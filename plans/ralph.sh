@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-prompt=$(cat plans/prompt.md)
+prompt=$(cat ./plans/prompt.md)
 
 opencode run  \
   "$prompt" \
