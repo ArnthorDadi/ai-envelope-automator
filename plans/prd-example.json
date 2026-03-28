@@ -1,0 +1,291 @@
+{
+  "features": [
+    {
+      "id": "F1-UI",
+      "category": "ui",
+      "description": "Username Input Form",
+      "verification_steps": [
+        "Display input field for username entry",
+        "Show 'Continue' or 'Join Game' button",
+        "Validate username is not empty",
+        "Show loading state during authentication"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F1-FUNC",
+      "category": "functional",
+      "description": "Firebase Anonymous Authentication",
+      "verification_steps": [
+        "Initialize Firebase Auth",
+        "Sign in user anonymously with Firebase",
+        "Get Firebase user ID token",
+        "Handle authentication errors"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F2-UI",
+      "category": "ui",
+      "description": "Player List Display",
+      "verification_steps": [
+        "Display current players in room",
+        "Show player avatars and names",
+        "Update list in real-time when players join/leave",
+        "Show 'Ready' status when appropriate"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F2-FUNC",
+      "category": "functional",
+      "description": "Real-time Room Synchronization",
+      "verification_steps": [
+        "Subscribe to /rooms/{roomId}/players changes",
+        "Update local player list on changes",
+        "Handle player disconnects/cleanup",
+        "Maintain player order consistency"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F3",
+      "category": "functional",
+      "description": "Role Dealing",
+      "verification_steps": [
+        "Correct role counts for 5-10 players.",
+        "Roles are shuffled and written to the protected /roles/ node by the Admin.",
+        "Asymmetric info enforced: Fascists see each other; Hitler visibility depends on player count."
+      ],
+      "passes": true
+    },
+    {
+      "id": "F4",
+      "category": "ui",
+      "description": "Digital Envelope",
+      "verification_steps": [
+        "Component displays when game_status is 'ROLE_REVEAL'.",
+        "'Open' toggle reveals Role and Party cards with high-contrast noir styling."
+      ],
+      "passes": true
+    },
+    {
+      "id": "F5-UI",
+      "category": "ui",
+      "description": "Investigation Target Selection",
+      "verification_steps": [
+        "Show player list to President for investigation",
+        "Display 'Investigate' button next to eligible targets",
+        "Highlight uninvestigated players",
+        "Prevent investigating self or already investigated players"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F5-FUNC",
+      "category": "functional",
+      "description": "Investigation Result Storage",
+      "verification_steps": [
+        "Validate current player is President",
+        "Check if investigation power is available",
+        "Write result to /investigations/{targetId}",
+        "Store party membership (Liberal/Fascist only)",
+        "Scope result to President's user ID only"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F6-UI",
+      "category": "ui",
+      "description": "Theme Toggle Button",
+      "verification_steps": [
+        "Display theme toggle in header/navigation",
+        "Show sun icon for light theme, moon for dark",
+        "Show system icon for auto theme",
+        "Handle button click to cycle through themes"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F6-FUNC",
+      "category": "functional",
+      "description": "Theme State Management",
+      "verification_steps": [
+        "Create theme context/provider",
+        "Manage theme state (light/dark/system)",
+        "Detect system preference with mediaQuery",
+        "Apply theme to document root",
+        "Save theme preference to localStorage"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F7",
+      "category": "functional",
+      "description": "Firebase RTDB Integration",
+      "verification_steps": [
+        "Initialize Firebase App and establish connection.",
+        "Implement useRoom hook for state subscription."
+      ],
+      "passes": true
+    },
+    {
+      "id": "F8",
+      "category": "functional",
+      "description": "Database Schema Setup",
+      "verification_steps": [
+        "Initialize the following paths: /rooms/{id}/metadata (status, adminId), /rooms/{id}/players (name, avatar), /rooms/{id}/roles (secret data), /rooms/{id}/investigations.",
+        "Deploy security rules to protect the /roles/ node."
+      ],
+      "passes": true
+    },
+    {
+      "id": "F9-UI",
+      "category": "ui",
+      "description": "Create Room Interface",
+      "verification_steps": [
+        "Display prominent 'Create Room' button on landing screen",
+        "Show button in primary color style",
+        "Show loading spinner during room creation",
+        "Disable create button during processing",
+        "Display 'Creating room...' message",
+        "Show success confirmation with room ID and sharing options"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F9-FUNC",
+      "category": "functional",
+      "description": "Room Creation Logic",
+      "verification_steps": [
+        "Generate short room code (4-6 characters)",
+        "Ensure room ID uniqueness in database",
+        "Create /rooms/{roomId}/metadata node",
+        "Set status to 'LOBBY'",
+        "Set adminId to creator's Firebase user ID",
+        "Set createdAt timestamp",
+        "Add creator to /rooms/{roomId}/players",
+        "Redirect to room lobby URL"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F10-UI",
+      "category": "ui",
+      "description": "Admin Control Panel",
+      "verification_steps": [
+        "Show admin controls only to room admin",
+        "Display 'Start Game' button when room has minimum players",
+        "Show player management options",
+        "Display room settings controls",
+        "Show 'Remove' button next to each player (except admin)",
+        "Display drag handles for player reordering",
+        "Show 'Transfer Admin' option for each player",
+        "Display 'Set Starting Player' option",
+        "Show confirmation dialog before starting game"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F10-FUNC",
+      "category": "functional",
+      "description": "Admin Operations",
+      "verification_steps": [
+        "Check if current user is room admin",
+        "Delete player node from /rooms/{roomId}/players/{userId}",
+        "Broadcast player removal to all clients",
+        "Prevent admin from removing themselves",
+        "Update player order in database",
+        "Update metadata.adminId to new admin",
+        "Broadcast admin change to all clients",
+        "Update metadata.startingPlayerId",
+        "Update room status from 'LOBBY' to 'ROLE_REVEAL'",
+        "Lock room to prevent new players from joining"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F11-UI",
+      "category": "ui",
+      "description": "Enhanced Room Creation Experience",
+      "verification_steps": [
+        "Show room code preview with copy-to-clipboard functionality",
+        "Display success animation when room is created",
+        "Show sharing options (copy link, QR code, social share buttons)"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F11-FUNC",
+      "category": "functional",
+      "description": "Advanced Room Configuration",
+      "verification_steps": [
+        "When joining a room, add the username to the player node, so that the players know who is who",
+        "Generate human-readable room codes (4-6 alphanumeric characters)",
+        "Validate room settings before creation",
+        "Add room persistence settings (auto-delete after X hours of inactivity)",
+        "Create unique shareable URLs with room code embedded"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F11-UX",
+      "category": "ux",
+      "description": "Room Discovery and Joining",
+      "validation_steps": [
+        "Implement room browser showing available public rooms",
+        "Add search functionality for rooms by name or code",
+        "Show room status (waiting, in-progress, full) in browser",
+        "Display player count and room settings in browser",
+        "Add quick-join buttons for friends from previous games",
+        "Implement room favorites/bookmarking system",
+        "Show room history for rejoining recent rooms",
+        "Add notification system when invited friends join"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F12-UI",
+      "category": "ui",
+      "description": "Game Reset Interface",
+      "verification_steps": [
+        "Display 'Reset Game' button in game over state",
+        "Show confirmation dialog before resetting",
+        "Display reset progress indicator during reset",
+        "Show reset history for transparency",
+        "Display different reset options based on user role"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F12-FUNC",
+      "category": "functional",
+      "description": "Game Reset Logic",
+      "verification_steps": [
+        "Validate reset permissions (admin or game over)",
+        "Clear all player roles from /roles/ node",
+        "Reset game state to LOBBY status",
+        "Reset enacted policies to zero",
+        "Clear investigation history",
+        "Maintain player list and room metadata",
+        "Trigger real-time update to all clients",
+        "Record reset action in reset history"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F12-UX",
+      "category": "ux",
+      "description": "Reset User Experience",
+      "verification_steps": [
+        "Provide clear visual feedback for reset action",
+        "Show countdown timer before reset (optional)",
+        "Display reset confirmation with consequences",
+        "Allow admin to cancel reset before completion",
+        "Show immediate UI updates after reset completes",
+        "Return all players to lobby interface smoothly"
+      ],
+      "passes": true
+    }
+  ]
+}

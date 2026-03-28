@@ -1,0 +1,149 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+    
+    // Check if a user is a player in the room
+    function isPlayerInRoom(uid, roomId) {
+      return exists(/databases/$(database)/documents/rooms/$(roomId)/players/$(uid));
+    }
+    
+    // Check if a user is the host of the room
+    function isHost(uid, roomId) {
+      return get(/databases/$(database)/documents/rooms/$(roomId)).data.hostId == uid;
+    }
+    
+    // Check if a user has a specific role
+    function hasRole(uid, roomId, role) {
+      return get(/databases/$(database)/documents/rooms/$(roomId)/players/$(uid)).data.role == role;
+    }
+    
+    // Check if user is a fascist
+    function isFascist(uid, roomId) {
+      return hasRole(uid, roomId, 'fascist');
+    }
+    
+    // Check if user is Hitler
+    function isHitler(uid, roomId) {
+      return hasRole(uid, roomId, 'hitler');
+    }
+    
+    // Check if room is in lobby state
+    function roomIsInLobby(roomId) {
+      return get(/databases/$(database)/documents/rooms/$(roomId)).data.status == 'lobby';
+    }
+    
+    // Validate role is one of the allowed values
+    function isValidRole(role) {
+      return role == null 
+          || role == 'liberal' 
+          || role == 'fascist' 
+          || role == 'hitler';
+    }
+    
+    // Check if only role field is being updated (for start game / reset)
+    function onlyRoleChanged(oldData, newData) {
+      return oldData.name == newData.name 
+          && oldData.joinedAt == newData.joinedAt
+          && oldData.id == newData.id
+          && oldData.role != newData.role;
+    }
+    
+    // ============================================
+    // ROOMS COLLECTION
+    // ============================================
+    
+    match /rooms/{roomId} {
+      
+      // Anyone can create a room (must be authenticated)
+      allow create: if request.auth != null
+        && request.resource.data.hostId == request.auth.uid
+        && request.resource.data.id == roomId
+        && request.resource.data.status == 'lobby'
+        && request.resource.data.playerCount == 1
+        && request.resource.data.settings != null;
+      
+      // Players in the room can read room data
+      allow read: if isPlayerInRoom(request.auth.uid, roomId);
+      
+      // Updates:
+      // - Host can change status: lobby -> started (start game)
+      // - Host can keep status at 'started' (reset game)
+      // - Anyone can update playerCount (use increment in client)
+      allow update: if isPlayerInRoom(request.auth.uid, roomId)
+        && (
+          // Host can change room status
+          (isHost(request.auth.uid, roomId) 
+            && (
+              // Start game: lobby -> started
+              (resource.data.status == 'lobby' && request.resource.data.status == 'started')
+              ||
+              // Reset game: stays at 'started'
+              (resource.data.status == 'started' && request.resource.data.status == 'started')
+            ))
+          || 
+          // Anyone can update playerCount only
+          (request.resource.data.keys().hasOnly(['playerCount']))
+        );
+      
+      // Only host can delete a room (quit game)
+      allow delete: if isHost(request.auth.uid, roomId);
+      
+      // ============================================
+      // PLAYERS SUBCOLLECTION
+      // ============================================
+      
+      match /players/{playerId} {
+        
+        // Player can create their own document when joining
+        // role must be null (cannot pre-assign)
+        allow create: if request.auth != null
+          && request.auth.uid == playerId
+          && request.resource.data.id == playerId
+          && request.resource.data.role == null
+          && request.resource.data.name != null
+          && roomIsInLobby(roomId);
+        
+        // Player can read their own data
+        // Fascists can read other fascists' roles
+        // Fascists can read Hitler's role
+        // NOTE: Hitler seeing fascists is handled client-side based on player count
+        //       Firestore rules allow it for fascists to see Hitler, but Hitler
+        //       visibility of fascists depends on room.playerCount (client-side check)
+        allow read: if isPlayerInRoom(request.auth.uid, roomId)
+          && (
+            // Always allow reading own data
+            request.auth.uid == playerId
+            ||
+            // Fascists can read other fascists
+            (isFascist(request.auth.uid, roomId) && isFascist(playerId, roomId))
+            ||
+            // Fascists can read Hitler's role
+            (isFascist(request.auth.uid, roomId) && isHitler(playerId, roomId))
+          );
+        
+        // Updates:
+        // - Players can update their own name
+        // - Host can assign/clear roles (start game or reset)
+        allow update: if request.auth.uid == playerId
+          && (
+            // Player can update their own name
+            (request.resource.data.name != resource.data.name
+              && request.resource.data.role == resource.data.role)
+            ||
+            // Host can assign/clear roles
+            (isHost(request.auth.uid, roomId) 
+              && onlyRoleChanged(resource.data, request.resource.data)
+              && isValidRole(request.resource.data.role))
+          );
+        
+        // Players cannot delete themselves or be deleted by host
+        // Use leftAt timestamp instead of deletion
+        allow delete: if false;
+      }
+    }
+  }
+}

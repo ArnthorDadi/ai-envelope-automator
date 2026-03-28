@@ -1,0 +1,463 @@
+{
+  "features": [
+    {
+      "id": "F1",
+      "description": "Anonymous Firebase Authentication",
+      "verification_steps": [
+        "Initialize Firebase Auth on app load",
+        "Sign in user anonymously with Firebase",
+        "Get Firebase user ID (UID)",
+        "Handle auth state changes",
+        "Persist auth across page refreshes",
+        "Unit test: AuthContext handles initial loading state",
+        "Unit test: AuthContext returns user after sign-in"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F2-UI",
+      "description": "Create Room Form",
+      "verification_steps": [
+        "Display 'Create Room' button on home page",
+        "Show loading state during creation",
+        "Disable button during processing",
+        "Redirect to room page after creation"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F2-FUNC",
+      "description": "Room Creation Logic",
+      "verification_steps": [
+        "Generate 6-char room codes using ABCDEFGHJKLMNPQRSTUVWXYZ23456789",
+        "Create room document in Firestore with roomId as document ID",
+        "Add creator as host player in players subcollection",
+        "Set status to 'lobby'",
+        "Set playerCount to 1",
+        "Unit test: room code is exactly 6 characters",
+        "Unit test: room code uses only valid characters",
+        "Unit test: room code has no ambiguous characters (I/O/0/1)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3-UI",
+      "description": "Join Room Form",
+      "verification_steps": [
+        "Display room code input field",
+        "Display player name input field",
+        "Validate name is max 20 characters",
+        "Validate name is alphanumeric + spaces only",
+        "Show error for invalid room code",
+        "Show loading state during join",
+        "Redirect to room page after join"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3-FUNC",
+      "description": "Room Joining Logic",
+      "verification_steps": [
+        "Validate room code format (uppercase, 6 chars, valid chars)",
+        "Check room exists and is in lobby state",
+        "Check room is not full (max 10 players)",
+        "Add player to room with merge: true for reconnection",
+        "Use atomic increment for playerCount",
+        "Unit test: invalid room code format returns error",
+        "Unit test: non-existent room returns error",
+        "Unit test: full room returns error",
+        "Unit test: already started room returns error"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F4-UI",
+      "description": "Lobby Display",
+      "verification_steps": [
+        "Display room code prominently",
+        "Show list of players with names",
+        "Indicate host with star badge",
+        "Show player count (e.g., '3/5 needed')",
+        "Update in real-time when players join/leave",
+        "Display toast notifications for join/leave events"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F4-FUNC",
+      "description": "Real-time Subscription",
+      "verification_steps": [
+        "Create onSnapshot listener for room document",
+        "Create onSnapshot listener for players subcollection",
+        "Handle disconnection/reconnection",
+        "Unsubscribe listeners on unmount",
+        "Unit test: subscribeToRoom returns room data",
+        "Unit test: subscribeToPlayers returns player list",
+        "Integration test: multiple clients receive same updates"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F5-UI",
+      "description": "Host Controls UI",
+      "verification_steps": [
+        "Show 'Start Game' button only for host",
+        "Disable start button if fewer than 5 players",
+        "Show 'Need X more players' message",
+        "Show 'Reset Game' button only for host",
+        "Show 'Quit Game' button only for host",
+        "Display confirmation dialog before reset",
+        "Display warning dialog before quit"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F5-FUNC",
+      "description": "Start Game Logic",
+      "verification_steps": [
+        "Verify caller is host in client",
+        "Verify minimum 5 players",
+        "Update room status to 'started'",
+        "Unit test: non-host cannot start game (rules deny)",
+        "Unit test: fewer than 5 players cannot start"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F6-FUNC",
+      "description": "Host Transfer",
+      "verification_steps": [
+        "Detect when host leaves room",
+        "Query players ordered by joinedAt",
+        "Transfer hostId to first player atomically via transaction",
+        "Display toast: '{name} is now the host'",
+        "Unit test: host transfer updates room.hostId",
+        "Unit test: first player by joinedAt becomes host"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F7-FUNC",
+      "description": "Role Assignment",
+      "verification_steps": [
+        "Implement role distribution: 5p (3L/2F), 6p (4L/2F), 7p (4L/3F), 8p (5L/3F), 9p (5L/4F), 10p (6L/4F)",
+        "Fisher-Yates shuffle for random assignment",
+        "Batch write all role updates atomically",
+        "Update room status to 'started'",
+        "Unit test: 5 players gets 3 liberal, 2 fascist, 1 hitler",
+        "Unit test: 10 players gets 6 liberal, 4 fascist, 1 hitler",
+        "Unit test: Fisher-Yates produces uniform distribution"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8-UI",
+      "description": "Role Reveal Card",
+      "verification_steps": [
+        "Display role card with fade-in animation (500ms) when game starts",
+        "Show 'You are a [ROLE]' message",
+        "Style based on role (colors, icons)",
+        "Show teammates for fascists/Hitler (5-6p)",
+        "Auto-hide after exactly 7 seconds",
+        "Pause timer on user interaction",
+        "Tap outside card to dismiss early",
+        "'View Role' button shows card for 7 seconds each time",
+        "Fade out animation when hiding (300ms)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F9-UI",
+      "description": "Visible Players Display",
+      "verification_steps": [
+        "Show allied players for fascists (names + roles)",
+        "Show allied players for Hitler (5-6p only)",
+        "Hide allied info from liberals",
+        "Display in minimal game view after role card hides"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F9-FUNC",
+      "description": "Role Visibility Logic",
+      "verification_steps": [
+        "Liberals see own role only (empty allies list)",
+        "Fascists see other fascists and Hitler",
+        "Hitler (5-6p) sees fascists only",
+        "Hitler (7-10p) sees nothing extra",
+        "Unit test: liberal gets empty allies",
+        "Unit test: fascist sees other fascists and hitler",
+        "Unit test: hitler (5-6p) sees fascists",
+        "Unit test: hitler (7-10p) sees nothing"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F10-FUNC",
+      "description": "Game Reset Logic",
+      "verification_steps": [
+        "Clear all roles (set to null)",
+        "Re-shuffle and assign new random roles",
+        "Room status stays 'started'",
+        "All clients receive real-time update",
+        "Role cards re-display with new roles",
+        "Unit test: reset clears all roles",
+        "Unit test: reset assigns new random roles",
+        "Unit test: hitler can get hitler again on reset"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F11-FUNC",
+      "description": "Firestore Security Rules",
+      "verification_steps": [
+        "Only players in room can read that room",
+        "Only host can update room status",
+        "Players can only read their own role",
+        "Fascists can read other fascist roles",
+        "Fascists can read Hitler's role",
+        "Only host can assign/clear roles",
+        "Only host can delete room",
+        "Integration test: non-player cannot read room",
+        "Integration test: fascist can read other fascist",
+        "Integration test: liberal cannot read other roles"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F12-UI",
+      "description": "Toast Notification Display",
+      "verification_steps": [
+        "Display '{name} joined' notification",
+        "Display '{name} left' notification",
+        "Display '{name} is now the host' notification",
+        "Display 'Game started!' notification",
+        "Display 'New round started' notification",
+        "Display error messages",
+        "Auto-dismiss after 3 seconds",
+        "Slide in animation from top"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F12-FUNC",
+      "description": "Toast Logic",
+      "verification_steps": [
+        "Create Toast context/provider",
+        "Expose addToast function globally",
+        "Handle auto-dismiss timer",
+        "Handle manual dismiss",
+        "Unit test: toast auto-dismisses after 3s",
+        "Unit test: multiple toasts queue correctly"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F13-UI",
+      "description": "Share Button",
+      "verification_steps": [
+        "Display share button in lobby/game",
+        "Show copy-to-clipboard feedback",
+        "Offer Web Share API on mobile",
+        "Display full URL: https://app.com/room/ABC123"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F13-FUNC",
+      "description": "Share/Copy Link Logic",
+      "verification_steps": [
+        "Copy full URL to clipboard",
+        "Detect Web Share API support",
+        "Use native share on mobile if available",
+        "Unit test: clipboard gets correct URL"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F14-FUNC",
+      "description": "Leave Room",
+      "verification_steps": [
+        "Set leftAt timestamp on player document",
+        "Do NOT delete player document",
+        "Do NOT decrement playerCount",
+        "Handle host leaving (trigger host transfer)",
+        "Unit test: leave sets leftAt timestamp",
+        "Unit test: leave does not decrement playerCount"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F15-UI",
+      "description": "Error States UI",
+      "verification_steps": [
+        "Display 'Room not found' error page",
+        "Display 'Room is full' error page",
+        "Display 'Game already started' error page",
+        "Display 'Room has been deleted' error page",
+        "Display 'Go Back Home' button on all error pages"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F15-FUNC",
+      "description": "Error Handling Logic",
+      "verification_steps": [
+        "Handle room not found error",
+        "Handle room full error",
+        "Handle game already started error",
+        "Handle room deleted error",
+        "Handle network errors",
+        "Handle auth errors",
+        "Unit test: each error type triggers correct UI"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F16-FUNC",
+      "description": "Reconnection During Game",
+      "verification_steps": [
+        "Player can return to room URL anytime",
+        "Role is preserved in Firestore",
+        "Re-subscribe displays role with visibility rules",
+        "Integration test: reconnecting shows correct role"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F17-UI",
+      "description": "Theme Toggle",
+      "verification_steps": [
+        "Display theme toggle in header/navigation",
+        "Show sun icon for light theme",
+        "Show moon icon for dark theme",
+        "Show system icon for auto theme",
+        "Cycle through themes on click",
+        "Persist theme preference to localStorage",
+        "Apply theme to document root"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F18-UI",
+      "description": "Mobile Optimization",
+      "verification_steps": [
+        "Single column layout on mobile",
+        "Full-width buttons",
+        "Touch-friendly targets (min 44px)",
+        "Safe area insets for notched devices",
+        "Test on iOS Safari",
+        "Test on Chrome Android"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F19-UI",
+      "description": "Loading States",
+      "verification_steps": [
+        "Display 'Loading room...' text for initial load",
+        "Show button loading states during actions",
+        "Show role assignment loading state"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F20-FUNC",
+      "description": "Delete Room (Quit Game)",
+      "verification_steps": [
+        "Delete room document from Firestore",
+        "Redirect all clients to home page",
+        "Show error toast: 'Room has been deleted'",
+        "Unit test: only host can delete room",
+        "Integration test: other clients see deleted error"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F4-UX",
+      "description": "Lobby Waiting States",
+      "verification_steps": [
+        "Non-host sees 'Waiting for host to start...' message",
+        "Host sees 'Start Game' button with player count",
+        "Show player count progress (e.g., '3/5 players')",
+        "Update waiting message in real-time when players join/leave"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8-PRIVACY",
+      "description": "Minimal Game View (Privacy)",
+      "verification_steps": [
+        "After role card auto-hides, display minimal view",
+        "Show player names only (no role icons)",
+        "Show 'View My Role' button",
+        "No information visible that could be exploited by phone peekers",
+        "Minimal view persists until player taps 'View My Role'"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F21-FUNC",
+      "description": "Background Room Cleanup",
+      "verification_steps": [
+        "Mark rooms inactive for 2+ hours as candidates for cleanup",
+        "Host action deletes room immediately",
+        "Client-side check on join shows informational message for orphaned rooms",
+        "Unit test: createdAt timestamp is stored on room creation"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F22-OPT",
+      "description": "Performance Optimization",
+      "verification_steps": [
+        "React.memo on PlayerList component to minimize re-renders",
+        "React.memo on RoleCard component",
+        "Unsubscribe Firestore listeners in useEffect cleanup",
+        "Optimize Firestore reads by subscribing to specific documents only",
+        "Unit test: listeners are cleaned up on unmount"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F23-UI",
+      "description": "Player List Animations",
+      "verification_steps": [
+        "Player join: slide in from right animation (300ms)",
+        "Player leave: fade out animation (200ms)",
+        "Button state transitions: opacity/transform (150ms)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F24-UI",
+      "description": "Page Transitions",
+      "verification_steps": [
+        "Fade animation between pages (200ms)",
+        "Smooth navigation transitions"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F25-UI",
+      "description": "Desktop Layout",
+      "verification_steps": [
+        "Centered container (max-width: 480px) on desktop",
+        "Comfortable spacing on larger screens",
+        "Hover states on interactive elements"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F26-FUNC",
+      "description": "Mass Disconnect Edge Case",
+      "verification_steps": [
+        "Detect when all non-host players disconnect",
+        "Room persists with host only",
+        "Host can still start game if others reconnect",
+        "Handle scenario gracefully without errors"
+      ],
+      "passes": false
+    }
+  ]
+}
