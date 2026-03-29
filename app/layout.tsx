@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ToastProvider } from '@/contexts/ToastContext'
+import { ThemeProvider } from '@/contexts/ThemeContext'
 import { Toast } from '@/components/Toast'
 import './globals.css'
 
@@ -15,14 +16,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <AuthProvider>
-          <ToastProvider>
-            {children}
-            <Toast />
-          </ToastProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ToastProvider>
+              {children}
+              <Toast />
+            </ToastProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
