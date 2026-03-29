@@ -549,7 +549,7 @@
         "Content not obscured by notch/home indicator",
         "No horizontal scroll on mobile"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F19-UI",

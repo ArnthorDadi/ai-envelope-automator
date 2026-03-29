@@ -16,7 +16,7 @@ export function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const baseStyles = 'w-full px-4 py-3 rounded-lg font-semibold transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'w-full px-4 py-4 min-h-[44px] rounded-lg font-semibold transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation';
   
   const variants = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700 active:scale-98',

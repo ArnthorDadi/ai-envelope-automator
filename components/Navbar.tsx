@@ -49,7 +49,7 @@ export function Navbar() {
   const { user, signOut, loading } = useAuth();
 
   return (
-    <nav className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+    <nav className="flex items-center justify-between px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-4 border-b dark:border-gray-700">
       <Link href="/" className="text-xl font-bold dark:text-white">
         SECRET HITLER
       </Link>

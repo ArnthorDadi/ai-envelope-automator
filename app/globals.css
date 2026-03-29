@@ -93,3 +93,19 @@ body {
     animation: none;
   }
 }
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+input,
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}

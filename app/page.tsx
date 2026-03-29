@@ -69,7 +69,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main className="max-w-md mx-auto p-6">
+      <main className="max-w-md mx-auto px-6 py-6 pb-[max(env(safe-area-inset-bottom),1.5rem)]">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">SECRET HITLER</h1>
           <p className="text-gray-600">Digital Roles</p>

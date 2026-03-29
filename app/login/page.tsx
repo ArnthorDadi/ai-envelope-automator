@@ -48,7 +48,7 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <main className="max-w-md mx-auto p-6 flex items-center justify-center">
+        <main className="max-w-md mx-auto px-6 py-6 flex items-center justify-center">
           <p>Loading...</p>
         </main>
       </div>
@@ -58,7 +58,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main className="max-w-md mx-auto p-6">
+      <main className="max-w-md mx-auto px-6 py-6 pb-[max(env(safe-area-inset-bottom),1.5rem)]">
         <button
           onClick={handleBack}
           className="mb-6 text-gray-600 hover:text-gray-800"
