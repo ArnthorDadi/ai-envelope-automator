@@ -566,7 +566,7 @@
         "Loading states match app theme",
         "No layout shift when content loads"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F20-FUNC",
@@ -679,7 +679,7 @@
         "Button transitions are smooth",
         "Animations can be disabled via system preference"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F24-UI",

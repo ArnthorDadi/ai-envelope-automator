@@ -58,3 +58,38 @@ body {
 .animate-scale-98:active {
   transform: scale(0.98);
 }
+
+@keyframes player-join {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes player-leave {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-player-join {
+  animation: player-join 0.3s ease-out;
+}
+
+.animate-player-leave {
+  animation: player-leave 0.2s ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-player-join,
+  .animate-player-leave {
+    animation: none;
+  }
+}

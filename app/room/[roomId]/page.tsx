@@ -35,6 +35,9 @@ export default function RoomPage() {
   const [showRoleCard, setShowRoleCard] = useState(false);
   const [joinError, setJoinError] = useState<RoomErrorType | null>(null);
   const [roomDeleted, setRoomDeleted] = useState(false);
+  const [leavingPlayerIds, setLeavingPlayerIds] = useState<Set<string>>(new Set());
+  const [joiningPlayerIds, setJoiningPlayerIds] = useState<Set<string>>(new Set());
+  const prevPlayersRef = useRef<string[]>([]);
   const hasJoinedRef = useRef(false);
 
   const isHost = room?.hostId === user?.uid;
@@ -89,6 +92,26 @@ export default function RoomPage() {
       }
     }
   }, [error, room, joinError, roomDeleted]);
+
+  useEffect(() => {
+    const currentPlayerIds = players.map(p => p.id);
+    const prevPlayerIds = prevPlayersRef.current;
+
+    const joined = currentPlayerIds.filter(id => !prevPlayerIds.includes(id));
+    const left = prevPlayerIds.filter(id => !currentPlayerIds.includes(id));
+
+    if (joined.length > 0) {
+      setJoiningPlayerIds(new Set(joined));
+      setTimeout(() => setJoiningPlayerIds(new Set()), 300);
+    }
+
+    if (left.length > 0) {
+      setLeavingPlayerIds(new Set(left));
+      setTimeout(() => setLeavingPlayerIds(new Set()), 200);
+    }
+
+    prevPlayersRef.current = currentPlayerIds;
+  }, [players]);
 
   const handleStartGame = async () => {
     if (!isHost || playerCount < MIN_PLAYERS) return;
@@ -204,19 +227,28 @@ export default function RoomPage() {
             Players ({playerCount}{room.status === 'lobby' && `, need ${needsMorePlayers} more`}):
           </h2>
           <div className="space-y-2">
-            {players.map((player) => (
-              <div
-                key={player.id}
-                className="flex items-center gap-2 p-3 bg-white rounded-lg border"
-              >
-                <span>{player.id === room.hostId ? '⭐' : '👤'}</span>
-                <span className="font-medium">
-                  {player.name}
-                  {player.id === room.hostId && ' (Host)'}
-                  {player.id === user?.uid && ' (You)'}
-                </span>
-              </div>
-            ))}
+            {players.map((player) => {
+              const isJoining = joiningPlayerIds.has(player.id);
+              const isLeaving = leavingPlayerIds.has(player.id);
+              
+              let animationClass = '';
+              if (isJoining) animationClass = 'animate-player-join';
+              else if (isLeaving) animationClass = 'animate-player-leave';
+              
+              return (
+                <div
+                  key={player.id}
+                  className={`flex items-center gap-2 p-3 bg-white rounded-lg border ${animationClass}`}
+                >
+                  <span>{player.id === room.hostId ? '⭐' : '👤'}</span>
+                  <span className="font-medium">
+                    {player.name}
+                    {player.id === room.hostId && ' (Host)'}
+                    {player.id === user?.uid && ' (You)'}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
