@@ -1,5 +1,7 @@
 # TASK SELECTION
 
+Before picking a task to work on read all the ./docs/*.md files. Especially docs/project-blueprint.md.
+
 Pick the next task. Prioritize tasks in this order:
 
 1. Critical bugfixes
@@ -25,7 +27,7 @@ Explore the repo.
 
 # IMPLEMENTATION
 
-Where possible, use a red-green refactor loop:
+**IMPORTANT**: Where possible, use a red-green refactor loop:
 
 ## RED: Write a single failing test
 
@@ -58,3 +60,7 @@ If the task is not complete, leave a summary of what was done in progress.txt.
 # FINAL RULES
 
 ONLY WORK ON A SINGLE TASK.
+
+# WHEN DONE
+
+If the PRD is complete, output <promise>COMPLETE</promise>.
