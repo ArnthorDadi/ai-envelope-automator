@@ -21,7 +21,7 @@
 - leaveRoom.ts - Leave room logic
 
 #### contexts/
-- AuthContext.tsx - Firebase authentication context
+- AuthContext.tsx - Firebase authentication context (with Firestore user document)
 - ToastContext.tsx - Toast notification context
 
 #### components/
@@ -49,6 +49,14 @@
 - postcss.config.js - PostCSS with Tailwind
 - tailwind.config.ts - Tailwind configuration
 
+### 4. Features Completed
+
+#### F1: User Login
+- AuthContext now saves user to Firestore users/{uid} collection
+- Anonymous auth with automatic user document creation
+- Name updates saved to Firestore
+- User data fetched from Firestore on auth state change
+
 ## Verification
 - pnpm run typecheck: PASS
 - pnpm run lint: PASS
@@ -57,21 +65,20 @@
 
 ## Next Steps (Priority Order)
 
-1. F1: User Login - Auth flow with Firebase anonymous auth
-2. F2-UI/F2-FUNC: Create Room - Already partially implemented
-3. F3-UI/F3-FUNC: Join Room - Already partially implemented  
-4. F4-UI/F4-FUNC: Lobby Display - Already partially implemented
-5. F12-UI/F12-FUNC: Toast Notifications - Already partially implemented
-6. F5-UI/F5-FUNC: Host Controls and Start Game
-7. F8-UI: Role Reveal Card - Already partially implemented
-8. F11-FUNC: Firestore Security Rules
-9. F13-UI/F13-FUNC: Share Button
-10. F14-FUNC: Leave Room - Already partially implemented
-11. F6-FUNC: Host Transfer
-12. F10-FUNC: Game Reset Logic
-13. F20-FUNC: Delete Room
-14. F15-UI/F15-FUNC: Error States
-15. Remaining UI polish features
+1. F2-UI/F2-FUNC: Create Room - Already partially implemented
+2. F3-UI/F3-FUNC: Join Room - Already partially implemented  
+3. F4-UI/F4-FUNC: Lobby Display - Already partially implemented
+4. F12-UI/F12-FUNC: Toast Notifications - Already partially implemented
+5. F5-UI/F5-FUNC: Host Controls and Start Game
+6. F8-UI: Role Reveal Card - Already partially implemented
+7. F11-FUNC: Firestore Security Rules
+8. F13-UI/F13-FUNC: Share Button
+9. F14-FUNC: Leave Room - Already partially implemented
+10. F6-FUNC: Host Transfer
+11. F10-FUNC: Game Reset Logic
+12. F20-FUNC: Delete Room
+13. F15-UI/F15-FUNC: Error States
+14. Remaining UI polish features
 
 ## Notes
 - The application builds successfully but hasn't been tested with actual Firebase

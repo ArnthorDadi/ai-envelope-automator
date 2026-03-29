@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -8,9 +8,12 @@ import { useRoom, usePlayers, usePlayer } from '@/hooks/useRoom';
 import { startGame } from '@/lib/startGame';
 import { leaveRoom } from '@/lib/leaveRoom';
 import { joinRoom } from '@/lib/joinRoom';
+import { resetGame } from '@/lib/resetGame';
+import { deleteRoom } from '@/lib/deleteRoom';
 import { Button } from '@/components/Button';
 import { Navbar } from '@/components/Navbar';
 import { RoleCard } from '@/components/RoleCard';
+import { ShareButton } from '@/components/ShareButton';
 import { MIN_PLAYERS } from '@/lib/types';
 
 export default function RoomPage() {
@@ -25,6 +28,8 @@ export default function RoomPage() {
   const { player: currentPlayer } = usePlayer(roomId, user?.uid || '');
   
   const [isStarting, setIsStarting] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const [isQuitting, setIsQuitting] = useState(false);
   const [showRoleCard, setShowRoleCard] = useState(false);
 
   const isHost = room?.hostId === user?.uid;
@@ -85,6 +90,39 @@ export default function RoomPage() {
     }
   };
 
+  const handleResetGame = async () => {
+    if (!isHost) return;
+    
+    const confirmed = window.confirm('Are you sure you want to reset the game? All roles will be randomized.');
+    if (!confirmed) return;
+
+    setIsResetting(true);
+    try {
+      await resetGame(roomId, players);
+      addToast('New round started');
+    } catch (err) {
+      addToast('Failed to reset game');
+      setIsResetting(false);
+    }
+  };
+
+  const handleQuitGame = async () => {
+    if (!isHost) return;
+
+    const confirmed = window.confirm('Are you sure you want to quit? This will delete the room for all players.');
+    if (!confirmed) return;
+
+    setIsQuitting(true);
+    try {
+      await deleteRoom(roomId);
+      addToast('Room has been deleted');
+      router.push('/');
+    } catch (err) {
+      addToast('Failed to delete room');
+      setIsQuitting(false);
+    }
+  };
+
   if (authLoading || roomLoading || playersLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -114,9 +152,12 @@ export default function RoomPage() {
       <main className="max-w-md mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold">Room: {roomId}</h1>
-          <span className="text-sm text-gray-500">
-            {room.status === 'started' ? 'Started' : 'Lobby'}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">
+              {room.status === 'started' ? 'Started' : 'Lobby'}
+            </span>
+            <ShareButton roomCode={roomId} />
+          </div>
         </div>
 
         <div className="mb-6">
@@ -177,6 +218,24 @@ export default function RoomPage() {
             >
               View My Role
             </Button>
+            {isHost && (
+              <>
+                <Button
+                  variant="secondary"
+                  onClick={handleResetGame}
+                  loading={isResetting}
+                >
+                  Reset Game
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={handleQuitGame}
+                  loading={isQuitting}
+                >
+                  Quit Game
+                </Button>
+              </>
+            )}
           </div>
         )}
 
