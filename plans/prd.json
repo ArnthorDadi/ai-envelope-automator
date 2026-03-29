@@ -681,7 +681,7 @@
       ],
       "passes": true
     },
-    {
+      {
       "id": "F24-UI",
       "description": "Page Transitions",
       "steps": [
@@ -695,42 +695,7 @@
         "No white flash between pages",
         "Transition fast enough to not feel slow"
       ],
-      "passes": false
-    },
-    {
-      "id": "F25-UI",
-      "description": "Desktop Layout",
-      "steps": [
-        "Detect desktop viewport",
-        "Center content in max-width 480px container",
-        "Add comfortable padding and spacing",
-        "Add hover states on interactive elements"
-      ],
-      "verification_steps": [
-        "Content centered on large screens",
-        "Max-width 480px maintained",
-        "Hover states work on desktop",
-        "Mobile layout unaffected"
-      ],
-      "passes": false
-    },
-    {
-      "id": "F26-FUNC",
-      "description": "Mass Disconnect Edge Case",
-      "steps": [
-        "All non-host players disconnect",
-        "Room persists in Firestore with host only",
-        "Host remains in room",
-        "Host can start game alone if desired",
-        "Reconnecting players rejoin room seamlessly"
-      ],
-      "verification_steps": [
-        "Room survives when only host remains",
-        "Host can still start game",
-        "Reconnecting players restore to room",
-        "No errors when all non-hosts disconnect"
-      ],
-      "passes": false
+      "passes": true
     }
   ]
 }

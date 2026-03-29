@@ -151,6 +151,11 @@
 - Button state transitions (150ms) - already in Button component
 - Respects prefers-reduced-motion
 
+#### F24-UI: Page Transitions
+- Created app/template.tsx with fade-in animation (200ms)
+- Smooth transition between pages
+- Respects prefers-reduced-motion
+
 ## Verification
 - pnpm run typecheck: PASS
 - pnpm run lint: PASS
@@ -163,9 +168,8 @@
 2. F18-UI: Mobile Optimization - Touch-friendly, safe areas
 3. F21-FUNC: Background Room Cleanup - Clean up old rooms
 4. F22-OPT: Performance Optimization - React.memo, cleanup
-5. F24-UI: Page Transitions - Fade between pages
-6. F25-UI: Desktop Layout - Centered max-width container
-7. F26-FUNC: Mass Disconnect Edge Case - Handle gracefully
+5. F25-UI: Desktop Layout - Centered max-width container
+6. F26-FUNC: Mass Disconnect Edge Case - Handle gracefully
 
 ## Notes
 - The application builds successfully but hasn't been tested with actual Firebase
