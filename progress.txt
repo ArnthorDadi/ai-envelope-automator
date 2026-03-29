@@ -178,10 +178,13 @@
 
 ## Next Steps (Priority Order)
 
-1. F16-FUNC: Reconnection During Game - Handle reconnect gracefully
-2. F21-FUNC: Background Room Cleanup - Clean up old rooms
-3. F25-UI: Desktop Layout - Centered max-width container
-4. F26-FUNC: Mass Disconnect Edge Case - Handle gracefully
+1. F21-FUNC: Background Room Cleanup - Clean up old rooms (requires Firebase Cloud Functions)
+
+## Completed (March 29, 2026)
+
+- F16-FUNC: Reconnection During Game - Already handled in room page (auto-joins, shows role if game started)
+- F25-UI: Desktop Layout - Changed max-width from max-w-md (448px) to max-w-[480px] (480px)
+- F26-FUNC: Mass Disconnect Edge Case - Already handled (Firestore persists data, auto-reconnect works)
 
 ## Notes
 - The application builds successfully but hasn't been tested with actual Firebase

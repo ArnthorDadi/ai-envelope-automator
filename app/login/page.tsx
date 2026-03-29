@@ -48,7 +48,7 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <main className="max-w-md mx-auto px-6 py-6 flex items-center justify-center">
+        <main className="max-w-[480px] mx-auto px-6 py-6 flex items-center justify-center">
           <p>Loading...</p>
         </main>
       </div>

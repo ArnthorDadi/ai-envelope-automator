@@ -212,7 +212,7 @@ export default function RoomPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main className="max-w-md mx-auto px-6 py-6 pb-[max(env(safe-area-inset-bottom),1.5rem)]">
+        <main className="max-w-[480px] mx-auto px-6 py-6 pb-[max(env(safe-area-inset-bottom),1.5rem)]">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold">Room: {roomId}</h1>
           <div className="flex items-center gap-2">
