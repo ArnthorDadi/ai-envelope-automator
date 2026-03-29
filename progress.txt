@@ -57,6 +57,62 @@
 - Name updates saved to Firestore
 - User data fetched from Firestore on auth state change
 
+#### F2-UI/F2-FUNC: Create Room
+- CreateRoomForm component (inline in page.tsx)
+- Room creation logic with 6-char code generation
+- Host added as first player in players subcollection
+
+#### F3-UI/F3-FUNC: Join Room
+- JoinRoomForm component (inline in page.tsx)
+- Room joining logic with validation
+- Auto-uppercase room code input
+
+#### F4-UI/F4-FUNC: Lobby Display & Real-time Subscription
+- useRoom, usePlayers, usePlayer hooks for real-time data
+- Player list with host badge
+- Toast notifications for join/leave
+
+#### F5-UI/F5-FUNC: Host Controls & Start Game
+- Host-only Start Game button (disabled if <5 players)
+- Waiting message for non-hosts
+- Role assignment on game start
+
+#### F7-FUNC: Role Assignment
+- Fisher-Yates shuffle for random role distribution
+- Batch write to Firestore
+
+#### F8-UI: Role Reveal Card
+- RoleCard component with animation
+- Shows role-specific styling
+- 7-second auto-hide timer
+
+#### F9-FUNC: Role Visibility Logic
+- Client-side filtering of visible allies
+- Liberals see no teammates
+- Fascists see other fascists + Hitler
+- Hitler sees fascists only (5-6p)
+
+#### F10-FUNC: Game Reset Logic
+- Randomizes roles for all players
+- Host can reset game during started state
+
+#### F12-UI/F12-FUNC: Toast Notifications
+- ToastContext provider
+- Toast component with slide-in animation
+
+#### F13-UI/F13-FUNC: Share Button
+- ShareButton component in room header
+- Copy to clipboard with fallback
+- Web Share API on mobile
+
+#### F14-FUNC: Leave Room
+- Sets leftAt timestamp on player document
+- Does NOT decrement playerCount
+
+#### F20-FUNC: Delete Room
+- Host can quit and delete room
+- Confirmation dialog before delete
+
 ## Verification
 - pnpm run typecheck: PASS
 - pnpm run lint: PASS
@@ -65,20 +121,19 @@
 
 ## Next Steps (Priority Order)
 
-1. F2-UI/F2-FUNC: Create Room - Already partially implemented
-2. F3-UI/F3-FUNC: Join Room - Already partially implemented  
-3. F4-UI/F4-FUNC: Lobby Display - Already partially implemented
-4. F12-UI/F12-FUNC: Toast Notifications - Already partially implemented
-5. F5-UI/F5-FUNC: Host Controls and Start Game
-6. F8-UI: Role Reveal Card - Already partially implemented
-7. F11-FUNC: Firestore Security Rules
-8. F13-UI/F13-FUNC: Share Button
-9. F14-FUNC: Leave Room - Already partially implemented
-10. F6-FUNC: Host Transfer
-11. F10-FUNC: Game Reset Logic
-12. F20-FUNC: Delete Room
-13. F15-UI/F15-FUNC: Error States
-14. Remaining UI polish features
+1. F6-FUNC: Host Transfer - Transfer host when host leaves
+2. F11-FUNC: Firestore Security Rules - Define security rules
+3. F15-UI/F15-FUNC: Error States - Better error handling UI
+4. F16-FUNC: Reconnection During Game - Handle reconnect gracefully
+5. F17-UI: Theme Toggle - Light/Dark/System theme
+6. F18-UI: Mobile Optimization - Touch-friendly, safe areas
+7. F19-UI: Loading States - Loading states throughout
+8. F21-FUNC: Background Room Cleanup - Clean up old rooms
+9. F22-OPT: Performance Optimization - React.memo, cleanup
+10. F23-UI: Player List Animations - Smooth join/leave
+11. F24-UI: Page Transitions - Fade between pages
+12. F25-UI: Desktop Layout - Centered max-width container
+13. F26-FUNC: Mass Disconnect Edge Case - Handle gracefully
 
 ## Notes
 - The application builds successfully but hasn't been tested with actual Firebase
