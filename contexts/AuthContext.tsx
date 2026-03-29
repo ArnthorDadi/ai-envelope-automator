@@ -2,8 +2,9 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User } from '@/lib/types';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged, signInAnonymously, User as FirebaseUser } from 'firebase/auth';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -21,7 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
 
   useEffect(() => {
-    if (!auth) {
+    if (!auth || !db) {
       setLoading(false);
       return;
     }
@@ -29,9 +30,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
         setFirebaseUser(fbUser);
+        const userDoc = await getDoc(doc(db, 'users', fbUser.uid));
+        const userData = userDoc.exists() ? userDoc.data() : null;
         setUser({
           uid: fbUser.uid,
-          name: (fbUser as FirebaseUser & { displayName?: string }).displayName || '',
+          name: userData?.name || '',
         });
       } else {
         setFirebaseUser(null);
@@ -44,8 +47,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async () => {
-    if (!auth) return;
-    await signInAnonymously(auth);
+    if (!auth || !db) return;
+    const result = await signInAnonymously(auth);
+    const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+    if (!userDoc.exists()) {
+      await setDoc(doc(db, 'users', result.user.uid), {
+        name: '',
+        createdAt: serverTimestamp(),
+      });
+    }
   };
 
   const signOut = async () => {
@@ -55,9 +65,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const updateName = async (name: string) => {
-    if (!firebaseUser) return;
-    const { updateProfile } = await import('firebase/auth');
-    await updateProfile(firebaseUser, { displayName: name });
+    if (!firebaseUser || !db) return;
+    
+    await setDoc(doc(db, 'users', firebaseUser.uid), {
+      name,
+      createdAt: serverTimestamp(),
+    }, { merge: true });
+    
     setUser({ uid: firebaseUser.uid, name });
   };
 
