@@ -37,3 +37,36 @@ export const ROLE_DISTRIBUTION: Record<number, { liberals: number; fascists: num
   9:  { liberals: 5, fascists: 4 },
   10: { liberals: 6, fascists: 4 },
 };
+
+export type RoomErrorType = 
+  | 'ROOM_NOT_FOUND' 
+  | 'ROOM_FULL' 
+  | 'GAME_STARTED' 
+  | 'ROOM_DELETED' 
+  | 'NETWORK_ERROR'
+  | 'AUTH_ERROR';
+
+export interface RoomError {
+  type: RoomErrorType;
+  message: string;
+  roomCode?: string;
+}
+
+export function getErrorMessage(type: RoomErrorType): string {
+  switch (type) {
+    case 'ROOM_NOT_FOUND':
+      return 'This room does not exist.';
+    case 'ROOM_FULL':
+      return 'This room is full (10 players).';
+    case 'GAME_STARTED':
+      return 'This game has already started.';
+    case 'ROOM_DELETED':
+      return 'This room no longer exists. The host may have quit.';
+    case 'NETWORK_ERROR':
+      return 'Network error. Please check your connection.';
+    case 'AUTH_ERROR':
+      return 'Authentication error. Please log in again.';
+    default:
+      return 'An error occurred.';
+  }
+}

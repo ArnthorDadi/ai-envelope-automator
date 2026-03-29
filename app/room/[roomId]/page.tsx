@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -15,7 +15,8 @@ import { Button } from '@/components/Button';
 import { Navbar } from '@/components/Navbar';
 import { RoleCard } from '@/components/RoleCard';
 import { ShareButton } from '@/components/ShareButton';
-import { MIN_PLAYERS } from '@/lib/types';
+import { ErrorPage } from '@/components/ErrorPage';
+import { MIN_PLAYERS, RoomErrorType } from '@/lib/types';
 
 export default function RoomPage() {
   const params = useParams();
@@ -32,6 +33,9 @@ export default function RoomPage() {
   const [isResetting, setIsResetting] = useState(false);
   const [isQuitting, setIsQuitting] = useState(false);
   const [showRoleCard, setShowRoleCard] = useState(false);
+  const [joinError, setJoinError] = useState<RoomErrorType | null>(null);
+  const [roomDeleted, setRoomDeleted] = useState(false);
+  const hasJoinedRef = useRef(false);
 
   const isHost = room?.hostId === user?.uid;
   const playerCount = players.length;
@@ -50,18 +54,41 @@ export default function RoomPage() {
   }, [room?.status, currentPlayer?.role]);
 
   useEffect(() => {
-    if (user && room && !currentPlayer && !playersLoading) {
+    if (user && room && !currentPlayer && !playersLoading && !hasJoinedRef.current) {
+      hasJoinedRef.current = true;
       joinRoom({
         roomId,
         playerId: user.uid,
         playerName: user.name || 'Player',
       }).then((result) => {
-        if (!result.success && result.error !== 'ROOM_FULL' && result.error !== 'GAME_STARTED') {
-          addToast('Failed to join room');
+        if (!result.success) {
+          if (result.error === 'ROOM_FULL') {
+            setJoinError('ROOM_FULL');
+          } else if (result.error === 'GAME_STARTED') {
+            setJoinError('GAME_STARTED');
+          } else if (result.error === 'ROOM_NOT_FOUND') {
+            setRoomDeleted(true);
+          } else {
+            addToast('Failed to join room');
+          }
         }
       });
     }
   }, [user, room, currentPlayer, playersLoading, roomId, addToast]);
+
+  useEffect(() => {
+    if (error || !room) {
+      if (joinError === 'ROOM_FULL') {
+        return;
+      }
+      if (joinError === 'GAME_STARTED') {
+        return;
+      }
+      if (roomDeleted) {
+        return;
+      }
+    }
+  }, [error, room, joinError, roomDeleted]);
 
   const handleStartGame = async () => {
     if (!isHost || playerCount < MIN_PLAYERS) return;
@@ -146,16 +173,16 @@ export default function RoomPage() {
     );
   }
 
-  if (error || !room) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <main className="max-w-md mx-auto p-6 flex flex-col items-center justify-center min-h-[50vh]">
-          <h1 className="text-xl font-bold mb-4">Room not found</h1>
-          <Button onClick={() => router.push('/')}>Go Back Home</Button>
-        </main>
-      </div>
-    );
+  if (joinError) {
+    return <ErrorPage type={joinError} roomCode={roomId} />;
+  }
+
+  if (roomDeleted || (error && !room)) {
+    return <ErrorPage type="ROOM_DELETED" roomCode={roomId} />;
+  }
+
+  if (!room) {
+    return <ErrorPage type="ROOM_NOT_FOUND" roomCode={roomId} />;
   }
 
   return (
