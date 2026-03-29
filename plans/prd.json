@@ -26,7 +26,7 @@
         "Logout button visible when authenticated",
         "Clicking logout clears session, shows login button"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F2-UI",
@@ -44,7 +44,7 @@
         "Redirected to room page after successful creation",
         "Room code displayed prominently on room page"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F2-FUNC",
@@ -65,7 +65,7 @@
         "Room code is exactly 6 characters",
         "Room code uses only unambiguous characters"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3-UI",
@@ -88,7 +88,7 @@
         "Button disabled during join process",
         "Redirected to room page on successful join"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3-FUNC",
@@ -111,7 +111,7 @@
         "Player count increments correctly",
         "Reconnecting player merges with existing document"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F4-UI",
@@ -135,7 +135,7 @@
         "Player leaving triggers toast notification",
         "List updates in real-time without refresh"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F4-FUNC",
@@ -155,7 +155,7 @@
         "No memory leaks from orphaned listeners",
         "Initial loading state shown while subscribing"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F5-UI",
@@ -164,8 +164,8 @@
         "Check if current user is host",
         "Host sees: 'Start Game' button (disabled if <5 players), 'Need X more players' message, 'Reset Game', 'Quit Game'",
         "Non-host sees: 'Waiting for host to start...' message, 'Leave Room' button",
-        "Host clicks destructive action → confirmation dialog appears",
-        "Host confirms → action executed"
+        "Host clicks destructive action \u2192 confirmation dialog appears",
+        "Host confirms \u2192 action executed"
       ],
       "verification_steps": [
         "Start Game button only visible to host",
@@ -175,7 +175,7 @@
         "Reset/Quit buttons only visible to host",
         "Confirmation dialog appears before destructive actions"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F5-FUNC",
@@ -196,7 +196,7 @@
         "Room status changes to 'started'",
         "All connected clients see role cards after game starts"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F6-FUNC",
@@ -216,7 +216,7 @@
         "New host immediately sees host-only controls",
         "Old host (if still in room) no longer sees host controls"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F7-FUNC",
@@ -237,7 +237,7 @@
         "Roles randomly distributed (no predictable patterns)",
         "All clients receive role assignments simultaneously"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8-UI",
@@ -263,7 +263,7 @@
         "'View Role' button re-displays card",
         "Tapping outside dismisses card early"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F9-UI",
@@ -330,7 +330,7 @@
         "All clients see new role cards simultaneously",
         "Previous role information fully cleared"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F11-FUNC",
@@ -375,7 +375,7 @@
         "Multiple toasts display without overlap issues",
         "Animation smooth (slide in/out)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F12-FUNC",
@@ -394,7 +394,7 @@
         "Auto-dismiss respects 3-second timer",
         "No memory leaks from orphaned timers"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F13-UI",
@@ -413,7 +413,7 @@
         "Mobile: native share sheet appears",
         "Shared link opens correct room"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F13-FUNC",
@@ -430,7 +430,7 @@
         "Web Share API used on supported devices",
         "Graceful fallback when clipboard unavailable"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F14-FUNC",
@@ -450,7 +450,7 @@
         "If host left: host transfer occurs",
         "Player redirected to home page"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F15-UI",
@@ -470,7 +470,7 @@
         "'Go Back Home' button present on all error pages",
         "Button navigates to home page"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F15-FUNC",
@@ -489,7 +489,7 @@
         "Recoverable errors offer retry option",
         "Error context preserved for debugging"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F16-FUNC",
@@ -508,14 +508,14 @@
         "Player list shows all current players",
         "No duplicate player documents created"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F17-UI",
       "description": "Theme Toggle",
       "steps": [
         "User clicks theme toggle in header",
-        "Cycle through: Light → Dark → System",
+        "Cycle through: Light \u2192 Dark \u2192 System",
         "Apply theme to document root",
         "Persist preference to localStorage",
         "Icon reflects current theme (sun/moon/system)"
@@ -529,7 +529,7 @@
         "Preference persists across page refreshes",
         "Theme applies immediately without flash"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F18-UI",
@@ -588,7 +588,7 @@
         "Toast 'Room has been deleted' shown",
         "Non-hosts cannot trigger deletion"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F4-UX",
@@ -606,7 +606,7 @@
         "Non-host sees waiting message",
         "Messages update without refresh"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8-PRIVACY",
@@ -681,7 +681,7 @@
       ],
       "passes": true
     },
-      {
+    {
       "id": "F24-UI",
       "description": "Page Transitions",
       "steps": [
