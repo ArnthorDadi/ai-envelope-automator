@@ -644,7 +644,7 @@
         "No active rooms deleted prematurely",
         "Orphaned rooms handled gracefully on join"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F22-OPT",

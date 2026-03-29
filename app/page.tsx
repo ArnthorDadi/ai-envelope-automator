@@ -49,6 +49,9 @@ export default function Home() {
       });
 
       if (result.success) {
+        if (result.isOrphaned) {
+          addToast('This room has been inactive for a while');
+        }
         router.push(`/room/${roomCode.toUpperCase()}`);
       } else if (result.error === 'ROOM_NOT_FOUND') {
         addToast('Room not found');

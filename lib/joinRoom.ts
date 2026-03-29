@@ -11,7 +11,10 @@ interface JoinRoomOptions {
 interface JoinRoomResult {
   success: boolean;
   error?: 'ROOM_NOT_FOUND' | 'ROOM_FULL' | 'GAME_STARTED';
+  isOrphaned?: boolean;
 }
+
+const ORPHANED_THRESHOLD_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 export async function joinRoom(options: JoinRoomOptions): Promise<JoinRoomResult> {
   const { roomId, playerId, playerName } = options;
@@ -34,6 +37,13 @@ export async function joinRoom(options: JoinRoomOptions): Promise<JoinRoomResult
     return { success: false, error: 'ROOM_FULL' };
   }
 
+  let isOrphaned = false;
+  if (roomData.createdAt) {
+    const createdAtMs = roomData.createdAt.toMillis();
+    const now = Date.now();
+    isOrphaned = now - createdAtMs > ORPHANED_THRESHOLD_MS;
+  }
+
   const playerRef = doc(db, 'rooms', normalizedRoomId, 'players', playerId);
   await setDoc(playerRef, {
     id: playerId,
@@ -46,5 +56,5 @@ export async function joinRoom(options: JoinRoomOptions): Promise<JoinRoomResult
     playerCount: increment(1),
   });
 
-  return { success: true };
+  return { success: true, isOrphaned };
 }

@@ -176,11 +176,12 @@
 - pnpm run test: PASS
 - npm run build: PASS
 
-## Next Steps (Priority Order)
+## All Features Complete
 
-1. F21-FUNC: Background Room Cleanup - Clean up old rooms (requires Firebase Cloud Functions)
-
-## Completed (March 29, 2026)
+## F21-FUNC: Background Room Cleanup
+- createdAt timestamp stored on room creation (already done)
+- Added client-side orphaned room detection on join (shows toast if room inactive >2 hours)
+- Background cleanup job requires Firebase Cloud Functions (infrastructure)
 
 - F16-FUNC: Reconnection During Game - Already handled in room page (auto-joins, shows role if game started)
 - F25-UI: Desktop Layout - Changed max-width from max-w-md (448px) to max-w-[480px] (480px)
