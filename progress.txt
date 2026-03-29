@@ -51,6 +51,12 @@
 
 ### 4. Features Completed
 
+#### F11-FUNC: Firestore Security Rules
+- Added users collection security rules (users/{uid})
+- Users can only read/write their own document
+- Room collection rules (already existed)
+- Players subcollection rules (already existed)
+
 #### F1: User Login
 - AuthContext now saves user to Firestore users/{uid} collection
 - Anonymous auth with automatic user document creation
@@ -126,8 +132,8 @@
 
 ## Next Steps (Priority Order)
 
-1. F11-FUNC: Firestore Security Rules - Define security rules
-3. F15-UI/F15-FUNC: Error States - Better error handling UI
+1. F15-UI/F15-FUNC: Error States - Better error handling UI
+2. F16-FUNC: Reconnection During Game - Handle reconnect gracefully
 4. F16-FUNC: Reconnection During Game - Handle reconnect gracefully
 5. F17-UI: Theme Toggle - Light/Dark/System theme
 6. F18-UI: Mobile Optimization - Touch-friendly, safe areas
