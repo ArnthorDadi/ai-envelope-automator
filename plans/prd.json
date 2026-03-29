@@ -662,7 +662,7 @@
         "No memory leaks from Firestore listeners",
         "Bundle size not increased significantly"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F23-UI",

@@ -164,6 +164,12 @@
 - Smooth transition between pages
 - Respects prefers-reduced-motion
 
+#### F22-OPT: Performance Optimization
+- Created PlayerList component with React.memo
+- Added React.memo to RoleCard component
+- Firestore listeners already properly unsubscribed in hooks
+- Bundle size not increased significantly
+
 ## Verification
 - pnpm run typecheck: PASS
 - pnpm run lint: PASS
@@ -174,9 +180,8 @@
 
 1. F16-FUNC: Reconnection During Game - Handle reconnect gracefully
 2. F21-FUNC: Background Room Cleanup - Clean up old rooms
-3. F22-OPT: Performance Optimization - React.memo, cleanup
-4. F25-UI: Desktop Layout - Centered max-width container
-5. F26-FUNC: Mass Disconnect Edge Case - Handle gracefully
+3. F25-UI: Desktop Layout - Centered max-width container
+4. F26-FUNC: Mass Disconnect Edge Case - Handle gracefully
 
 ## Notes
 - The application builds successfully but hasn't been tested with actual Firebase

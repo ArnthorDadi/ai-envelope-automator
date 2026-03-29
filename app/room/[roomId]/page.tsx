@@ -14,6 +14,7 @@ import { deleteRoom } from '@/lib/deleteRoom';
 import { Button } from '@/components/Button';
 import { Navbar } from '@/components/Navbar';
 import { RoleCard } from '@/components/RoleCard';
+import { PlayerList } from '@/components/PlayerList';
 import { ShareButton } from '@/components/ShareButton';
 import { ErrorPage } from '@/components/ErrorPage';
 import { MIN_PLAYERS, RoomErrorType } from '@/lib/types';
@@ -226,30 +227,13 @@ export default function RoomPage() {
           <h2 className="font-semibold mb-3">
             Players ({playerCount}{room.status === 'lobby' && `, need ${needsMorePlayers} more`}):
           </h2>
-          <div className="space-y-2">
-            {players.map((player) => {
-              const isJoining = joiningPlayerIds.has(player.id);
-              const isLeaving = leavingPlayerIds.has(player.id);
-              
-              let animationClass = '';
-              if (isJoining) animationClass = 'animate-player-join';
-              else if (isLeaving) animationClass = 'animate-player-leave';
-              
-              return (
-                <div
-                  key={player.id}
-                  className={`flex items-center gap-2 p-3 bg-white rounded-lg border ${animationClass}`}
-                >
-                  <span>{player.id === room.hostId ? '⭐' : '👤'}</span>
-                  <span className="font-medium">
-                    {player.name}
-                    {player.id === room.hostId && ' (Host)'}
-                    {player.id === user?.uid && ' (You)'}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+          <PlayerList
+            players={players}
+            hostId={room.hostId}
+            currentUserId={user?.uid}
+            joiningPlayerIds={joiningPlayerIds}
+            leavingPlayerIds={leavingPlayerIds}
+          />
         </div>
 
         {room.status === 'lobby' && (

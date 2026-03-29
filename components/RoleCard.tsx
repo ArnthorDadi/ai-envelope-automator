@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Role } from '@/lib/types';
 
 interface RoleCardProps {
@@ -29,7 +29,7 @@ const roleConfig = {
   },
 };
 
-export function RoleCard({ role, onClose }: RoleCardProps) {
+export const RoleCard = React.memo(function RoleCard({ role, onClose }: RoleCardProps) {
   const [visible, setVisible] = useState(false);
   const config = roleConfig[role];
 
@@ -75,4 +75,4 @@ export function RoleCard({ role, onClose }: RoleCardProps) {
       </div>
     </div>
   );
-}
+});
