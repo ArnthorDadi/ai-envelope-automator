@@ -63,4 +63,6 @@ ONLY WORK ON A SINGLE TASK.
 
 # WHEN DONE
 
+Mark the prd as finished in the prd.json. "passes": true
+
 **IMPORTANT** If the selected PRD feature is complete, output <promise>COMPLETE</promise>.
