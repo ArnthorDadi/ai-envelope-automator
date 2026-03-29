@@ -7,6 +7,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { useRoom, usePlayers, usePlayer } from '@/hooks/useRoom';
 import { startGame } from '@/lib/startGame';
 import { leaveRoom } from '@/lib/leaveRoom';
+import { transferHost } from '@/lib/transferHost';
 import { joinRoom } from '@/lib/joinRoom';
 import { resetGame } from '@/lib/resetGame';
 import { deleteRoom } from '@/lib/deleteRoom';
@@ -82,8 +83,19 @@ export default function RoomPage() {
 
   const handleLeaveRoom = async () => {
     if (!user) return;
+    
+    const wasHost = isHost;
+    
     try {
       await leaveRoom(roomId, user.uid);
+      
+      if (wasHost && playerCount > 1) {
+        const result = await transferHost(roomId);
+        if (result.success && result.newHostName) {
+          addToast(`${result.newHostName} is now the host`);
+        }
+      }
+      
       router.push('/');
     } catch (err) {
       addToast('Failed to leave room');

@@ -63,4 +63,4 @@ ONLY WORK ON A SINGLE TASK.
 
 # WHEN DONE
 
-If the PRD is complete, output <promise>COMPLETE</promise>.
+**IMPORTANT** If the selected PRD feature is complete, output <promise>COMPLETE</promise>.

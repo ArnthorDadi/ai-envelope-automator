@@ -77,6 +77,11 @@
 - Waiting message for non-hosts
 - Role assignment on game start
 
+#### F6-FUNC: Host Transfer
+- transferHost.ts function created
+- Transfers host to first player by joinedAt when host leaves
+- Toast notification shows "{name} is now the host"
+
 #### F7-FUNC: Role Assignment
 - Fisher-Yates shuffle for random role distribution
 - Batch write to Firestore
@@ -121,8 +126,7 @@
 
 ## Next Steps (Priority Order)
 
-1. F6-FUNC: Host Transfer - Transfer host when host leaves
-2. F11-FUNC: Firestore Security Rules - Define security rules
+1. F11-FUNC: Firestore Security Rules - Define security rules
 3. F15-UI/F15-FUNC: Error States - Better error handling UI
 4. F16-FUNC: Reconnection During Game - Handle reconnect gracefully
 5. F17-UI: Theme Toggle - Light/Dark/System theme
