@@ -12,7 +12,7 @@ import {
   writeBatch 
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { assignRoles } from './startGame';
+import { generateRoles } from './startGame';
 
 // Type definitions
 interface Player {
@@ -61,7 +61,7 @@ export async function resetGame(
   })) as Player[];
   
   // Generate new roles
-  const roles = assignRoles(players.length);
+  const roles = generateRoles(players.length);
   
   // Use a batch write for atomic role assignment
   const batch = writeBatch(db);

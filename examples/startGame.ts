@@ -55,7 +55,7 @@ function shuffle<T>(array: T[]): T[] {
 /**
  * Generates roles based on player count.
  */
-function generateRoles(playerCount: number): Role[] {
+export function generateRoles(playerCount: number): Role[] {
   if (playerCount < MIN_PLAYERS || playerCount > MAX_PLAYERS) {
     throw new Error(`Invalid player count: ${playerCount}`);
   }
