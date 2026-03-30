@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
+import { Providers } from '@/components/Providers'
+import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'AI Envelope Automator',
-  description: 'AI Envelope Automator',
+  title: 'Secret Hitler - Digital Roles',
+  description: 'Digital roles for Secret Hitler board game',
 }
 
 export default function RootLayout({
@@ -12,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }
