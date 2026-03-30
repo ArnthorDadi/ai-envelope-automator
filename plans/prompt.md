@@ -21,6 +21,8 @@ TL;DR - build a tiny, end-to-end slice of the feature first, then expand it out.
 4. Polish and quick wins
 5. Refactors
 
+Important: When a feature has been picked tell the user what feature it is and why.
+
 # EXPLORATION
 
 Explore the repo.

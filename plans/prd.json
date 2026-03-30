@@ -26,7 +26,25 @@
         "Logout button visible when authenticated",
         "Clicking logout clears session, shows login button"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": [
+          "lib/firebase.ts",
+          "types/index.ts",
+          "contexts/AuthContext.tsx",
+          "contexts/ToastContext.tsx",
+          "components/Navbar.tsx",
+          "components/Toast.tsx",
+          "components/Providers.tsx",
+          "app/login/page.tsx",
+          "app/layout.tsx",
+          "app/page.tsx"
+        ],
+        "tests": [
+          "tests/ToastContext.test.tsx",
+          "tests/Navbar.test.tsx"
+        ]
+      }
     },
     {
       "id": "F2-UI",

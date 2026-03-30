@@ -1,0 +1,25 @@
+# Progress Log
+
+## Session 1: March 29, 2026
+
+### Completed: F1 (User Login)
+
+- Implemented Firebase initialization (lib/firebase.ts)
+- Created types for User and Auth (types/index.ts)
+- Implemented AuthContext with anonymous sign-in (contexts/AuthContext.tsx)
+- Implemented ToastContext for notifications (contexts/ToastContext.tsx)
+- Created Navbar component with login/logout buttons (components/Navbar.tsx)
+- Created Toast component for notifications (components/Toast.tsx)
+- Created Providers wrapper component (components/Providers.tsx)
+- Created Login page at /login (app/login/page.tsx)
+- Updated layout to include providers and navbar (app/layout.tsx)
+- Updated home page to show auth status (app/page.tsx)
+- Added tests for ToastContext and Navbar
+- All tests pass (5 tests)
+- TypeScript compiles without errors
+
+### Next Session
+
+- F2-UI/F2-FUNC: Create Room (depends on F1)
+- F3-UI/F3-FUNC: Join Room (depends on F1, F2-FUNC)
+- F4-UI/F4-FUNC: Lobby Display (depends on F2-FUNC, F3-FUNC)
