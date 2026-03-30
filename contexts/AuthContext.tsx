@@ -38,21 +38,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { addToast } = useToast();
 
   useEffect(() => {
-    const stored = getStoredUser();
-    if (stored) {
-      setUser(stored);
-    }
-    setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      const stored = getStoredUser();
+      if (stored && firebaseUser) {
+        const updatedUser = { ...stored, uid: firebaseUser.uid };
+        setUser(updatedUser);
+        setStoredUser(updatedUser);
+      } else if (firebaseUser) {
+        const userData = { uid: firebaseUser.uid, name: 'Anonymous', createdAt: new Date() };
+        setUser(userData);
+        setStoredUser(userData);
+      } else {
+        setUser(null);
+        setStoredUser(null);
+      }
+      setLoading(false);
+    });
 
-    const unsubscribe = onAuthStateChanged(auth, () => {});
     return () => unsubscribe();
   }, []);
 
   const signIn = async (name: string) => {
     try {
       setLoading(true);
-      await signInAnonymously(auth);
-      const userData = { name, createdAt: new Date() };
+      const result = await signInAnonymously(auth);
+      const userData = { uid: result.user.uid, name, createdAt: new Date() };
       setUser(userData);
       setStoredUser(userData);
       addToast(`Welcome, ${name}!`, 'success');

@@ -18,8 +18,21 @@
 - All tests pass (5 tests)
 - TypeScript compiles without errors
 
+## Session 2: March 30, 2026
+
+### Completed: F2-UI/F2-FUNC (Create Room)
+
+- Created lib/utils.ts with room code generation and validation
+- Created lib/rooms.ts with createRoom function and types
+- Updated types/index.ts to include uid in UserData
+- Updated AuthContext to store uid from Firebase Auth
+- Updated app/page.tsx with Create Room button and navigation
+- Created tests/rooms.test.ts with unit tests for utils
+- Fixed pre-existing Navbar test (spinner instead of text)
+- All tests pass (18 tests)
+- TypeScript compiles without errors
+
 ### Next Session
 
-- F2-UI/F2-FUNC: Create Room (depends on F1)
 - F3-UI/F3-FUNC: Join Room (depends on F1, F2-FUNC)
 - F4-UI/F4-FUNC: Lobby Display (depends on F2-FUNC, F3-FUNC)

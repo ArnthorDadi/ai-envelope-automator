@@ -70,11 +70,6 @@ interface Room {
   // Metadata
   createdAt: Timestamp;            // Room creation time
   playerCount: number;             // Denormalized count (use increment, not read-modify-write)
-  
-  // Settings
-  settings: {
-    hitlerSeesFascists: boolean;   // true = 5-6 player rules
-  };
 }
 ```
 
@@ -86,10 +81,7 @@ interface Room {
   "hostId": "firebase-uid-xxxxx",
   "status": "lobby",
   "createdAt": "2024-01-15T10:30:00Z",
-  "playerCount": 5,
-  "settings": {
-    "hitlerSeesFascists": true
-  }
+  "playerCount": 5
 }
 ```
 
@@ -101,8 +93,7 @@ interface Room {
   "id": "ABC123",
   "hostId": "uid-001",
   "status": "lobby",
-  "playerCount": 3,
-  "settings": { "hitlerSeesFascists": true }
+  "playerCount": 3
 }
 ```
 
@@ -112,8 +103,7 @@ interface Room {
   "id": "ABC123",
   "hostId": "uid-001",
   "status": "started",
-  "playerCount": 5,
-  "settings": { "hitlerSeesFascists": true }
+  "playerCount": 5
 }
 ```
 

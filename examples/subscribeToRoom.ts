@@ -21,9 +21,6 @@ interface Room {
   hostId: string;
   status: 'lobby' | 'started';
   playerCount: number;
-  settings: {
-    hitlerSeesFascists: boolean;
-  };
   createdAt: unknown; // Firebase Timestamp
 }
 

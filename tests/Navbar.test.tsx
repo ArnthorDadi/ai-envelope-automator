@@ -33,8 +33,8 @@ describe('Navbar', () => {
     expect(screen.getByText('Logout')).toBeInTheDocument();
   });
 
-  it('shows Loading when loading', () => {
+  it('shows spinner when loading', () => {
     renderWithAuth(null, true);
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(document.querySelector('.animate-spin')).toBeInTheDocument();
   });
 });

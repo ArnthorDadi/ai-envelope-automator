@@ -60,9 +60,8 @@
         "Button disabled during room creation",
         "Loading indicator shown while processing",
         "Redirected to room page after successful creation",
-        "Room code displayed prominently on room page"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F2-FUNC",

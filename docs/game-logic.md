@@ -318,10 +318,8 @@ function getVisiblePlayers(
   }
   
   if (player.role === 'hitler') {
-    const hitlerSeesFascists = room.settings?.hitlerSeesFascists 
-      ?? (allPlayers.length <= 6);
-    
-    if (hitlerSeesFascists) {
+    // Hitler sees fascists in 5-6 player games, but not in 7-10 player games
+    if (room.playerCount <= 6) {
       return allPlayers.filter(p => p.role === 'fascist');
     }
     return [];

@@ -266,7 +266,6 @@ These are NOT part of MVP scope:
 - [ ] Win/lose conditions
 - [ ] Game history
 - [ ] Player avatars
-- [ ] Room settings (hitler sees fascists toggle)
 - [ ] Kicking players
 - [ ] shadcn/ui component library
 - [ ] i18n support

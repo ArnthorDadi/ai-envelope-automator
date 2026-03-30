@@ -27,12 +27,7 @@ interface Room {
   id: string;
   status: 'lobby' | 'started';
   playerCount: number;
-  settings: {
-    hitlerSeesFascists: boolean;
-  };
 }
-
-const HITLER_SEES_FASCISTS_THRESHOLD = 6;
 
 /**
  * Fetches all players in a room and filters based on visibility rules.
@@ -111,12 +106,7 @@ export function filterVisiblePlayers(
       );
     
     case 'hitler':
-      // Hitler sees fascists only in games with 5-6 players
-      // This is controlled by room settings or player count
-      const hitlerSeesFascists = room.settings?.hitlerSeesFascists 
-        ?? (totalPlayers <= HITLER_SEES_FASCISTS_THRESHOLD);
-      
-      if (hitlerSeesFascists) {
+      if (room.playerCount <= 6) {
         return allPlayers.filter((p) => p.role === 'fascist');
       }
       return [];

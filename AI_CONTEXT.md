@@ -68,9 +68,6 @@ interface Room {
   status: 'lobby' | 'started';    // Game phase
   playerCount: number;            // Current player count
   createdAt: Timestamp;
-  settings: {
-    hitlerSeesFascists: boolean; // Rule variant (5-6 players)
-  };
 }
 ```
 

@@ -31,7 +31,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4">
+    <main className="flex flex-col items-center justify-center flex-1 p-4">
       <button
         onClick={() => router.push('/')}
         className="absolute top-16 left-4 text-blue-500 hover:underline"
@@ -56,9 +56,10 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={!name.trim() || loading}
-          className="w-full p-3 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+          className="w-full p-3 bg-blue-500 text-white rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {loading ? 'Loading...' : 'SUBMIT'}
+          {loading && <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+          {loading ? 'SUBMITTING' : 'SUBMIT'}
         </button>
       </form>
     </main>

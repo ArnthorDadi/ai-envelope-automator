@@ -203,7 +203,6 @@ firestore/
 │       ├── hostId: string
 │       ├── status: "lobby" | "started"
 │       ├── playerCount: number       # Denormalized for quick reads
-│       ├── settings: { hitlerSeesFascists: boolean }
 │       ├── createdAt: timestamp
 │       │
 │       └── players/
@@ -299,7 +298,7 @@ doc(db, 'rooms', roomId)
 | Rule Type | Purpose |
 |-----------|---------|
 | Room Read | Only players in room can read room data |
-| Room Write | Only host can modify room settings/start game |
+| Room Write | Only host can start game |
 | Player Read | Players can read own role; fascists can read fellow fascists |
 | Player Write | Host assigns roles; players update own name |
 | Game Reset | Only host can reset |

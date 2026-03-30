@@ -7,24 +7,11 @@
 
 import { doc, setDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
-import { getRandomRoomCode } from './utils';
-
-// Generate a unique 6-character room code
-function generateRoomCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
+import { generateRoomCode } from './utils';
 
 interface CreateRoomOptions {
   hostId: string;
   hostName: string;
-  settings?: {
-    hitlerSeesFascists: boolean;
-  };
 }
 
 interface CreateRoomResult {
@@ -39,7 +26,7 @@ interface CreateRoomResult {
  * @returns Promise with roomId and playerId
  */
 export async function createRoom(options: CreateRoomOptions): Promise<CreateRoomResult> {
-  const { hostId, hostName, settings = { hitlerSeesFascists: true } } = options;
+  const { hostId, hostName } = options;
   
   // Generate unique room code
   // In production, verify uniqueness by checking Firestore
@@ -52,7 +39,6 @@ export async function createRoom(options: CreateRoomOptions): Promise<CreateRoom
     hostId,
     status: 'lobby',
     playerCount: 1,
-    settings,
     createdAt: serverTimestamp(),
   });
   
