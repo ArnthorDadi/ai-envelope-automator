@@ -1,5 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { generateRoomCode, isValidRoomCode, normalizeRoomCode, GAME_CONSTANTS } from '@/lib/utils';
+import { RoomsServiceImpl, Room, Player } from '@/lib/rooms';
+
+vi.mock('firebase/database', () => ({
+  ref: vi.fn(() => ({})),
+  set: vi.fn(),
+  get: vi.fn(),
+  onValue: vi.fn(),
+  off: vi.fn(),
+}));
 
 describe('utils', () => {
   describe('generateRoomCode', () => {
@@ -77,30 +86,28 @@ describe('utils', () => {
   });
 });
 
-describe('createRoom', () => {
-  const mockSetDoc = vi.fn();
-  const mockDoc = vi.fn((_db: string, _col: string, id: string) => ({ id }));
-  const mockServerTimestamp = vi.fn(() => ({ seconds: Date.now() / 1000 }));
+describe('RoomsServiceImpl', () => {
+  let service: RoomsServiceImpl;
+  let mockDb: any;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    mockDb = {};
+    service = new RoomsServiceImpl(mockDb);
   });
 
-  it('creates a room with correct structure', async () => {
-    const { createRoom } = await import('@/lib/rooms');
-    
-    vi.mock('@/lib/firebase', () => ({
-      db: {},
-    }));
+  describe('createRoom', () => {
+    it('creates a room with correct structure', async () => {
+      const { ref, set } = await import('firebase/database');
+      (ref as any).mockReturnValue({});
+      (set as any).mockResolvedValue(undefined);
 
-    const mockDb = {} as any;
-    const { roomId, playerId } = await createRoom({
-      db: mockDb,
-      hostId: 'user-123',
-      hostName: 'TestHost',
+      const { roomId, playerId } = await service.createRoom({
+        hostId: 'user-123',
+        hostName: 'TestHost',
+      });
+
+      expect(roomId).toHaveLength(6);
+      expect(playerId).toBe('user-123');
     });
-
-    expect(roomId).toHaveLength(6);
-    expect(playerId).toBe('user-123');
   });
 });
