@@ -64,6 +64,8 @@ export interface RoomsService {
   getRoom(roomId: string): Promise<Room | null>
   getPlayers(roomId: string): Promise<Player[]>
   joinRoom(roomId: string, options: JoinRoomOptions): Promise<JoinRoomResult>
+  leaveRoom(roomId: string, playerId: string): Promise<void>
+  startGame(roomId: string, playerId: string): Promise<void>
   subscribeToRoom(
     roomId: string,
     callback: (room: Room | null) => void
@@ -159,6 +161,94 @@ export class RoomsServiceImpl implements RoomsService {
     })
 
     return { roomId: normalizedCode, playerId: options.playerId }
+  }
+
+  async leaveRoom(roomId: string, playerId: string): Promise<void> {
+    const playerRef = ref(this.db, `rooms/${roomId}/players/${playerId}`)
+    await update(playerRef, {
+      leftAt: Date.now(),
+    })
+  }
+
+  async startGame(roomId: string, playerId: string): Promise<void> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
+    const playersRef = ref(this.db, `rooms/${roomId}/players`)
+
+    const roomSnapshot = await get(roomRef)
+    const room = roomSnapshot.val()
+
+    if (!room) {
+      throw new Error('Room not found')
+    }
+
+    if (room.hostId !== playerId) {
+      throw new Error('Only the host can start the game')
+    }
+
+    if (room.status !== 'lobby') {
+      throw new Error('Game already started')
+    }
+
+    const playersSnapshot = await get(playersRef)
+    const playersData = playersSnapshot.val()
+    const players: Player[] = playersData ? Object.values(playersData) : []
+
+    if (players.length < GAME_CONSTANTS.MIN_PLAYERS) {
+      throw new Error(
+        `Need at least ${GAME_CONSTANTS.MIN_PLAYERS} players to start`
+      )
+    }
+
+    const roleDistribution = this.getRoleDistribution(players.length)
+    const shuffledPlayers = this.fisherYatesShuffle([...players])
+    const roles: Array<'liberal' | 'fascist' | 'hitler'> = [
+      ...Array(roleDistribution.liberals).fill('liberal'),
+      ...Array(roleDistribution.fascists - 1).fill('fascist'),
+      'hitler',
+    ]
+    const shuffledRoles = this.fisherYatesShuffle(roles)
+
+    const updates: Record<string, unknown> = {
+      status: 'started',
+    }
+
+    shuffledPlayers.forEach((player, index) => {
+      updates[`rooms/${roomId}/players/${player.id}/role`] =
+        shuffledRoles[index]
+    })
+
+    await update(roomRef, updates)
+  }
+
+  private getRoleDistribution(playerCount: number): {
+    liberals: number
+    fascists: number
+  } {
+    switch (playerCount) {
+      case 5:
+        return { liberals: 3, fascists: 2 }
+      case 6:
+        return { liberals: 4, fascists: 2 }
+      case 7:
+        return { liberals: 4, fascists: 3 }
+      case 8:
+        return { liberals: 5, fascists: 3 }
+      case 9:
+        return { liberals: 5, fascists: 4 }
+      case 10:
+        return { liberals: 6, fascists: 4 }
+      default:
+        return { liberals: playerCount - 2, fascists: 2 }
+    }
+  }
+
+  private fisherYatesShuffle<T>(array: T[]): T[] {
+    const shuffled = [...array]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled
   }
 
   subscribeToRoom(
