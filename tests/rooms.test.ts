@@ -99,6 +99,7 @@ describe('RoomsServiceImpl', () => {
   beforeEach(() => {
     mockDb = {}
     service = new RoomsServiceImpl(mockDb)
+    vi.clearAllMocks()
   })
 
   describe('createRoom', () => {
@@ -199,6 +200,221 @@ describe('RoomsServiceImpl', () => {
       })
 
       expect(update).toHaveBeenCalled()
+    })
+  })
+
+  describe('leaveRoom', () => {
+    it('sets leftAt timestamp on player', async () => {
+      const { ref, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(update as any).mockResolvedValue(undefined)
+
+      await service.leaveRoom('ABCDEF', 'user-123')
+
+      expect(update).toHaveBeenCalled()
+      const updateCall = (update as any).mock.calls[0][1]
+      expect(updateCall.leftAt).toBeDefined()
+      expect(typeof updateCall.leftAt).toBe('number')
+    })
+  })
+
+  describe('startGame', () => {
+    it('throws error when room not found', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any).mockResolvedValue({ val: () => null })
+
+      await expect(service.startGame('ABCDEF', 'user-123')).rejects.toThrow(
+        'Room not found'
+      )
+    })
+
+    it('throws error when caller is not host', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any).mockResolvedValue({
+        val: () => ({
+          hostId: 'other-user',
+          status: 'lobby',
+          playerCount: 5,
+        }),
+      })
+
+      await expect(service.startGame('ABCDEF', 'user-123')).rejects.toThrow(
+        'Only the host can start the game'
+      )
+    })
+
+    it('throws error when game already started', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any).mockResolvedValue({
+        val: () => ({
+          hostId: 'user-123',
+          status: 'started',
+        }),
+      })
+
+      await expect(service.startGame('ABCDEF', 'user-123')).rejects.toThrow(
+        'Game already started'
+      )
+    })
+
+    it('throws error when not enough players', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({
+            hostId: 'user-123',
+            status: 'lobby',
+          }),
+        })
+        .mockResolvedValueOnce({
+          val: () => ({
+            'user-123': { id: 'user-123', name: 'Host' },
+          }),
+        })
+
+      await expect(service.startGame('ABCDEF', 'user-123')).rejects.toThrow(
+        'Need at least 5 players to start'
+      )
+    })
+
+    it('starts game successfully with 5 players', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({
+            hostId: 'user-1',
+            status: 'lobby',
+          }),
+        })
+        .mockResolvedValueOnce({
+          val: () => ({
+            'user-1': { id: 'user-1', name: 'Player 1' },
+            'user-2': { id: 'user-2', name: 'Player 2' },
+            'user-3': { id: 'user-3', name: 'Player 3' },
+            'user-4': { id: 'user-4', name: 'Player 4' },
+            'user-5': { id: 'user-5', name: 'Player 5' },
+          }),
+        })
+      ;(update as any).mockResolvedValue(undefined)
+
+      await service.startGame('ABCDEF', 'user-1')
+
+      expect(update).toHaveBeenCalled()
+    })
+  })
+
+  describe('subscribeToRoom', () => {
+    it('calls onValue with room data', async () => {
+      const { ref, onValue } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(onValue as any).mockImplementation((ref: any, callback: any) => {
+        callback({ val: () => ({ id: 'ABC123', status: 'lobby' }) })
+        return vi.fn()
+      })
+
+      const callback = vi.fn()
+      service.subscribeToRoom('ABC123', callback)
+
+      expect(onValue).toHaveBeenCalled()
+    })
+  })
+
+  describe('subscribeToPlayers', () => {
+    it('calls onValue with players array', async () => {
+      const { ref, onValue } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(onValue as any).mockImplementation((ref: any, callback: any) => {
+        callback({
+          val: () => ({
+            'user-1': { id: 'user-1', name: 'Player 1' },
+            'user-2': { id: 'user-2', name: 'Player 2' },
+          }),
+        })
+        return vi.fn()
+      })
+
+      const callback = vi.fn()
+      service.subscribeToPlayers('ABC123', callback)
+
+      expect(onValue).toHaveBeenCalled()
+    })
+
+    it('returns empty array when no players', async () => {
+      const { ref, onValue } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(onValue as any).mockImplementation((ref: any, callback: any) => {
+        callback({ val: () => null })
+        return vi.fn()
+      })
+
+      const callback = vi.fn()
+      service.subscribeToPlayers('ABC123', callback)
+
+      expect(callback).toHaveBeenCalledWith([])
+    })
+  })
+
+  describe('getRoleDistribution', () => {
+    it('distributes roles correctly for 5 players', () => {
+      const distribution = (service as any).getRoleDistribution(5)
+      expect(distribution.liberals).toBe(3)
+      expect(distribution.fascists).toBe(2)
+    })
+
+    it('distributes roles correctly for 6 players', () => {
+      const distribution = (service as any).getRoleDistribution(6)
+      expect(distribution.liberals).toBe(4)
+      expect(distribution.fascists).toBe(2)
+    })
+
+    it('distributes roles correctly for 7 players', () => {
+      const distribution = (service as any).getRoleDistribution(7)
+      expect(distribution.liberals).toBe(4)
+      expect(distribution.fascists).toBe(3)
+    })
+
+    it('distributes roles correctly for 8 players', () => {
+      const distribution = (service as any).getRoleDistribution(8)
+      expect(distribution.liberals).toBe(5)
+      expect(distribution.fascists).toBe(3)
+    })
+
+    it('distributes roles correctly for 9 players', () => {
+      const distribution = (service as any).getRoleDistribution(9)
+      expect(distribution.liberals).toBe(5)
+      expect(distribution.fascists).toBe(4)
+    })
+
+    it('distributes roles correctly for 10 players', () => {
+      const distribution = (service as any).getRoleDistribution(10)
+      expect(distribution.liberals).toBe(6)
+      expect(distribution.fascists).toBe(4)
+    })
+  })
+
+  describe('fisherYatesShuffle', () => {
+    it('returns array of same length', () => {
+      const input = [1, 2, 3, 4, 5]
+      const result = (service as any).fisherYatesShuffle(input)
+      expect(result).toHaveLength(input.length)
+    })
+
+    it('returns array with same elements', () => {
+      const input = [1, 2, 3, 4, 5]
+      const result = (service as any).fisherYatesShuffle(input)
+      expect(result.sort()).toEqual(input.sort())
+    })
+
+    it('does not mutate original array', () => {
+      const input = [1, 2, 3, 4, 5]
+      const original = [...input]
+      ;(service as any).fisherYatesShuffle(input)
+      expect(input).toEqual(original)
     })
   })
 })
