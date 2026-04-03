@@ -1,15 +1,15 @@
-'use client';
+'use client'
 
-import { useAuth } from '@/contexts/auth-context';
-import { Spinner } from '@/components/shared';
-import { LoginButton } from '@/components/login';
-import { LogoutButton } from '@/components/auth';
+import { useAuth } from '@/contexts/auth-context'
+import { Spinner } from '@/components/shared'
+import { LoginButton } from '@/components/login'
+import { LogoutButton } from '@/components/auth'
 
 export function UserSection() {
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuth()
 
   if (loading) {
-    return <Spinner size="sm" />;
+    return <Spinner size="sm" />
   }
 
   return user ? (
@@ -19,5 +19,5 @@ export function UserSection() {
     </div>
   ) : (
     <LoginButton />
-  );
+  )
 }

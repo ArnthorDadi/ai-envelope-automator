@@ -164,6 +164,7 @@
 ### Share Button
 
 Tapping "Share" copies deep link to clipboard:
+
 ```
 https://yourapp.com/room/ABC123
 ```
@@ -180,6 +181,7 @@ On mobile, also offers Web Share API for native sharing.
 ### Host Transfer
 
 If host leaves:
+
 1. Toast: "Alice left. Bob is now the host."
 2. First player in list becomes new host
 3. New host sees "Start Game" button
@@ -197,6 +199,7 @@ If host leaves:
 After game starts, role card appears with animation.
 
 **Liberal:**
+
 ```
 ┌─────────────────────────────────────────┐
 │                                          │
@@ -215,6 +218,7 @@ After game starts, role card appears with animation.
 ```
 
 **Fascist (sees teammates):**
+
 ```
 ┌─────────────────────────────────────────┐
 │          YOU ARE A FASCIST               │
@@ -239,6 +243,7 @@ After game starts, role card appears with animation.
 ```
 
 **Hitler (5-6 players, sees fascists):**
+
 ```
 ┌─────────────────────────────────────────┐
 │          YOU ARE HITLER                  │
@@ -260,6 +265,7 @@ After game starts, role card appears with animation.
 ```
 
 **Hitler (7-10 players, sees nothing):**
+
 ```
 ┌─────────────────────────────────────────┐
 │          YOU ARE HITLER                  │
@@ -280,18 +286,19 @@ After game starts, role card appears with animation.
 
 The role reveal has specific timing and interaction rules for privacy:
 
-| Behavior | Specification |
-|----------|---------------|
-| Initial display | Role card appears with animation (fade in + scale up) |
-| Auto-hide timeout | 7 seconds (fixed duration) |
-| Timer pause | Pauses while user is interacting with the card |
-| Manual dismiss | Tap anywhere outside card to dismiss early |
-| Subsequent views | Each "View Role" tap shows card for 7 seconds, then auto-hides |
-| Reset behavior | Role card appears again after reset, same timeout applies |
+| Behavior          | Specification                                                  |
+| ----------------- | -------------------------------------------------------------- |
+| Initial display   | Role card appears with animation (fade in + scale up)          |
+| Auto-hide timeout | 7 seconds (fixed duration)                                     |
+| Timer pause       | Pauses while user is interacting with the card                 |
+| Manual dismiss    | Tap anywhere outside card to dismiss early                     |
+| Subsequent views  | Each "View Role" tap shows card for 7 seconds, then auto-hides |
+| Reset behavior    | Role card appears again after reset, same timeout applies      |
 
 **Why fixed 7 seconds**: Everyone gets the same time, so it's obvious when everyone is getting their role.
 
 **Minimal game view (after card hides)**:
+
 ```
 ┌─────────────────────────────────────────┐
 │  Room: ABC123           (Started)        │
@@ -330,6 +337,7 @@ The role reveal has specific timing and interaction rules for privacy:
 ### "View Role" Button
 
 Tapping "View Role" re-displays the role card:
+
 - Can view anytime during game
 - Shows for 7 seconds, then auto-hides
 - Timer pauses while interacting
@@ -483,23 +491,23 @@ System preference auto-detected via CSS:
 
 ## Animations
 
-| Element | Animation | Duration |
-|---------|-----------|----------|
-| Player join | Slide in from right | 300ms |
-| Player leave | Fade out | 200ms |
-| Role reveal | Fade in + scale up | 500ms |
-| Role auto-hide | Fade out | 300ms |
-| Toast | Slide in from top | 200ms |
-| Button states | Opacity/transform | 150ms |
-| Page transitions | Fade | 200ms |
+| Element          | Animation           | Duration |
+| ---------------- | ------------------- | -------- |
+| Player join      | Slide in from right | 300ms    |
+| Player leave     | Fade out            | 200ms    |
+| Role reveal      | Fade in + scale up  | 500ms    |
+| Role auto-hide   | Fade out            | 300ms    |
+| Toast            | Slide in from top   | 200ms    |
+| Button states    | Opacity/transform   | 150ms    |
+| Page transitions | Fade                | 200ms    |
 
 ## Toast Notifications
 
-| Event | Message |
-|-------|--------|
-| Player joined | "{name} joined" |
-| Player left | "{name} left" |
-| Host changed | "{name} is now the host" |
-| Game started | "Game started!" |
-| Game reset | "New round started" |
-| Room deleted | "Room has been deleted" |
+| Event         | Message                  |
+| ------------- | ------------------------ |
+| Player joined | "{name} joined"          |
+| Player left   | "{name} left"            |
+| Host changed  | "{name} is now the host" |
+| Game started  | "Game started!"          |
+| Game reset    | "New round started"      |
+| Room deleted  | "Room has been deleted"  |

@@ -12,9 +12,9 @@ file.
 
 1. **Scan the conversation** for domain-relevant nouns, verbs, and concepts
 2. **Identify problems**:
-    - Same word used for different concepts (ambiguity)
-    - Different words used for the same concept (synonyms)
-    - Vague or overloaded terms
+   - Same word used for different concepts (ambiguity)
+   - Different words used for the same concept (synonyms)
+   - Vague or overloaded terms
 3. **Propose a canonical glossary** with opinionated term choices
 4. **Write to `UBIQUITOUS_LANGUAGE.md`** in the working directory using the format below
 5. **Output a summary** inline in the conversation
@@ -28,17 +28,17 @@ Write a `UBIQUITOUS_LANGUAGE.md` file with this structure:
 
 ## Order lifecycle
 
-| Term | Definition | Aliases to avoid |
-|------|-----------|-----------------|
-| **Order** | A customer's request to purchase one or more items | Purchase, transaction |
+| Term        | Definition                                              | Aliases to avoid      |
+| ----------- | ------------------------------------------------------- | --------------------- |
+| **Order**   | A customer's request to purchase one or more items      | Purchase, transaction |
 | **Invoice** | A request for payment sent to a customer after delivery | Bill, payment request |
 
 ## People
 
-| Term | Definition | Aliases to avoid |
-|------|-----------|-----------------|
+| Term         | Definition                                  | Aliases to avoid       |
+| ------------ | ------------------------------------------- | ---------------------- |
 | **Customer** | A person or organization that places orders | Client, buyer, account |
-| **User** | An authentication identity in the system | Login, account |
+| **User**     | An authentication identity in the system    | Login, account         |
 
 ## Relationships
 
@@ -90,4 +90,4 @@ When invoked again in the same conversation:
 After writing the file, state:
 
 > I've written/updated `UBIQUITOUS_LANGUAGE.md`. From this point forward I will use these terms consistently. If I drift
-from this language or you notice a term that should be added, let me know.
+> from this language or you notice a term that should be added, let me know.

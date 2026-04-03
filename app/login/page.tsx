@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { BackButton, LoginForm } from '@/components/login';
+import { BackButton, LoginForm } from '@/components/login'
 
 export default function LoginPage() {
   return (
@@ -11,5 +11,5 @@ export default function LoginPage() {
 
       <LoginForm />
     </main>
-  );
+  )
 }

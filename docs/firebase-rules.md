@@ -31,14 +31,14 @@ Critical operations (game start, role assignment, reset) are validated server-si
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Room-level rules
     match /rooms/{roomId} {
       allow read: ...;
       allow create: ...;
       allow update: ...;
       allow delete: ...;
-      
+
       // Player-level rules (subcollection)
       match /players/{playerId} {
         allow read: ...;
@@ -69,7 +69,8 @@ allow create: if request.auth != null
               && request.resource.data.id == roomId;
 ```
 
-**Why**: 
+**Why**:
+
 - User must be authenticated (anonymous Firebase auth)
 - Creator becomes the host
 - Room must start in lobby state
@@ -81,16 +82,17 @@ allow create: if request.auth != null
 allow update: if isPlayerInRoom(request.auth.uid, roomId)
               && (
                 // Host can change status (start game) or reset
-                (isHost(request.auth.uid, roomId) 
+                (isHost(request.auth.uid, roomId)
                   && (resource.data.status == 'lobby' || resource.data.status == 'started')
                   && request.resource.data.status == 'started')
-                || 
+                ||
                 // Anyone can update playerCount (join/leave)
                 (request.resource.data.keys().hasOnly(['playerCount']))
               );
 ```
 
 **Why**:
+
 - Only host can modify room status
 - Status transitions: lobby → started (stays at started for reset)
 - PlayerCount can be updated by anyone (use increment in client)
@@ -114,6 +116,7 @@ allow create: if request.auth != null
 ```
 
 **Why**:
+
 - Player document ID must match their auth UID
 - Cannot pre-assign roles (role must be null on join)
 - Cannot join a started game
@@ -135,6 +138,7 @@ allow read: if isPlayerInRoom(request.auth.uid, roomId)
 ```
 
 **Why**: This is the most complex rule:
+
 - Players can always read their own data (to see their role)
 - Fascists can read other fascists' roles
 - Fascists can see Hitler's role
@@ -150,13 +154,14 @@ allow update: if request.auth.uid == playerId
                   && request.resource.data.role == resource.data.role)
                 ||
                 // Host can assign/clear roles (start game or reset)
-                (isHost(request.auth.uid, roomId) 
+                (isHost(request.auth.uid, roomId)
                   && onlyRoleChanged(resource.data, request.resource.data)
                   && isValidRole(request.resource.data.role))
               );
 ```
 
 **Why**:
+
 - Players can update their own name
 - Only host can assign or clear roles
 - Only role field can change during role assignment
@@ -172,6 +177,7 @@ The Firestore rules do NOT implement Hitler visibility by player count. Instead:
 3. Hitler can read fascist documents when 5-6 players via client logic
 
 This is acceptable because:
+
 - If Hitler is in the game, at least one fascist exists
 - The fascist can see Hitler (rules allow this)
 - Hitler seeing fascists is a game balance issue, not a security issue
@@ -206,16 +212,16 @@ function roomIsInLobby(roomId) {
 }
 
 function onlyRoleChanged(oldData, newData) {
-  return oldData.name == newData.name 
+  return oldData.name == newData.name
       && oldData.joinedAt == newData.joinedAt
       && oldData.id == newData.id
       && oldData.role != newData.role;
 }
 
 function isValidRole(role) {
-  return role == null 
-      || role == 'liberal' 
-      || role == 'fascist' 
+  return role == null
+      || role == 'liberal'
+      || role == 'fascist'
       || role == 'hitler';
 }
 ```
@@ -235,6 +241,7 @@ function isValidRole(role) {
 ### Data Cleanup
 
 Rooms are cleaned up by:
+
 1. Host action (delete room)
 2. Client-side checks on join (informational)
 3. Future: Cloud Function for periodic cleanup
@@ -293,13 +300,13 @@ firebase emulators:start
 
 ```typescript
 // Test: Non-player access
-await expect(readDoc(roomRef)).to.fail(); // No player document exists
+await expect(readDoc(roomRef)).to.fail() // No player document exists
 
 // Test: Player joins
-await setDoc(playerRef, { name: 'Alice', role: null });
-await expect(readDoc(roomRef)).to.succeed();
+await setDoc(playerRef, { name: 'Alice', role: null })
+await expect(readDoc(roomRef)).to.succeed()
 
 // Test: Role assignment
-await updateDoc(playerRef, { role: 'fascist' }); // By host
-await expect(readDoc(playerRef)).to.succeed();
+await updateDoc(playerRef, { role: 'fascist' }) // By host
+await expect(readDoc(playerRef)).to.succeed()
 ```

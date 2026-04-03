@@ -1,17 +1,17 @@
 export interface UserData {
-  uid: string;
-  name: string;
-  createdAt: Date;
+  uid: string
+  name: string
+  createdAt: Date
 }
 
 export interface Toast {
-  id: string;
-  message: string;
-  type: 'success' | 'error' | 'info';
+  id: string
+  message: string
+  type: 'success' | 'error' | 'info'
 }
 
 export interface ToastState {
-  toasts: Toast[];
-  addToast: (message: string, type?: 'success' | 'error' | 'info') => void;
-  removeToast: (id: string) => void;
+  toasts: Toast[]
+  addToast: (message: string, type?: 'success' | 'error' | 'info') => void
+  removeToast: (id: string) => void
 }

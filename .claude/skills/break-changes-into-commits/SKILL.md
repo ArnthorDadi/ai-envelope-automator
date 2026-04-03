@@ -30,11 +30,11 @@ Apply these heuristics to group files into commits:
 2. **Configuration files** related to a feature group together (e.g., `package.json` changes with new dependencies)
 3. **Directory-based grouping** - files in the same directory with related purpose
 4. **Change type grouping** - group by what the change does:
-    - New feature (feat) → group related implementation
-    - Bug fix (fix) → group the fix with its tests
-    - Refactor → group all refactored files
-    - Documentation → group all doc changes
-    - Dependencies → group all dependency changes
+   - New feature (feat) → group related implementation
+   - Bug fix (fix) → group the fix with its tests
+   - Refactor → group all refactored files
+   - Documentation → group all doc changes
+   - Dependencies → group all dependency changes
 5. **Atomic commits** - if changes are independent and affect different concerns, keep them separate
 
 **Be decisive:** If a file could reasonably belong to multiple commits, pick the most logical one based on primary

@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import { Logo } from '@/components/layout';
-import { UserSection } from '@/components/auth';
+import { Logo } from '@/components/layout'
+import { UserSection } from '@/components/auth'
 
 export function Navbar() {
   return (
@@ -9,5 +9,5 @@ export function Navbar() {
       <Logo />
       <UserSection />
     </nav>
-  );
+  )
 }

@@ -1,57 +1,59 @@
 /**
  * createRoom.ts
- * 
+ *
  * Creates a new game room and adds the creator as host.
  * Uses Firebase v9 modular SDK.
  */
 
-import { doc, setDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { db } from './firebase';
-import { generateRoomCode } from './utils';
+import { doc, setDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { db } from './firebase'
+import { generateRoomCode } from './utils'
 
 interface CreateRoomOptions {
-  hostId: string;
-  hostName: string;
+  hostId: string
+  hostName: string
 }
 
 interface CreateRoomResult {
-  roomId: string;
-  playerId: string;
+  roomId: string
+  playerId: string
 }
 
 /**
  * Creates a new room and adds the host as the first player.
- * 
+ *
  * @param options - Room creation options
  * @returns Promise with roomId and playerId
  */
-export async function createRoom(options: CreateRoomOptions): Promise<CreateRoomResult> {
-  const { hostId, hostName } = options;
-  
+export async function createRoom(
+  options: CreateRoomOptions
+): Promise<CreateRoomResult> {
+  const { hostId, hostName } = options
+
   // Generate unique room code
   // In production, verify uniqueness by checking Firestore
-  const roomId = generateRoomCode();
-  
+  const roomId = generateRoomCode()
+
   // Create room document
-  const roomRef = doc(db, 'rooms', roomId);
+  const roomRef = doc(db, 'rooms', roomId)
   await setDoc(roomRef, {
     id: roomId,
     hostId,
     status: 'lobby',
     playerCount: 1,
     createdAt: serverTimestamp(),
-  });
-  
+  })
+
   // Add host as first player
-  const playerRef = doc(db, 'rooms', roomId, 'players', hostId);
+  const playerRef = doc(db, 'rooms', roomId, 'players', hostId)
   await setDoc(playerRef, {
     id: hostId,
     name: hostName,
     role: null, // Role assigned when game starts
     joinedAt: serverTimestamp(),
-  });
-  
-  return { roomId, playerId: hostId };
+  })
+
+  return { roomId, playerId: hostId }
 }
 
 // Example usage:

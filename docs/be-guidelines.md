@@ -21,35 +21,36 @@ A single `Db` class initializes Firebase and holds all service instances. The si
 
 ```typescript
 // lib/db.ts
-import { FirebaseApp } from 'firebase/app';
-import { getDatabase, Database } from 'firebase/database';
-import { getAuth, Auth } from 'firebase/auth';
-import { app } from './firebase';
-import { AuthService, AuthServiceImpl } from './auth';
-import { RoomsService, RoomsServiceImpl } from './rooms';
+import { FirebaseApp } from 'firebase/app'
+import { getDatabase, Database } from 'firebase/database'
+import { getAuth, Auth } from 'firebase/auth'
+import { app } from './firebase'
+import { AuthService, AuthServiceImpl } from './auth'
+import { RoomsService, RoomsServiceImpl } from './rooms'
 
 class Db {
-  readonly db: Database;
-  readonly auth: Auth;
-  readonly rooms: RoomsService;
-  readonly user: AuthService;
+  readonly db: Database
+  readonly auth: Auth
+  readonly rooms: RoomsService
+  readonly user: AuthService
 
   constructor(firebaseApp: FirebaseApp) {
-    this.db = getDatabase(firebaseApp);
-    this.auth = getAuth(firebaseApp);
-    this.rooms = new RoomsServiceImpl(this.db);
-    this.user = new AuthServiceImpl(firebaseApp, this.auth);
+    this.db = getDatabase(firebaseApp)
+    this.auth = getAuth(firebaseApp)
+    this.rooms = new RoomsServiceImpl(this.db)
+    this.user = new AuthServiceImpl(firebaseApp, this.auth)
   }
 }
 
-const db = new Db(app);
+const db = new Db(app)
 
-export { db, Db };
+export { db, Db }
 ```
 
 ### Service Class Structure
 
 Each service class:
+
 - Is a plain class implementing a corresponding interface
 - Receives required dependencies via constructor
 - All public methods return `Promise<T>`
@@ -82,25 +83,25 @@ export class {Service}Impl implements {Service} {
 ### Usage Pattern
 
 ```typescript
-import { db } from '@/lib/db';
+import { db } from '@/lib/db'
 
 // All services accessed via db.*
-const result = await db.rooms.createRoom({ hostId, hostName });
-await db.user.signIn({ name });
+const result = await db.rooms.createRoom({ hostId, hostName })
+await db.user.signIn({ name })
 ```
 
 ## Rules Summary
 
-| Rule | Description |
-|------|-------------|
-| Location | Backend services live in `/lib` |
-| Entry point | Import `db` from `@/lib/db` (singleton) |
-| Db class | Initializes Firebase, creates service instances |
-| Firebase | Only `app` exported from `firebase.ts` |
-| Return types | All public methods return `Promise<T>` |
-| Error handling | Methods throw on failure; consumers handle errors |
-| Type inputs | Interfaces for all input types (e.g., `{Service}Options`) |
-| Implementation hiding | Consumers never import Firebase modules directly |
+| Rule                  | Description                                               |
+| --------------------- | --------------------------------------------------------- |
+| Location              | Backend services live in `/lib`                           |
+| Entry point           | Import `db` from `@/lib/db` (singleton)                   |
+| Db class              | Initializes Firebase, creates service instances           |
+| Firebase              | Only `app` exported from `firebase.ts`                    |
+| Return types          | All public methods return `Promise<T>`                    |
+| Error handling        | Methods throw on failure; consumers handle errors         |
+| Type inputs           | Interfaces for all input types (e.g., `{Service}Options`) |
+| Implementation hiding | Consumers never import Firebase modules directly          |
 
 ## Adding New Services
 

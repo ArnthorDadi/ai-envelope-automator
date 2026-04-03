@@ -36,3 +36,22 @@
 
 - F3-UI/F3-FUNC: Join Room (depends on F1, F2-FUNC)
 - F4-UI/F4-FUNC: Lobby Display (depends on F2-FUNC, F3-FUNC)
+
+## Session 3: April 3, 2026
+
+### Completed: F3-UI/F3-FUNC (Join Room)
+
+- Added joinRoom function to lib/rooms.ts with validation
+- Created JoinRoomForm component (components/home/join-room-form.tsx)
+- Implemented room code auto-uppercase and validation
+- Implemented error handling for: room not found, room full, game started
+- Updated home page to show join form alongside create room button
+- Added unit tests for JoinRoomForm (14 tests)
+- Added unit tests for joinRoom service (6 tests)
+- All tests pass (61 tests)
+- TypeScript compiles without errors
+
+### Next Session
+
+- F4-UI/F4-FUNC: Lobby Display (depends on F3-FUNC)
+- F4-FUNC: Real-time Subscription (depends on F3-FUNC)

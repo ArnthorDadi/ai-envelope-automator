@@ -1,16 +1,16 @@
-'use client';
+'use client'
 
-import { useToast } from '@/contexts/toast-context';
-import type { Toast as ToastType } from '@/types';
+import { useToast } from '@/contexts/toast-context'
+import type { Toast as ToastType } from '@/types'
 
 const typeClasses: Record<ToastType['type'], string> = {
   error: 'bg-red-500',
   success: 'bg-green-500',
   info: 'bg-gray-700',
-};
+}
 
 export function Toast() {
-  const { toasts, removeToast } = useToast();
+  const { toasts, removeToast } = useToast()
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2">
@@ -24,5 +24,5 @@ export function Toast() {
         </div>
       ))}
     </div>
-  );
+  )
 }

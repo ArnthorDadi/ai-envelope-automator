@@ -1,10 +1,10 @@
-'use client';
+'use client'
 
-import { ToastProvider } from '@/contexts/toast-context';
-import { AuthProvider } from '@/contexts/auth-context';
-import { Navbar } from '@/components/layout';
-import { Toast } from '@/components/shared';
-import { ReactNode } from 'react';
+import { ToastProvider } from '@/contexts/toast-context'
+import { AuthProvider } from '@/contexts/auth-context'
+import { Navbar } from '@/components/layout'
+import { Toast } from '@/components/shared'
+import { ReactNode } from 'react'
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
@@ -17,5 +17,5 @@ export function Providers({ children }: { children: ReactNode }) {
         </div>
       </AuthProvider>
     </ToastProvider>
-  );
+  )
 }

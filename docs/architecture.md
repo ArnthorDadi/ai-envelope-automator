@@ -66,6 +66,7 @@ Firebase Authentication provides anonymous sign-in (generates unique user IDs), 
 ## Room ID Strategy
 
 Room codes serve as Firestore document IDs, enabling:
+
 - Guaranteed uniqueness (Firestore constraint)
 - Simple URL routing: `/room/{roomId}`
 - Direct deep linking: `https://app.com/room/ABC123`
@@ -222,11 +223,11 @@ To prevent race conditions when players join simultaneously:
 
 ```typescript
 // Use increment instead of read-then-write
-import { increment } from 'firebase/firestore';
+import { increment } from 'firebase/firestore'
 
 await updateDoc(roomRef, {
-  playerCount: increment(1)
-});
+  playerCount: increment(1),
+})
 ```
 
 ### Transaction for Host Transfer
@@ -235,15 +236,15 @@ When host leaves, use transaction to ensure atomic transfer:
 
 ```typescript
 await runTransaction(db, async (transaction) => {
-  const roomDoc = await transaction.get(roomRef);
+  const roomDoc = await transaction.get(roomRef)
   if (roomDoc.data().hostId === leavingPlayerId) {
-    const players = await getDocs(playersRef);
-    const firstPlayer = players.docs[0];
+    const players = await getDocs(playersRef)
+    const firstPlayer = players.docs[0]
     if (firstPlayer) {
-      transaction.update(roomRef, { hostId: firstPlayer.id });
+      transaction.update(roomRef, { hostId: firstPlayer.id })
     }
   }
-});
+})
 ```
 
 ## Real-time Synchronization Approach
@@ -295,17 +296,18 @@ doc(db, 'rooms', roomId)
 
 ### Rule Categories
 
-| Rule Type | Purpose |
-|-----------|---------|
-| Room Read | Only players in room can read room data |
-| Room Write | Only host can start game |
-| Player Read | Players can read own role; fascists can read fellow fascists |
-| Player Write | Host assigns roles; players update own name |
-| Game Reset | Only host can reset |
+| Rule Type    | Purpose                                                      |
+| ------------ | ------------------------------------------------------------ |
+| Room Read    | Only players in room can read room data                      |
+| Room Write   | Only host can start game                                     |
+| Player Read  | Players can read own role; fascists can read fellow fascists |
+| Player Write | Host assigns roles; players update own name                  |
+| Game Reset   | Only host can reset                                          |
 
 ## Host Transfer
 
 When the host disconnects or leaves:
+
 1. First player in the players collection becomes new host
 2. `hostId` updated atomically via transaction
 3. New host gains all host privileges
@@ -326,6 +328,7 @@ app/
 ### Client Components
 
 All game-related components are Client Components (`'use client'`) because they:
+
 - Use Firebase SDK directly
 - Manage real-time subscriptions
 - Handle user interactions
@@ -333,6 +336,7 @@ All game-related components are Client Components (`'use client'`) because they:
 ### Server Components
 
 The root layout and static pages can be Server Components for:
+
 - SEO (if needed)
 - Initial HTML generation
 - Environment variable access
@@ -356,6 +360,7 @@ Rooms are cleaned up in these scenarios:
 3. **Inactivity**: Rooms inactive for 2+ hours
 
 > Note: Firebase doesn't support document TTL. Cleanup handled by:
+>
 > - Host action (immediate)
 > - Client-side check on join (informational)
 > - Future: Cloud Function for periodic cleanup

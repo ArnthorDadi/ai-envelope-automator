@@ -25,6 +25,7 @@ rooms/
 ### Room ID as Document ID
 
 The 6-character room code serves as the Firestore document ID:
+
 - Guaranteed uniqueness by Firestore
 - Enables direct document access: `doc(db, 'rooms', roomId)`
 - Simple URL routing: `/room/{roomId}`
@@ -32,6 +33,7 @@ The 6-character room code serves as the Firestore document ID:
 ### Player ID as Document ID
 
 The Firebase Auth UID serves as the player document ID:
+
 - Guaranteed uniqueness
 - Links directly to authenticated user
 - Enables secure Firestore rules: `request.auth.uid == playerId`
@@ -59,17 +61,17 @@ The Firebase Auth UID serves as the player document ID:
 ```typescript
 interface Room {
   // Identification
-  id: string;                     // 6-char code, matches document ID
-  
+  id: string // 6-char code, matches document ID
+
   // Ownership
-  hostId: string;                 // Firebase UID of creator
-  
+  hostId: string // Firebase UID of creator
+
   // Game State
-  status: 'lobby' | 'started';    // Current game phase
-  
+  status: 'lobby' | 'started' // Current game phase
+
   // Metadata
-  createdAt: Timestamp;            // Room creation time
-  playerCount: number;             // Denormalized count (use increment, not read-modify-write)
+  createdAt: Timestamp // Room creation time
+  playerCount: number // Denormalized count (use increment, not read-modify-write)
 }
 ```
 
@@ -88,6 +90,7 @@ interface Room {
 ### Room Document States
 
 **Lobby State:**
+
 ```json
 {
   "id": "ABC123",
@@ -98,6 +101,7 @@ interface Room {
 ```
 
 **Started State:**
+
 ```json
 {
   "id": "ABC123",
@@ -112,29 +116,29 @@ interface Room {
 ```typescript
 interface Player {
   // Identification
-  id: string;                     // Firebase UID, matches document ID
-  
+  id: string // Firebase UID, matches document ID
+
   // Display
-  name: string;                   // Player name (max 20 chars)
-  
+  name: string // Player name (max 20 chars)
+
   // Role (null until game starts)
-  role: 'liberal' | 'fascist' | 'hitler' | null;
-  
+  role: 'liberal' | 'fascist' | 'hitler' | null
+
   // Metadata
-  joinedAt: Timestamp;             // When player joined
-  leftAt?: Timestamp;              // Set when player leaves (optional)
+  joinedAt: Timestamp // When player joined
+  leftAt?: Timestamp // Set when player leaves (optional)
 }
 ```
 
 ### Player Document Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| id | string | Firebase UID |
-| name | string | Display name |
-| role | string/null | Assigned role |
-| joinedAt | Timestamp | Join time |
-| leftAt | Timestamp | Leave time (optional) |
+| Field    | Type        | Description           |
+| -------- | ----------- | --------------------- |
+| id       | string      | Firebase UID          |
+| name     | string      | Display name          |
+| role     | string/null | Assigned role         |
+| joinedAt | Timestamp   | Join time             |
+| leftAt   | Timestamp   | Leave time (optional) |
 
 ### Example Player Documents (Before Game Start)
 
@@ -222,12 +226,12 @@ interface Player {
 Use Firestore `increment()` to avoid race conditions:
 
 ```typescript
-import { increment } from 'firebase/firestore';
+import { increment } from 'firebase/firestore'
 
 // When joining
 await updateDoc(roomRef, {
-  playerCount: increment(1)
-});
+  playerCount: increment(1),
+})
 
 // When leaving - DO NOT decrement
 // leftAt is set but playerCount remains for consistency
@@ -236,6 +240,7 @@ await updateDoc(roomRef, {
 ### Why Not Decrement on Leave?
 
 Decrementing `playerCount` creates race conditions:
+
 1. Player A reads count: 5
 2. Player B reads count: 5
 3. Player A leaves, writes count: 4
@@ -258,9 +263,7 @@ If future features require queries, add:
     {
       "collectionGroup": "rooms",
       "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "status", "order": "ASCENDING" }
-      ]
+      "fields": [{ "fieldPath": "status", "order": "ASCENDING" }]
     }
   ]
 }
@@ -281,18 +284,18 @@ When adding game phases (voting, policy, etc.):
 ```typescript
 interface Room {
   // ... existing fields ...
-  
+
   // Game Phase (future)
-  phase?: 'role-reveal' | 'policy-selection' | 'voting' | 'execution';
-  
+  phase?: 'role-reveal' | 'policy-selection' | 'voting' | 'execution'
+
   // Current President (future)
-  presidentId?: string;
-  
+  presidentId?: string
+
   // Policy Deck (future)
   policyDeck?: {
-    liberals: number;
-    fascists: number;
-  };
+    liberals: number
+    fascists: number
+  }
 }
 ```
 

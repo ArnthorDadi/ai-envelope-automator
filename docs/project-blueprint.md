@@ -13,21 +13,21 @@ Master guide for implementing Secret Hitler Digital Roles. Read this before star
 
 These components are used across multiple features and should be referenced by each feature that needs them.
 
-| Component | Used By | Description |
-|-----------|---------|-------------|
+| Component                 | Used By                              | Description                    |
+| ------------------------- | ------------------------------------ | ------------------------------ |
 | `Toast` (F12-UI/F12-FUNC) | F1, F4-UI, F6-FUNC, F13-UI, F15-FUNC | Toast notifications for events |
-| `Button` | All UI features | Reusable button component |
-| `ConfirmDialog` | F5-UI, F10-FUNC, F20-FUNC | Confirmation modals |
-| `Navbar` | F1, All pages | App header with login/logout |
-| `AuthContext` | All features | Firebase auth state |
-| `ToastContext` | All features | Global toast state |
+| `Button`                  | All UI features                      | Reusable button component      |
+| `ConfirmDialog`           | F5-UI, F10-FUNC, F20-FUNC            | Confirmation modals            |
+| `Navbar`                  | F1, All pages                        | App header with login/logout   |
+| `AuthContext`             | All features                         | Firebase auth state            |
+| `ToastContext`            | All features                         | Global toast state             |
 
 ## Page Routes
 
-| Page | Route | Features |
-|------|-------|----------|
-| Home | `/` | F1, F2-UI, F2-FUNC, F3-UI, F3-FUNC |
-| Login | `/login` | F1 |
+| Page              | Route            | Features                                                  |
+| ----------------- | ---------------- | --------------------------------------------------------- |
+| Home              | `/`              | F1, F2-UI, F2-FUNC, F3-UI, F3-FUNC                        |
+| Login             | `/login`         | F1                                                        |
 | Room (Lobby/Game) | `/room/[roomId]` | F4-UI through F10-FUNC, F13-UI through F20-FUNC, F26-FUNC |
 
 ---
@@ -59,6 +59,7 @@ These components are used across multiple features and should be referenced by e
 ### Navbar States
 
 **Not logged in:**
+
 ```
 ┌─────────────────────────────────────────┐
 │  SECRET HITLER              [Login]      │
@@ -66,6 +67,7 @@ These components are used across multiple features and should be referenced by e
 ```
 
 **Logged in:**
+
 ```
 ┌─────────────────────────────────────────┐
 │  SECRET HITLER  John [Logout]            │
@@ -119,8 +121,8 @@ These components are used across multiple features and should be referenced by e
 ```typescript
 // users/{uid}
 {
-  name: string;    // User's display name
-  createdAt: Timestamp;
+  name: string // User's display name
+  createdAt: Timestamp
 }
 ```
 
@@ -310,6 +312,7 @@ From TASKS.md Phase 2.2:
 From `docs/ui-flow.md`:
 
 **Host View:**
+
 ```
 ┌─────────────────────────────────────────┐
 │  Room: ABC123                    [Share]│
@@ -331,6 +334,7 @@ From `docs/ui-flow.md`:
 ```
 
 **Non-Host View:**
+
 ```
 ┌─────────────────────────────────────────┐
 │  Room: ABC123                    [Share]│
@@ -424,10 +428,12 @@ From TASKS.md Phase 3.1:
 ### UI State
 
 **Host View:**
+
 - "Need X more players" message
 - "Start Game" button (disabled until 5+ players)
 
 **Non-Host View:**
+
 - "Waiting for host to start..." message
 - No start button
 
@@ -457,6 +463,7 @@ From TASKS.md Phase 3.2 and 4.1:
 ### UI State
 
 **Host View (Game Started):**
+
 ```
 ┌─────────────────────────────────────────┐
 │  ┌────────────────────────────────────┐  │
@@ -579,13 +586,13 @@ From TASKS.md Phase 3.4:
 ### Role Distribution
 
 | Players | Liberals | Fascists | Hitler |
-|---------|----------|----------|--------|
-| 5 | 3 | 2 | 1 |
-| 6 | 4 | 2 | 1 |
-| 7 | 4 | 3 | 1 |
-| 8 | 5 | 3 | 1 |
-| 9 | 5 | 4 | 1 |
-| 10 | 6 | 4 | 1 |
+| ------- | -------- | -------- | ------ |
+| 5       | 3        | 2        | 1      |
+| 6       | 4        | 2        | 1      |
+| 7       | 4        | 3        | 1      |
+| 8       | 5        | 3        | 1      |
+| 9       | 5        | 4        | 1      |
+| 10      | 6        | 4        | 1      |
 
 ### Implementation Steps
 
@@ -614,6 +621,7 @@ From TASKS.md Phase 4.2:
 ### UI State
 
 **Liberal:**
+
 ```
 ┌─────────────────────────────────────────┐
 │           YOU ARE A LIBERAL              │
@@ -627,6 +635,7 @@ From TASKS.md Phase 4.2:
 ```
 
 **Fascist (sees teammates):**
+
 ```
 ┌─────────────────────────────────────────┐
 │          YOU ARE A FASCIST               │
@@ -643,6 +652,7 @@ From TASKS.md Phase 4.2:
 ```
 
 **Hitler (5-6 players, sees fascists):**
+
 ```
 ┌─────────────────────────────────────────┐
 │          YOU ARE HITLER                  │
@@ -659,6 +669,7 @@ From TASKS.md Phase 4.2:
 ```
 
 **Hitler (7-10 players, sees nothing):**
+
 ```
 ┌─────────────────────────────────────────┐
 │          YOU ARE HITLER                  │
@@ -681,14 +692,14 @@ From TASKS.md Phase 4.2:
 
 ### Role Reveal Behavior
 
-| Behavior | Specification |
-|----------|---------------|
-| Initial display | Role card appears with animation (fade in + scale up) |
-| Auto-hide timeout | 7 seconds (fixed duration) |
-| Timer pause | Pauses while user is interacting with the card |
-| Manual dismiss | Tap anywhere outside card to dismiss early |
-| Subsequent views | Each "View Role" tap shows card for 7 seconds, then auto-hides |
-| Fade out animation | 300ms |
+| Behavior           | Specification                                                  |
+| ------------------ | -------------------------------------------------------------- |
+| Initial display    | Role card appears with animation (fade in + scale up)          |
+| Auto-hide timeout  | 7 seconds (fixed duration)                                     |
+| Timer pause        | Pauses while user is interacting with the card                 |
+| Manual dismiss     | Tap anywhere outside card to dismiss early                     |
+| Subsequent views   | Each "View Role" tap shows card for 7 seconds, then auto-hides |
+| Fade out animation | 300ms                                                          |
 
 ### Implementation Steps
 
@@ -722,6 +733,7 @@ From TASKS.md Phase 5.1 and 5.2:
 ### UI State
 
 After role card auto-hides:
+
 ```
 ┌─────────────────────────────────────────┐
 │  Room: ABC123           (Started)        │
@@ -779,6 +791,7 @@ From TASKS.md Phase 5.5:
 ### UI State
 
 Shown within role card for fascists/Hitler:
+
 ```
 │  Your teammates:                         │
 │  ┌────────────────────────────────────┐  │
@@ -825,12 +838,12 @@ From TASKS.md Phase 5.4:
 
 ### Visibility Rules
 
-| Role | Sees |
-|------|------|
-| Liberal | Own role only (empty allies list) |
-| Fascist | Other fascists and Hitler |
-| Hitler (5-6p) | Fascists only |
-| Hitler (7-10p) | Nothing extra |
+| Role           | Sees                              |
+| -------------- | --------------------------------- |
+| Liberal        | Own role only (empty allies list) |
+| Fascist        | Other fascists and Hitler         |
+| Hitler (5-6p)  | Fascists only                     |
+| Hitler (7-10p) | Nothing extra                     |
 
 ### Implementation Steps
 
@@ -890,15 +903,15 @@ From TASKS.md Phase 6.2:
 
 ### Security Rules Summary
 
-| Rule | Description |
-|------|-------------|
-| Room read | Only players in room can read that room |
-| Room status write | Only host can update room status |
-| Role read | Players can only read their own role |
-| Fascist role read | Fascists can read other fascist roles |
-| Hitler role read | Fascists can read Hitler's role |
-| Role write | Only host can assign/clear roles |
-| Room delete | Only host can delete room |
+| Rule              | Description                             |
+| ----------------- | --------------------------------------- |
+| Room read         | Only players in room can read that room |
+| Room status write | Only host can update room status        |
+| Role read         | Players can only read their own role    |
+| Fascist role read | Fascists can read other fascist roles   |
+| Hitler role read  | Fascists can read Hitler's role         |
+| Role write        | Only host can assign/clear roles        |
+| Room delete       | Only host can delete room               |
 
 ### Implementation Steps
 
@@ -924,15 +937,15 @@ From TASKS.md Phase 7.1:
 
 ### Toast Notifications
 
-| Event | Message |
-|-------|---------|
-| Player joined | "{name} joined" |
-| Player left | "{name} left" |
-| Host changed | "{name} is now the host" |
-| Game started | "Game started!" |
-| Game reset | "New round started" |
-| Room deleted | "Room has been deleted" |
-| Error | Error-specific message |
+| Event         | Message                  |
+| ------------- | ------------------------ |
+| Player joined | "{name} joined"          |
+| Player left   | "{name} left"            |
+| Host changed  | "{name} is now the host" |
+| Game started  | "Game started!"          |
+| Game reset    | "New round started"      |
+| Room deleted  | "Room has been deleted"  |
+| Error         | Error-specific message   |
 
 ### UI State
 
@@ -993,6 +1006,7 @@ From TASKS.md Phase 7.2:
 ### UI State
 
 From `docs/ui-flow.md`:
+
 - Share button in header
 - Shows copy-to-clipboard feedback
 - Offers Web Share API on mobile
@@ -1085,6 +1099,7 @@ From TASKS.md Phase 3.3:
 ### UI States
 
 **Room Not Found:**
+
 ```
 ┌─────────────────────────────────────────┐
 │     Room "XYZ999" not found.            │
@@ -1093,6 +1108,7 @@ From TASKS.md Phase 3.3:
 ```
 
 **Room Full:**
+
 ```
 ┌─────────────────────────────────────────┐
 │     This room is full (10 players).     │
@@ -1101,6 +1117,7 @@ From TASKS.md Phase 3.3:
 ```
 
 **Game Already Started:**
+
 ```
 ┌─────────────────────────────────────────┐
 │     This game has already started.       │
@@ -1109,6 +1126,7 @@ From TASKS.md Phase 3.3:
 ```
 
 **Room Deleted:**
+
 ```
 ┌─────────────────────────────────────────┐
 │     This room no longer exists.         │
@@ -1364,11 +1382,11 @@ From TASKS.md Phase 7.8:
 
 ### Animation Specs
 
-| Element | Animation | Duration |
-|---------|-----------|----------|
-| Player join | Slide in from right | 300ms |
-| Player leave | Fade out | 200ms |
-| Button states | Opacity/transform | 150ms |
+| Element       | Animation           | Duration |
+| ------------- | ------------------- | -------- |
+| Player join   | Slide in from right | 300ms    |
+| Player leave  | Fade out            | 200ms    |
+| Button states | Opacity/transform   | 150ms    |
 
 ### Implementation Steps
 
@@ -1455,40 +1473,40 @@ From TASKS.md Phase 7.7:
 
 Before implementing, ensure dependencies are complete:
 
-| Feature | Must Have First |
-|---------|-----------------|
-| F1 | Firebase setup, AuthContext |
-| F2-UI | F1, Navbar component |
-| F2-FUNC | F1 |
-| F3-UI | F1, F2-FUNC, Navbar component |
-| F3-FUNC | F1, F2-FUNC |
-| F4-UI | F1, F2-FUNC, F3-FUNC, F4-FUNC, Navbar component |
-| F4-FUNC | F1, F2-FUNC, F3-FUNC |
-| F4-UX | F4-UI |
-| F5-UI | F4-UI |
-| F5-FUNC | F4-UI, F4-FUNC |
-| F6-FUNC | F4-FUNC |
-| F7-FUNC | F5-FUNC |
-| F8-UI | F7-FUNC |
-| F8-PRIVACY | F8-UI |
-| F9-UI | F8-UI, F9-FUNC |
-| F9-FUNC | F7-FUNC |
-| F10-FUNC | F5-UI, F7-FUNC |
-| F11-FUNC | (can be written anytime, tested at end) |
-| F12-UI | F12-FUNC |
-| F12-FUNC | (can be written anytime, used by many) |
-| F13-UI | F4-UI |
-| F13-FUNC | F13-UI |
-| F14-FUNC | F4-FUNC |
-| F15-UI | F4-FUNC |
-| F15-FUNC | F15-UI |
-| F16-FUNC | F4-FUNC |
-| F17-UI | (can be written anytime) |
-| F18-UI | (can be written anytime) |
-| F19-UI | (can be written anytime) |
-| F20-FUNC | F5-UI |
-| F22-OPT | F4-UI, F8-UI |
-| F23-UI | F4-UI |
-| F24-UI | (can be written anytime) |
-| F25-UI | (can be written anytime) |
-| F26-FUNC | F4-FUNC |
+| Feature    | Must Have First                                 |
+| ---------- | ----------------------------------------------- |
+| F1         | Firebase setup, AuthContext                     |
+| F2-UI      | F1, Navbar component                            |
+| F2-FUNC    | F1                                              |
+| F3-UI      | F1, F2-FUNC, Navbar component                   |
+| F3-FUNC    | F1, F2-FUNC                                     |
+| F4-UI      | F1, F2-FUNC, F3-FUNC, F4-FUNC, Navbar component |
+| F4-FUNC    | F1, F2-FUNC, F3-FUNC                            |
+| F4-UX      | F4-UI                                           |
+| F5-UI      | F4-UI                                           |
+| F5-FUNC    | F4-UI, F4-FUNC                                  |
+| F6-FUNC    | F4-FUNC                                         |
+| F7-FUNC    | F5-FUNC                                         |
+| F8-UI      | F7-FUNC                                         |
+| F8-PRIVACY | F8-UI                                           |
+| F9-UI      | F8-UI, F9-FUNC                                  |
+| F9-FUNC    | F7-FUNC                                         |
+| F10-FUNC   | F5-UI, F7-FUNC                                  |
+| F11-FUNC   | (can be written anytime, tested at end)         |
+| F12-UI     | F12-FUNC                                        |
+| F12-FUNC   | (can be written anytime, used by many)          |
+| F13-UI     | F4-UI                                           |
+| F13-FUNC   | F13-UI                                          |
+| F14-FUNC   | F4-FUNC                                         |
+| F15-UI     | F4-FUNC                                         |
+| F15-FUNC   | F15-UI                                          |
+| F16-FUNC   | F4-FUNC                                         |
+| F17-UI     | (can be written anytime)                        |
+| F18-UI     | (can be written anytime)                        |
+| F19-UI     | (can be written anytime)                        |
+| F20-FUNC   | F5-UI                                           |
+| F22-OPT    | F4-UI, F8-UI                                    |
+| F23-UI     | F4-UI                                           |
+| F24-UI     | (can be written anytime)                        |
+| F25-UI     | (can be written anytime)                        |
+| F26-FUNC   | F4-FUNC                                         |

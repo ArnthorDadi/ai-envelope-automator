@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 
 export function LoginButton() {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <button
@@ -12,5 +12,5 @@ export function LoginButton() {
     >
       Login
     </button>
-  );
+  )
 }

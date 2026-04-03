@@ -1,18 +1,18 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { Navbar } from '@/components/layout';
-import { AuthContext } from '@/contexts/auth-context';
-import { ToastProvider } from '@/contexts/toast-context';
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { Navbar } from '@/components/layout'
+import { AuthContext } from '@/contexts/auth-context'
+import { ToastProvider } from '@/contexts/toast-context'
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: vi.fn(),
   }),
-}));
+}))
 
 vi.mock('@/lib/firebase', () => ({
   app: {},
-}));
+}))
 
 vi.mock('@/lib/db', () => ({
   db: {
@@ -24,28 +24,33 @@ vi.mock('@/lib/db', () => ({
       setStoredUser: vi.fn(),
     },
   },
-}));
+}))
 
-const renderWithAuth = (user: { name: string; uid: string } | null, loading = false) => {
+const renderWithAuth = (
+  user: { name: string; uid: string } | null,
+  loading = false
+) => {
   return render(
     <ToastProvider>
-      <AuthContext.Provider value={{ user, loading, signIn: vi.fn(), signOut: vi.fn() } as any}>
+      <AuthContext.Provider
+        value={{ user, loading, signIn: vi.fn(), signOut: vi.fn() } as any}
+      >
         <Navbar />
       </AuthContext.Provider>
     </ToastProvider>
-  );
-};
+  )
+}
 
 describe('Navbar', () => {
   it('renders Logo and UserSection', () => {
-    renderWithAuth(null);
-    expect(screen.getByText('Secret Hitler')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Login' })).toBeInTheDocument();
-  });
+    renderWithAuth(null)
+    expect(screen.getByText('Secret Hitler')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Login' })).toBeInTheDocument()
+  })
 
   it('shows username when authenticated', () => {
-    renderWithAuth({ name: 'TestUser', uid: 'test-123' });
-    expect(screen.getByText('TestUser')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
-  });
-});
+    renderWithAuth({ name: 'TestUser', uid: 'test-123' })
+    expect(screen.getByText('TestUser')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument()
+  })
+})

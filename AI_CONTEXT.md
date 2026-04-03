@@ -63,11 +63,11 @@ A real-time multiplayer web app that replaces physical role envelopes in Secret 
 
 ```typescript
 interface Room {
-  id: string;                     // 6-char code, matches Firestore document ID
-  hostId: string;                 // Firebase UID of room creator
-  status: 'lobby' | 'started';    // Game phase
-  playerCount: number;            // Current player count
-  createdAt: Timestamp;
+  id: string // 6-char code, matches Firestore document ID
+  hostId: string // Firebase UID of room creator
+  status: 'lobby' | 'started' // Game phase
+  playerCount: number // Current player count
+  createdAt: Timestamp
 }
 ```
 
@@ -75,11 +75,11 @@ interface Room {
 
 ```typescript
 interface Player {
-  id: string;                    // Firebase UID
-  name: string;                 // Display name (max 20 chars, alphanumeric + spaces)
-  role: 'liberal' | 'fascist' | 'hitler' | null; // null until game starts
-  joinedAt: Timestamp;
-  leftAt?: Timestamp;           // Set when player leaves (document persists)
+  id: string // Firebase UID
+  name: string // Display name (max 20 chars, alphanumeric + spaces)
+  role: 'liberal' | 'fascist' | 'hitler' | null // null until game starts
+  joinedAt: Timestamp
+  leftAt?: Timestamp // Set when player leaves (document persists)
 }
 ```
 
@@ -88,7 +88,7 @@ interface Player {
 ### Role Distribution
 
 | Players | Liberals | Fascists | Hitler |
-|---------|----------|----------|--------|
+| ------- | -------- | -------- | ------ |
 | 5       | 3        | 2        | 1      |
 | 6       | 4        | 2        | 1      |
 | 7       | 4        | 3        | 1      |
@@ -98,12 +98,12 @@ interface Player {
 
 ### Visibility Rules
 
-| Viewer          | Can See                           |
-|-----------------|-----------------------------------|
-| Liberal         | Nothing (only knows own role)     |
-| Fascist         | Other fascists, Hitler            |
-| Hitler (5-6p)   | Other fascists                    |
-| Hitler (7-10p)  | Nothing                           |
+| Viewer         | Can See                       |
+| -------------- | ----------------------------- |
+| Liberal        | Nothing (only knows own role) |
+| Fascist        | Other fascists, Hitler        |
+| Hitler (5-6p)  | Other fascists                |
+| Hitler (7-10p) | Nothing                       |
 
 ### Game Reset Rules
 
@@ -141,15 +141,15 @@ interface Player {
 ```typescript
 // Subscribe to room updates
 onSnapshot(roomRef, (snapshot) => {
-  const room = snapshot.data();
+  const room = snapshot.data()
   // UI updates automatically
-});
+})
 
 // Subscribe to player's own role
 onSnapshot(playerRef, (snapshot) => {
-  const player = snapshot.data();
+  const player = snapshot.data()
   // Role reveal handled here
-});
+})
 ```
 
 ## Room System Details
@@ -168,6 +168,7 @@ onSnapshot(playerRef, (snapshot) => {
 ### Room Cleanup
 
 Rooms are cleaned up in these scenarios:
+
 1. Host executes "Quit Game" (delete room)
 2. All players leave (room becomes orphaned)
 3. Room inactive for 2+ hours (background cleanup)

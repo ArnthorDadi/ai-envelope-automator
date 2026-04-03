@@ -7,16 +7,17 @@ These rules apply when creating or modifying React components in this codebase.
 Use kebab-case for all component filenames with the `.tsx` extension.
 
 **Rules:**
+
 - Single word: `navbar.tsx` → `Navbar`
 - Two words: `user-profile.tsx` → `UserProfile`
 - Three+ words: `create-room-form.tsx` → `CreateRoomForm`
 
 **Examples:**
 
-| Component Name | Filename |
-|----------------|----------|
-| Navbar | `navbar.tsx` |
-| UserProfile | `user-profile.tsx` |
+| Component Name | Filename               |
+| -------------- | ---------------------- |
+| Navbar         | `navbar.tsx`           |
+| UserProfile    | `user-profile.tsx`     |
 | CreateRoomForm | `create-room-form.tsx` |
 
 ## 2. Decompose Layouts into Logical Sections
@@ -37,7 +38,7 @@ function MemberPage() {
       <MemberSidebar />
       <MemberContent />
     </div>
-  );
+  )
 }
 ```
 
@@ -71,7 +72,7 @@ function MemberSidebar() {
       <MemberProfile />
       <MemberContactInfo />
     </div>
-  );
+  )
 }
 ```
 
@@ -98,31 +99,31 @@ function Dashboard() {
       <ActivityFeed />
       <UpcomingEvents />
     </div>
-  );
+  )
 }
 
 function StatsSummary() {
-  const { data } = useSuspenseQuery(StatsQuery);  // owns its own data
-  return <div>...</div>;
+  const { data } = useSuspenseQuery(StatsQuery) // owns its own data
+  return <div>...</div>
 }
 
 function ActivityFeed() {
-  const { data } = useSuspenseQuery(ActivityQuery);  // owns its own data
-  return <div>...</div>;
+  const { data } = useSuspenseQuery(ActivityQuery) // owns its own data
+  return <div>...</div>
 }
 
 function UpcomingEvents() {
-  const { data } = useSuspenseQuery(EventsQuery);  // owns its own data
-  return <div>...</div>;
+  const { data } = useSuspenseQuery(EventsQuery) // owns its own data
+  return <div>...</div>
 }
 ```
 
 ```tsx
 // WRONG: Parent fetches everything, all children re-render on any data change
 function Dashboard() {
-  const { data: stats } = useSuspenseQuery(StatsQuery);
-  const { data: activity } = useSuspenseQuery(ActivityQuery);
-  const { data: events } = useSuspenseQuery(EventsQuery);
+  const { data: stats } = useSuspenseQuery(StatsQuery)
+  const { data: activity } = useSuspenseQuery(ActivityQuery)
+  const { data: events } = useSuspenseQuery(EventsQuery)
 
   return (
     <div>
@@ -130,7 +131,7 @@ function Dashboard() {
       <ActivityFeed data={activity} />
       <UpcomingEvents data={events} />
     </div>
-  );
+  )
 }
 ```
 
@@ -141,21 +142,21 @@ function Dashboard() {
 function MemberList() {
   return (
     <div>
-      <MemberSearchBar />   {/* owns search state + filters the query */}
-      <MemberTable />       {/* owns its own query, reads search params from URL */}
+      <MemberSearchBar /> {/* owns search state + filters the query */}
+      <MemberTable /> {/* owns its own query, reads search params from URL */}
     </div>
-  );
+  )
 }
 
 // WRONG: Hoisting state to parent causes both children to re-render on every keystroke
 function MemberList() {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState('')
   return (
     <div>
       <MemberSearchBar value={search} onChange={setSearch} />
       <MemberTable search={search} />
     </div>
-  );
+  )
 }
 ```
 
@@ -170,31 +171,43 @@ be `null` — never another component, never `undefined`, never an empty fragmen
 **The only allowed pattern:**
 
 ```tsx
-{condition ? <Component /> : null}
+{
+  condition ? <Component /> : null
+}
 ```
 
 **Example — Showing a badge conditionally:**
 
 ```tsx
 // CORRECT
-{isPremium ? <PremiumBadge /> : null}
+{
+  isPremium ? <PremiumBadge /> : null
+}
 
 // CORRECT — wrapping multiple elements
-{hasPermission ? (
-  <div>
-    <EditButton />
-    <DeleteButton />
-  </div>
-) : null}
+{
+  hasPermission ? (
+    <div>
+      <EditButton />
+      <DeleteButton />
+    </div>
+  ) : null
+}
 ```
 
 **WRONG — using `&&` operator:**
 
 ```tsx
 // WRONG: && can render "0" or "false" as text when condition is falsy non-boolean
-{count && <ItemList />}        // renders "0" when count is 0
-{name && <Greeting />}         // renders "" when name is empty string
-{isActive && <ActiveBadge />}  // works but violates the pattern — don't use
+{
+  count && <ItemList />
+} // renders "0" when count is 0
+{
+  name && <Greeting />
+} // renders "" when name is empty string
+{
+  isActive && <ActiveBadge />
+} // works but violates the pattern — don't use
 ```
 
 **Why not `&&`**: The `&&` operator returns the left operand when falsy. For non-boolean values (`0`, `""`, `NaN`), this
@@ -205,7 +218,9 @@ needing to think about the type of the condition.
 
 ```tsx
 // WRONG: Do not use ternary to switch between two components
-{isLoading ? <Spinner /> : <Content />}
+{
+  isLoading ? <Spinner /> : <Content />
+}
 ```
 
 **Why**: Ternary switching between two components makes the JSX harder to scan and hides branching logic inline.
@@ -215,26 +230,30 @@ Instead, extract the branching logic:
 // CORRECT: Use early return or separate the concerns
 function MySection() {
   if (isLoading) {
-    return <Spinner />;
+    return <Spinner />
   }
 
-  return <Content />;
+  return <Content />
 }
 
 // CORRECT: For truly independent conditional elements, use separate ternaries
-{isLoading ? <Spinner /> : null}
-{isReady ? <Content /> : null}
+{
+  isLoading ? <Spinner /> : null
+}
+{
+  isReady ? <Content /> : null
+}
 ```
 
 **Summary of allowed vs. disallowed patterns:**
 
-| Pattern | Allowed? |
-|---|---|
-| `{condition ? <UI /> : null}` | YES |
-| `{condition && <UI />}` | NO |
-| `{condition ? <A /> : <B />}` | NO |
-| `{condition ? <UI /> : undefined}` | NO |
-| `{condition ? <UI /> : <></>}` | NO |
+| Pattern                            | Allowed? |
+| ---------------------------------- | -------- |
+| `{condition ? <UI /> : null}`      | YES      |
+| `{condition && <UI />}`            | NO       |
+| `{condition ? <A /> : <B />}`      | NO       |
+| `{condition ? <UI /> : undefined}` | NO       |
+| `{condition ? <UI /> : <></>}`     | NO       |
 
 ## 5. Folder Structure
 
@@ -242,6 +261,7 @@ Group related components into feature-based folders. Each folder should contain 
 that belong to the same feature or page.
 
 **Rules:**
+
 - Use lowercase folder names matching the feature/page (e.g., `login/`, `home/`, `auth/`)
 - Export components via `index.ts` barrel files for cleaner imports
 - Keep shared/reusable components in a `shared/` folder
@@ -271,15 +291,15 @@ components/
 **Barrel file pattern (login/index.ts):**
 
 ```tsx
-export { LoginButton } from './login-button';
-export { LoginForm } from './login-form';
-export { BackButton } from './back-button';
+export { LoginButton } from './login-button'
+export { LoginForm } from './login-form'
+export { BackButton } from './back-button'
 ```
 
 **Import from barrel:**
 
 ```tsx
-import { LoginButton, LoginForm } from '@/components/login';
+import { LoginButton, LoginForm } from '@/components/login'
 ```
 
 ## 6. Test Co-location
@@ -288,6 +308,7 @@ Place test files in the same directory as the components they test. This keeps t
 close to the code they verify and makes them easier to find.
 
 **Rules:**
+
 - Test file naming: `<component-name>.test.tsx` in the same folder as `<component-name>.tsx`
 - Use relative imports in tests to avoid barrel file issues: `import { Component } from './component'`
 

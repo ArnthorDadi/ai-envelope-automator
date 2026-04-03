@@ -11,16 +11,16 @@ This document describes all environment variables used in the project.
 
 Required for Firebase services (auth, firestore, storage).
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase API key | `AIzaSy...` |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase auth domain | `project.firebaseapp.com` |
-| `NEXT_PUBLIC_FIREBASE_DATABASE_URL` | Realtime Database URL | `https://project-default-rtdb...firebasedatabase.app` |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase project ID | `my-project` |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Storage bucket | `project.appspot.com` |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | FCM sender ID | `123456789` |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase app ID | `1:123:web:abc` |
-| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | Google Analytics measurement ID (optional) | `G-XXXXXXXXXX` |
+| Variable                                   | Description                                | Example                                               |
+| ------------------------------------------ | ------------------------------------------ | ----------------------------------------------------- |
+| `NEXT_PUBLIC_FIREBASE_API_KEY`             | Firebase API key                           | `AIzaSy...`                                           |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`         | Firebase auth domain                       | `project.firebaseapp.com`                             |
+| `NEXT_PUBLIC_FIREBASE_DATABASE_URL`        | Realtime Database URL                      | `https://project-default-rtdb...firebasedatabase.app` |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID`          | Firebase project ID                        | `my-project`                                          |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`      | Storage bucket                             | `project.appspot.com`                                 |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | FCM sender ID                              | `123456789`                                           |
+| `NEXT_PUBLIC_FIREBASE_APP_ID`              | Firebase app ID                            | `1:123:web:abc`                                       |
+| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`      | Google Analytics measurement ID (optional) | `G-XXXXXXXXXX`                                        |
 
 ### Getting Firebase Credentials
 
@@ -35,18 +35,18 @@ Required for Firebase services (auth, firestore, storage).
 
 These keys are for external AI services and integrations.
 
-| Variable | Service | Status |
-|----------|---------|--------|
-| `OPENCODE_API_KEY` | OpenCode AI | Configured |
-| `GOOGLE_API_KEY` | Google AI services | Configured |
-| `OPENROUTER_API_KEY` | OpenRouter AI gateway | Configured |
-| `MINIMAX_API_KEY` | MiniMax AI | Configured |
-| `STRIPE_KEY` | Stripe payments | Reserved for future use |
+| Variable             | Service               | Status                  |
+| -------------------- | --------------------- | ----------------------- |
+| `OPENCODE_API_KEY`   | OpenCode AI           | Configured              |
+| `GOOGLE_API_KEY`     | Google AI services    | Configured              |
+| `OPENROUTER_API_KEY` | OpenRouter AI gateway | Configured              |
+| `MINIMAX_API_KEY`    | MiniMax AI            | Configured              |
+| `STRIPE_KEY`         | Stripe payments       | Reserved for future use |
 
 ## Local Tooling
 
-| Variable | Description | Values |
-|----------|-------------|--------|
+| Variable              | Description                | Values          |
+| --------------------- | -------------------------- | --------------- |
 | `OPENCODE_PERMISSION` | OpenCode agent permissions | `all` (default) |
 
 ## Setup Instructions

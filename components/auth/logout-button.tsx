@@ -1,20 +1,20 @@
-'use client';
+'use client'
 
-import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/auth-context'
+import { useRouter } from 'next/navigation'
 
 export function LogoutButton() {
-  const { signOut } = useAuth();
-  const router = useRouter();
+  const { signOut } = useAuth()
+  const router = useRouter()
 
   const handleLogout = async () => {
     try {
-      await signOut();
-      router.push('/');
+      await signOut()
+      router.push('/')
     } catch {
       // Error handled in context
     }
-  };
+  }
 
   return (
     <button
@@ -23,5 +23,5 @@ export function LogoutButton() {
     >
       Logout
     </button>
-  );
+  )
 }

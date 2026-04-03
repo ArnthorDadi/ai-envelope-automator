@@ -1,35 +1,35 @@
-'use client';
+'use client'
 
-import { useState, useRef, useEffect } from 'react';
-import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
-import { Spinner } from '@/components/shared';
+import { useState, useRef, useEffect } from 'react'
+import { useAuth } from '@/contexts/auth-context'
+import { useRouter } from 'next/navigation'
+import { Spinner } from '@/components/shared'
 
 export function LoginForm() {
-  const [name, setName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const { signIn } = useAuth();
-  const router = useRouter();
+  const [name, setName] = useState('')
+  const [loading, setLoading] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const { signIn } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    inputRef.current?.focus()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) return;
+    e.preventDefault()
+    if (!name.trim()) return
 
-    setLoading(true);
+    setLoading(true)
     try {
-      await signIn(name.trim());
-      router.push('/');
+      await signIn(name.trim())
+      router.push('/')
     } catch {
       // Error handled in context
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-xs">
@@ -53,5 +53,5 @@ export function LoginForm() {
         {loading ? 'SUBMITTING' : 'SUBMIT'}
       </button>
     </form>
-  );
+  )
 }

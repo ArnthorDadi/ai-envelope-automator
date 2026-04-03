@@ -1,6 +1,6 @@
 # TASK SELECTION
 
-Before picking a task to work on read all the ./docs/*.md files. Especially docs/project-blueprint.md.
+Before picking a task to work on read all the ./docs/\*.md files. Especially docs/project-blueprint.md.
 
 Pick the next task. Prioritize tasks in this order:
 

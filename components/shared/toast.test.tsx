@@ -1,11 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Toast } from '@/components/shared';
-import { ToastProvider, useToast } from '@/contexts/toast-context';
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { Toast } from '@/components/shared'
+import { ToastProvider, useToast } from '@/contexts/toast-context'
 
 vi.mock('@/lib/firebase', () => ({
   app: {},
-}));
+}))
 
 vi.mock('@/lib/db', () => ({
   db: {
@@ -17,17 +17,19 @@ vi.mock('@/lib/db', () => ({
       setStoredUser: vi.fn(),
     },
   },
-}));
+}))
 
 function TestComponent() {
-  const { addToast, toasts } = useToast();
+  const { addToast, toasts } = useToast()
 
   return (
     <div>
-      <button onClick={() => addToast('Test message', 'info')}>Add Toast</button>
+      <button onClick={() => addToast('Test message', 'info')}>
+        Add Toast
+      </button>
       <p data-testid="toast-count">{toasts.length}</p>
     </div>
-  );
+  )
 }
 
 describe('Toast', () => {
@@ -37,15 +39,15 @@ describe('Toast', () => {
         <TestComponent />
         <Toast />
       </ToastProvider>
-    );
+    )
 
-    const button = screen.getByText('Add Toast');
-    fireEvent.click(button);
+    const button = screen.getByText('Add Toast')
+    fireEvent.click(button)
 
     await waitFor(() => {
-      expect(screen.getByText('Test message')).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByText('Test message')).toBeInTheDocument()
+    })
+  })
 
   it('removes toast on click', async () => {
     render(
@@ -53,19 +55,19 @@ describe('Toast', () => {
         <TestComponent />
         <Toast />
       </ToastProvider>
-    );
+    )
 
-    const button = screen.getByText('Add Toast');
-    fireEvent.click(button);
-
-    await waitFor(() => {
-      expect(screen.getByText('Test message')).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByText('Test message'));
+    const button = screen.getByText('Add Toast')
+    fireEvent.click(button)
 
     await waitFor(() => {
-      expect(screen.queryByText('Test message')).not.toBeInTheDocument();
-    });
-  });
-});
+      expect(screen.getByText('Test message')).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByText('Test message'))
+
+    await waitFor(() => {
+      expect(screen.queryByText('Test message')).not.toBeInTheDocument()
+    })
+  })
+})

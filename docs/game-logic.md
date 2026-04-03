@@ -4,39 +4,40 @@
 
 ### Standard Rules (5-10 Players)
 
-| Total Players | Liberals | Fascists | Hitler | Notes |
-|--------------|----------|----------|--------|-------|
-| 5            | 3        | 2        | 1      | Most common |
-| 6            | 4        | 2        | 1      | - |
-| 7            | 4        | 3        | 1      | - |
-| 8            | 5        | 3        | 1      | - |
-| 9            | 5        | 4        | 1      | - |
-| 10           | 6        | 4        | 1      | Maximum |
+| Total Players | Liberals | Fascists | Hitler | Notes       |
+| ------------- | -------- | -------- | ------ | ----------- |
+| 5             | 3        | 2        | 1      | Most common |
+| 6             | 4        | 2        | 1      | -           |
+| 7             | 4        | 3        | 1      | -           |
+| 8             | 5        | 3        | 1      | -           |
+| 9             | 5        | 4        | 1      | -           |
+| 10            | 6        | 4        | 1      | Maximum     |
 
 ### Role Assignment Algorithm
 
 ```typescript
 function assignRoles(playerCount: number): Role[] {
-  const distribution = ROLE_DISTRIBUTION[playerCount];
+  const distribution = ROLE_DISTRIBUTION[playerCount]
   const roles: Role[] = [
     ...Array(distribution.liberals).fill('liberal'),
     ...Array(distribution.fascists - 1).fill('fascist'),
-    'hitler'
-  ];
-  
+    'hitler',
+  ]
+
   // Fisher-Yates shuffle
   for (let i = roles.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [roles[i], roles[j]] = [roles[j], roles[i]];
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[roles[i], roles[j]] = [roles[j], roles[i]]
   }
-  
-  return roles;
+
+  return roles
 }
 ```
 
 ### Re-shuffling on Reset
 
 When host resets the game:
+
 1. All roles are cleared (set to `null`)
 2. New random shuffle assigns fresh roles
 3. **Hitler can receive Hitler again** (fully random, no memory of previous rounds)
@@ -45,12 +46,12 @@ When host resets the game:
 
 ### Overview
 
-| Player Type | Sees Own Role | Sees Fellow Liberals | Sees Fascists | Sees Hitler |
-|-------------|---------------|----------------------|---------------|-------------|
-| Liberal     | ✓             | ✗                    | ✗             | ✗           |
-| Fascist     | ✓             | ✗                    | ✓             | ✓           |
-| Hitler (5-6p)| ✓            | ✗                    | ✓             | N/A         |
-| Hitler (7-10p)| ✓           | ✗                    | ✗             | N/A         |
+| Player Type    | Sees Own Role | Sees Fellow Liberals | Sees Fascists | Sees Hitler |
+| -------------- | ------------- | -------------------- | ------------- | ----------- |
+| Liberal        | ✓             | ✗                    | ✗             | ✗           |
+| Fascist        | ✓             | ✗                    | ✓             | ✓           |
+| Hitler (5-6p)  | ✓             | ✗                    | ✓             | N/A         |
+| Hitler (7-10p) | ✓             | ✗                    | ✗             | N/A         |
 
 ### Detailed Visibility Rules
 
@@ -73,12 +74,14 @@ When host resets the game:
 #### Hitler
 
 **5-6 Players:**
+
 - Know they are Hitler
 - Know who fascists are
 - Do NOT know who liberals are
 - **Rationale**: Standard rules; Hitler can coordinate with team
 
 **7-10 Players:**
+
 - Know they are Hitler
 - Do NOT know who fascists are
 - Do NOT know who liberals are
@@ -89,6 +92,7 @@ When host resets the game:
 ### When to Reset
 
 Host can reset the game at any time after initial start:
+
 - After a round ends
 - For a new game with the same players
 - Before everyone leaves
@@ -118,6 +122,7 @@ Host can reset the game at any time after initial start:
 ### Trigger Conditions
 
 Host transfer occurs when:
+
 1. Host explicitly leaves the room
 2. Host disconnects (detected via Firestore listener disconnect)
 
@@ -132,12 +137,14 @@ Host transfer occurs when:
 
 ```typescript
 async function transferHost(roomId: string, currentHostId: string) {
-  const playersRef = collection(db, 'rooms', roomId, 'players');
-  const playersSnap = await getDocs(query(playersRef, orderBy('joinedAt', 'asc')));
-  
+  const playersRef = collection(db, 'rooms', roomId, 'players')
+  const playersSnap = await getDocs(
+    query(playersRef, orderBy('joinedAt', 'asc'))
+  )
+
   if (!playersSnap.empty) {
-    const firstPlayer = playersSnap.docs[0];
-    await updateDoc(doc(db, 'rooms', roomId), { hostId: firstPlayer.id });
+    const firstPlayer = playersSnap.docs[0]
+    await updateDoc(doc(db, 'rooms', roomId), { hostId: firstPlayer.id })
   }
 }
 ```
@@ -244,12 +251,12 @@ For MVP, we implement:
 
 ### Display Timing
 
-| Behavior | Specification |
-|----------|---------------|
-| Initial display | Role card shows with fade-in animation (500ms) |
-| Auto-hide | After exactly 7 seconds |
-| Timer pause | Pauses while user is interacting |
-| Manual dismiss | Tap outside card to hide early |
+| Behavior         | Specification                                  |
+| ---------------- | ---------------------------------------------- |
+| Initial display  | Role card shows with fade-in animation (500ms) |
+| Auto-hide        | After exactly 7 seconds                        |
+| Timer pause      | Pauses while user is interacting               |
+| Manual dismiss   | Tap outside card to hide early                 |
 | Subsequent views | Each view shows for 7 seconds, then auto-hides |
 
 **Rationale**: Fixed 7-second timeout ensures everyone gets the same viewing time, making it obvious when all players receive their roles. This prevents confusion about game state.
@@ -257,6 +264,7 @@ For MVP, we implement:
 ### What Each Role Sees
 
 **Liberal:**
+
 ```
 ┌─────────────────────────┐
 │     YOU ARE A LIBERAL   │
@@ -270,6 +278,7 @@ For MVP, we implement:
 ```
 
 **Fascist (5-6p):**
+
 ```
 ┌─────────────────────────┐
 │    YOU ARE A FASCIST    │
@@ -284,6 +293,7 @@ For MVP, we implement:
 ```
 
 **Hitler (7-10p):**
+
 ```
 ┌─────────────────────────┐
 │      YOU ARE HITLER     │
@@ -303,52 +313,50 @@ For MVP, we implement:
 
 ```typescript
 function getVisiblePlayers(
-  player: Player, 
+  player: Player,
   allPlayers: Player[],
   room: Room
 ): Player[] {
   if (!player.role || player.role === 'liberal') {
-    return [];
+    return []
   }
-  
+
   if (player.role === 'fascist') {
-    return allPlayers.filter(p => 
-      p.role === 'fascist' || p.role === 'hitler'
-    );
+    return allPlayers.filter((p) => p.role === 'fascist' || p.role === 'hitler')
   }
-  
+
   if (player.role === 'hitler') {
     // Hitler sees fascists in 5-6 player games, but not in 7-10 player games
     if (room.playerCount <= 6) {
-      return allPlayers.filter(p => p.role === 'fascist');
+      return allPlayers.filter((p) => p.role === 'fascist')
     }
-    return [];
+    return []
   }
-  
-  return [];
+
+  return []
 }
 ```
 
 ## Constants
 
 ```typescript
-const MIN_PLAYERS = 5;
-const MAX_PLAYERS = 10;
-const HITLER_SEES_FASCISTS_THRESHOLD = 6;
+const MIN_PLAYERS = 5
+const MAX_PLAYERS = 10
+const HITLER_SEES_FASCISTS_THRESHOLD = 6
 
 const ROLE_DISTRIBUTION = {
-  5:  { liberals: 3, fascists: 2 },
-  6:  { liberals: 4, fascists: 2 },
-  7:  { liberals: 4, fascists: 3 },
-  8:  { liberals: 5, fascists: 3 },
-  9:  { liberals: 5, fascists: 4 },
+  5: { liberals: 3, fascists: 2 },
+  6: { liberals: 4, fascists: 2 },
+  7: { liberals: 4, fascists: 3 },
+  8: { liberals: 5, fascists: 3 },
+  9: { liberals: 5, fascists: 4 },
   10: { liberals: 6, fascists: 4 },
-} as const;
+} as const
 
-const ROOM_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-const ROOM_CODE_LENGTH = 6;
+const ROOM_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+const ROOM_CODE_LENGTH = 6
 
-const PLAYER_NAME_MAX_LENGTH = 20;
+const PLAYER_NAME_MAX_LENGTH = 20
 
-type Role = 'liberal' | 'fascist' | 'hitler';
+type Role = 'liberal' | 'fascist' | 'hitler'
 ```

@@ -1,13 +1,13 @@
 /**
  * firebase.ts
- * 
+ *
  * Firebase configuration and initialization.
  * Update with your Firebase project credentials.
  */
 
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
-import { getAuth, Auth } from 'firebase/auth';
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
+import { getFirestore, Firestore } from 'firebase/firestore'
+import { getAuth, Auth } from 'firebase/auth'
 
 // Firebase configuration from environment variables
 const firebaseConfig = {
@@ -18,22 +18,22 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
+}
 
 // Initialize Firebase App (prevent duplicate initialization)
-let app: FirebaseApp;
-let db: Firestore;
-let auth: Auth;
+let app: FirebaseApp
+let db: Firestore
+let auth: Auth
 
 if (typeof window !== 'undefined') {
   if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
+    app = initializeApp(firebaseConfig)
   } else {
-    app = getApps()[0];
+    app = getApps()[0]
   }
-  
-  db = getFirestore(app);
-  auth = getAuth(app);
+
+  db = getFirestore(app)
+  auth = getAuth(app)
 }
 
-export { db, auth };
+export { db, auth }
