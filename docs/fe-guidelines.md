@@ -2,7 +2,24 @@
 
 These rules apply when creating or modifying React components in this codebase.
 
-## 1. Decompose Layouts into Logical Sections
+## 1. File Naming Convention
+
+Use kebab-case for all component filenames with the `.tsx` extension.
+
+**Rules:**
+- Single word: `navbar.tsx` → `Navbar`
+- Two words: `user-profile.tsx` → `UserProfile`
+- Three+ words: `create-room-form.tsx` → `CreateRoomForm`
+
+**Examples:**
+
+| Component Name | Filename |
+|----------------|----------|
+| Navbar | `navbar.tsx` |
+| UserProfile | `user-profile.tsx` |
+| CreateRoomForm | `create-room-form.tsx` |
+
+## 2. Decompose Layouts into Logical Sections
 
 Every visual section of a layout MUST be its own component. Split based on the visual structure of the page — if a human
 would describe the UI as having distinct areas, each area is a separate component.
@@ -61,7 +78,7 @@ function MemberSidebar() {
 **When to stop splitting**: A component that renders a single cohesive piece of UI (one card, one form field, one list)
 does NOT need further splitting. Split sections, not atoms.
 
-## 2. Colocate Hooks with the Components That Use Their Data
+## 3. Colocate Hooks with the Components That Use Their Data
 
 Place data-fetching hooks and stateful hooks in the **lowest component** that actually needs the data. Never hoist data
 fetching to a parent just to pass it down.
@@ -145,7 +162,7 @@ function MemberList() {
 **Exception**: When multiple sibling components genuinely need the same data from a single query, fetch in the parent
 and pass down — but this should be the exception, not the default.
 
-## 3. Conditional Rendering: Always Use Ternary with `null`
+## 4. Conditional Rendering: Always Use Ternary with `null`
 
 When conditionally rendering UI, ALWAYS use the ternary operator with `null` as the falsy branch. The false branch MUST
 be `null` — never another component, never `undefined`, never an empty fragment.
