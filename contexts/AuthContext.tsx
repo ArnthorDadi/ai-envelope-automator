@@ -1,36 +1,18 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { onAuthStateChanged, signInAnonymously, signOut as firebaseSignOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { AuthState, UserData } from '@/types';
+import { db, AuthService } from '@/lib/db';
+import { UserData } from '@/lib/auth';
 import { useToast } from './ToastContext';
 
+interface AuthState {
+  user: UserData | null;
+  loading: boolean;
+  signIn: (name: string) => Promise<void>;
+  signOut: () => Promise<void>;
+}
+
 export const AuthContext = createContext<AuthState | null>(null);
-
-const STORAGE_KEY = 'secret-hitler-user';
-
-function getStoredUser(): UserData | null {
-  if (typeof window === 'undefined') return null;
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch {
-      return null;
-    }
-  }
-  return null;
-}
-
-function setStoredUser(user: UserData | null): void {
-  if (typeof window === 'undefined') return;
-  if (user) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-  } else {
-    localStorage.removeItem(STORAGE_KEY);
-  }
-}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null);
@@ -38,20 +20,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { addToast } = useToast();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      const stored = getStoredUser();
-      if (stored && firebaseUser) {
-        const updatedUser = { ...stored, uid: firebaseUser.uid };
-        setUser(updatedUser);
-        setStoredUser(updatedUser);
-      } else if (firebaseUser) {
-        const userData = { uid: firebaseUser.uid, name: 'Anonymous', createdAt: new Date() };
-        setUser(userData);
-        setStoredUser(userData);
-      } else {
-        setUser(null);
-        setStoredUser(null);
-      }
+    setLoading(true);
+    const unsubscribe = db.user.onAuthChange((userData) => {
+      setUser(userData);
       setLoading(false);
     });
 
@@ -61,10 +32,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (name: string) => {
     try {
       setLoading(true);
-      const result = await signInAnonymously(auth);
-      const userData = { uid: result.user.uid, name, createdAt: new Date() };
+      const userData = await db.user.signIn({ name });
       setUser(userData);
-      setStoredUser(userData);
       addToast(`Welcome, ${name}!`, 'success');
     } catch (error) {
       addToast('Login failed, please try again', 'error');
@@ -76,9 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
-      await firebaseSignOut(auth);
+      await db.user.signOut();
       setUser(null);
-      setStoredUser(null);
     } catch (error) {
       addToast('Logout failed, please try again', 'error');
       throw error;

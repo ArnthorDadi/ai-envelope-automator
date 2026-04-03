@@ -11,8 +11,24 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
+vi.mock('@/lib/firebase', () => ({
+  app: {},
+}));
+
+vi.mock('@/lib/db', () => ({
+  db: {
+    user: {
+      onAuthChange: vi.fn(),
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      getStoredUser: vi.fn(),
+      setStoredUser: vi.fn(),
+    },
+  },
+}));
+
 describe('Navbar', () => {
-  const renderWithAuth = (user: { name: string } | null, loading = false) => {
+  const renderWithAuth = (user: { name: string; uid: string } | null, loading = false) => {
     return render(
       <ToastProvider>
         <AuthContext.Provider value={{ user, loading, signIn: vi.fn(), signOut: vi.fn() } as any}>
@@ -28,7 +44,7 @@ describe('Navbar', () => {
   });
 
   it('shows username and Logout button when authenticated', () => {
-    renderWithAuth({ name: 'TestUser' });
+    renderWithAuth({ name: 'TestUser', uid: 'test-123' });
     expect(screen.getByText('TestUser')).toBeInTheDocument();
     expect(screen.getByText('Logout')).toBeInTheDocument();
   });

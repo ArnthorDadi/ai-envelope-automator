@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/contexts/ToastContext';
-import { db } from '@/lib/firebase';
-import { createRoom } from '@/lib/rooms';
+import { db } from '@/lib/db';
 
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
@@ -21,8 +20,7 @@ export default function Home() {
 
     setCreating(true);
     try {
-      const { roomId } = await createRoom({
-        db,
+      const { roomId } = await db.rooms.createRoom({
         hostId: user.uid,
         hostName: user.name,
       });
