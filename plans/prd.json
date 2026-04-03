@@ -166,7 +166,23 @@
         "Player leaving triggers toast notification",
         "List updates in real-time without refresh"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": [
+          "app/room/[roomId]/page.tsx",
+          "hooks/room/use-room.ts",
+          "hooks/room/use-players.ts",
+          "hooks/room/index.ts",
+          "components/room/lobby.tsx",
+          "components/room/player-list.tsx",
+          "components/room/share-button.tsx",
+          "components/room/leave-room-button.tsx",
+          "components/room/start-game-button.tsx",
+          "components/room/index.ts",
+          "lib/rooms.ts"
+        ],
+        "tests": ["components/room/player-list.test.tsx", "tests/rooms.test.ts"]
+      }
     },
     {
       "id": "F4-FUNC",
@@ -186,7 +202,16 @@
         "No memory leaks from orphaned listeners",
         "Initial loading state shown while subscribing"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": [
+          "hooks/room/use-room.ts",
+          "hooks/room/use-players.ts",
+          "hooks/room/index.ts",
+          "lib/rooms.ts"
+        ],
+        "tests": ["tests/rooms.test.ts"]
+      }
     },
     {
       "id": "F5-UI",
@@ -206,7 +231,14 @@
         "Reset/Quit buttons only visible to host",
         "Confirmation dialog appears before destructive actions"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": [
+          "components/room/lobby.tsx",
+          "components/room/start-game-button.tsx",
+          "components/room/leave-room-button.tsx"
+        ]
+      }
     },
     {
       "id": "F5-FUNC",
@@ -227,7 +259,11 @@
         "Room status changes to 'started'",
         "All connected clients see role cards after game starts"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": ["lib/rooms.ts", "components/room/start-game-button.tsx"],
+        "tests": ["tests/rooms.test.ts"]
+      }
     },
     {
       "id": "F6-FUNC",
@@ -444,7 +480,10 @@
         "Mobile: native share sheet appears",
         "Shared link opens correct room"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": ["components/room/share-button.tsx"]
+      }
     },
     {
       "id": "F13-FUNC",
@@ -461,7 +500,10 @@
         "Web Share API used on supported devices",
         "Graceful fallback when clipboard unavailable"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": ["components/room/share-button.tsx"]
+      }
     },
     {
       "id": "F14-FUNC",
@@ -481,7 +523,11 @@
         "If host left: host transfer occurs",
         "Player redirected to home page"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": ["lib/rooms.ts", "components/room/leave-room-button.tsx"],
+        "tests": ["tests/rooms.test.ts"]
+      }
     },
     {
       "id": "F15-UI",

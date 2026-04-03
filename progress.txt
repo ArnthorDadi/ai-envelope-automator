@@ -55,3 +55,54 @@
 
 - F4-UI/F4-FUNC: Lobby Display (depends on F3-FUNC)
 - F4-FUNC: Real-time Subscription (depends on F3-FUNC)
+
+## Session 4: April 3, 2026
+
+### Completed: F4-UI/F4-FUNC (Lobby Display & Real-time Subscription)
+
+- Created useRoom hook for real-time room data subscription (hooks/room/use-room.ts)
+- Created usePlayers hook for real-time players subscription (hooks/room/use-players.ts)
+- Created PlayerList component with host badge and player count (components/room/player-list.tsx)
+- Created Lobby component with host/non-host views (components/room/lobby.tsx)
+- Created ShareButton component with clipboard and Web Share API support (components/room/share-button.tsx)
+- Created LeaveRoomButton component (components/room/leave-room-button.tsx)
+- Created StartGameButton component (components/room/start-game-button.tsx)
+- Created room page at /room/[roomId] (app/room/[roomId]/page.tsx)
+- Added leaveRoom function to RoomsService (lib/rooms.ts)
+- Added startGame function with role assignment to RoomsService (lib/rooms.ts)
+- Implemented Fisher-Yates shuffle for role distribution
+- Added role distribution tests (5-10 players)
+- Added tests for PlayerList component
+- All new tests pass
+- TypeScript compiles without errors
+- Note: Pre-existing failures in join-room-form.test.tsx (outdated tests for name input)
+
+### Completed: F5-UI/F5-FUNC (Host Controls & Start Game)
+
+- Start Game button visible only to host
+- Start Game disabled when fewer than 5 players
+- "Need X more players" message shown to host when under minimum
+- "Waiting for host to start..." shown to non-hosts
+- Leave Room button available to all players
+- Role assignment logic integrated in startGame function
+
+### Completed: F13-UI/F13-FUNC (Share Button)
+
+- Share button in room header
+- Copy to clipboard with fallback
+- Web Share API support on mobile
+- Toast notification on copy success
+
+### Completed: F14-FUNC (Leave Room)
+
+- leaveRoom function sets leftAt timestamp on player document
+- Player document NOT deleted (audit trail)
+- PlayerCount NOT decremented (race condition prevention)
+- Redirect to home page after leaving
+
+### Next Session
+
+- F6-FUNC: Host Transfer (when host leaves)
+- F7-FUNC: Role Assignment (role reveal card UI)
+- F8-UI: Role Reveal Card
+- F9-UI/F9-FUNC: Visible Players Display
