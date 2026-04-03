@@ -4,13 +4,6 @@ export interface UserData {
   createdAt: Date;
 }
 
-export interface AuthState {
-  user: UserData | null;
-  loading: boolean;
-  signIn: (name: string) => Promise<void>;
-  signOut: () => Promise<void>;
-}
-
 export interface Toast {
   id: string;
   message: string;

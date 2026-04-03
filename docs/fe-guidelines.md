@@ -235,3 +235,70 @@ function MySection() {
 | `{condition ? <A /> : <B />}` | NO |
 | `{condition ? <UI /> : undefined}` | NO |
 | `{condition ? <UI /> : <></>}` | NO |
+
+## 5. Folder Structure
+
+Group related components into feature-based folders. Each folder should contain components
+that belong to the same feature or page.
+
+**Rules:**
+- Use lowercase folder names matching the feature/page (e.g., `login/`, `home/`, `auth/`)
+- Export components via `index.ts` barrel files for cleaner imports
+- Keep shared/reusable components in a `shared/` folder
+- Keep layout components (Navbar, Providers, Logo) in a `layout/` folder
+
+**Current structure:**
+
+```
+components/
+├── auth/           # Auth-related components (UserSection, LogoutButton, AuthPrompt)
+│   ├── index.ts
+│   └── *.tsx
+├── home/           # Home page components (CreateRoomButton, HeroSection)
+│   ├── index.ts
+│   └── *.tsx
+├── login/          # Login page components (LoginForm, LoginButton, BackButton)
+│   ├── index.ts
+│   └── *.tsx
+├── layout/         # Layout components (Navbar, Logo, Providers)
+│   ├── index.ts
+│   └── *.tsx
+└── shared/         # Shared components (Spinner, Toast)
+    ├── index.ts
+    └── *.tsx
+```
+
+**Barrel file pattern (login/index.ts):**
+
+```tsx
+export { LoginButton } from './login-button';
+export { LoginForm } from './login-form';
+export { BackButton } from './back-button';
+```
+
+**Import from barrel:**
+
+```tsx
+import { LoginButton, LoginForm } from '@/components/login';
+```
+
+## 6. Test Co-location
+
+Place test files in the same directory as the components they test. This keeps tests
+close to the code they verify and makes them easier to find.
+
+**Rules:**
+- Test file naming: `<component-name>.test.tsx` in the same folder as `<component-name>.tsx`
+- Use relative imports in tests to avoid barrel file issues: `import { Component } from './component'`
+
+**Example:**
+
+```
+components/
+├── login/
+│   ├── login-form.tsx
+│   ├── login-form.test.tsx    # Co-located test
+│   ├── login-button.tsx
+│   ├── login-button.test.tsx  # Co-located test
+│   └── index.ts
+```

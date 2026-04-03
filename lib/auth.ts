@@ -1,11 +1,6 @@
 import { FirebaseApp } from 'firebase/app';
 import { Auth, onAuthStateChanged, signInAnonymously, signOut as firebaseSignOut } from 'firebase/auth';
-
-export interface UserData {
-  uid: string;
-  name: string;
-  createdAt: Date;
-}
+import type { UserData } from '@/types';
 
 export interface SignInOptions {
   name: string;
