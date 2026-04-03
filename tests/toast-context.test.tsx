@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import { ToastProvider, useToast } from '@/contexts/ToastContext';
+import { ToastProvider, useToast } from '@/contexts/toast-context';
 import { useState } from 'react';
 
 function TestComponent() {

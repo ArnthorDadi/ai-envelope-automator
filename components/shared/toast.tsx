@@ -1,6 +1,13 @@
 'use client';
 
-import { useToast } from '@/contexts/ToastContext';
+import { useToast } from '@/contexts/toast-context';
+import type { Toast as ToastType } from '@/types';
+
+const typeClasses: Record<ToastType['type'], string> = {
+  error: 'bg-red-500',
+  success: 'bg-green-500',
+  info: 'bg-gray-700',
+};
 
 export function Toast() {
   const { toasts, removeToast } = useToast();
@@ -10,11 +17,7 @@ export function Toast() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`px-4 py-2 rounded-lg shadow-lg text-white animate-slide-in ${
-            toast.type === 'error' ? 'bg-red-500' :
-            toast.type === 'success' ? 'bg-green-500' :
-            'bg-gray-700'
-          }`}
+          className={`px-4 py-2 rounded-lg shadow-lg text-white animate-slide-in ${typeClasses[toast.type]}`}
           onClick={() => removeToast(toast.id)}
         >
           {toast.message}

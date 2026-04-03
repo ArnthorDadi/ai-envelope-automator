@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { db, AuthService } from '@/lib/db';
-import { UserData } from '@/lib/auth';
-import { useToast } from './ToastContext';
+import { UserData } from '@/types';
+import { useToast } from './toast-context';
 
 interface AuthState {
   user: UserData | null;

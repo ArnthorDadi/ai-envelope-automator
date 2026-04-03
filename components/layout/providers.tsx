@@ -1,9 +1,9 @@
 'use client';
 
-import { ToastProvider } from '@/contexts/ToastContext';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { Toast } from '@/components/Toast';
-import { Navbar } from '@/components/Navbar';
+import { ToastProvider } from '@/contexts/toast-context';
+import { AuthProvider } from '@/contexts/auth-context';
+import { Navbar } from '@/components/layout';
+import { Toast } from '@/components/shared';
 import { ReactNode } from 'react';
 
 export function Providers({ children }: { children: ReactNode }) {
