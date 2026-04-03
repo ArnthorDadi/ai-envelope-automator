@@ -8,39 +8,53 @@ These rules apply when creating or modifying backend service classes in `/lib`. 
 
 ```
 lib/
-├── db.ts           # Main Db class with static service singletons
-├── firebase.ts     # Firebase initialization (singleton)
-├── {service}.ts   # One file per service (e.g., auth.ts, rooms.ts)
+├── firebase.ts     # Firebase initialization (exports app only)
+├── db.ts           # Db class + singleton export
+├── auth.ts         # AuthService interface + AuthServiceImpl
+├── rooms.ts        # RoomsService interface + RoomsServiceImpl
 └── utils.ts        # Shared utilities
 ```
 
-### Pattern: Db Class with Static Services
+### Pattern: Db Class with Service Instances
 
-All backend services are exposed through a single `Db` class with static singleton instances. This ensures services share the same database connection while keeping the API clean for consumers.
+A single `Db` class initializes Firebase and holds all service instances. The singleton export `db` is used throughout the application.
 
 ```typescript
 // lib/db.ts
-import { getDatabase } from 'firebase/database';
+import { FirebaseApp } from 'firebase/app';
+import { getDatabase, Database } from 'firebase/database';
+import { getAuth, Auth } from 'firebase/auth';
 import { app } from './firebase';
+import { AuthService, AuthServiceImpl } from './auth';
+import { RoomsService, RoomsServiceImpl } from './rooms';
 
 class Db {
-  private static db = getDatabase(app);
+  readonly db: Database;
+  readonly auth: Auth;
+  readonly rooms: RoomsService;
+  readonly user: AuthService;
 
-  static auth = new AuthService(Db.db);
-  static rooms = new RoomsService(Db.db);
+  constructor(firebaseApp: FirebaseApp) {
+    this.db = getDatabase(firebaseApp);
+    this.auth = getAuth(firebaseApp);
+    this.rooms = new RoomsServiceImpl(this.db);
+    this.user = new AuthServiceImpl(firebaseApp, this.auth);
+  }
 }
 
-export { Db };
+const db = new Db(app);
+
+export { db, Db };
 ```
 
 ### Service Class Structure
 
 Each service class:
-- Is a plain class (not a singleton itself)
+- Is a plain class implementing a corresponding interface
 - Receives required dependencies via constructor
 - All public methods return `Promise<T>`
 - Public methods throw on error — consumers are responsible for error handling
-- Type definitions exist for inputs; outputs are inferred or explicitly typed at the return statement
+- Input/output types are defined in interfaces
 
 ### Generic Service Template
 
@@ -53,7 +67,7 @@ export interface {Service}Options {
 }
 
 export interface {Service} {
-  methodName(options: {Service}Options): Promise</* inferred */>;
+  methodName(options: {Service}Options): Promise<ReturnType>;
 }
 
 export class {Service}Impl implements {Service} {
@@ -61,7 +75,6 @@ export class {Service}Impl implements {Service} {
 
   async methodName(options: {Service}Options) {
     // implementation
-    return result as /* inferred type */;
   }
 }
 ```
@@ -69,10 +82,11 @@ export class {Service}Impl implements {Service} {
 ### Usage Pattern
 
 ```typescript
-import { Db } from '@/lib/db';
+import { db } from '@/lib/db';
 
-// All services accessed via Db.*
-const result = await Db.{service}.methodName({ /* options */ });
+// All services accessed via db.*
+const result = await db.rooms.createRoom({ hostId, hostName });
+await db.user.signIn({ name });
 ```
 
 ## Rules Summary
@@ -80,18 +94,19 @@ const result = await Db.{service}.methodName({ /* options */ });
 | Rule | Description |
 |------|-------------|
 | Location | Backend services live in `/lib` |
-| Entry point | All services accessed via `Db.*` (e.g., `Db.auth`, `Db.rooms`) |
-| Db class | Creates and owns the Firebase database instance; passes it to services |
+| Entry point | Import `db` from `@/lib/db` (singleton) |
+| Db class | Initializes Firebase, creates service instances |
+| Firebase | Only `app` exported from `firebase.ts` |
 | Return types | All public methods return `Promise<T>` |
 | Error handling | Methods throw on failure; consumers handle errors |
 | Type inputs | Interfaces for all input types (e.g., `{Service}Options`) |
-| Return types | All public methods return `Promise`; output type is inferred or cast with `as` at return |
 | Implementation hiding | Consumers never import Firebase modules directly |
 
 ## Adding New Services
 
 1. Create `lib/{service}.ts` with `{Service}Options`, `{Service}` interface, and `{Service}Impl` class
 2. Add constructor that accepts required dependencies (e.g., `Database`)
-3. Add static singleton to `lib/db.ts`: `static {service} = new {Service}Impl(Db.db)`
-4. Export from `lib/db.ts`
-5. Use via `Db.{service}.methodName()`
+3. Add property to `Db` class: `readonly {service}: {Service}`
+4. Initialize in constructor: `this.{service} = new {Service}Impl(...)`
+5. Export from `lib/db.ts`
+6. Use via `db.{service}.methodName()`
