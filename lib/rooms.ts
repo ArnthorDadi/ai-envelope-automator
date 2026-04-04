@@ -66,6 +66,12 @@ export interface RoomsService {
   joinRoom(roomId: string, options: JoinRoomOptions): Promise<JoinRoomResult>
   leaveRoom(roomId: string, playerId: string): Promise<void>
   startGame(roomId: string, playerId: string): Promise<void>
+  transferHost(roomId: string, leavingHostId: string): Promise<string | null>
+  transferHostTo(
+    roomId: string,
+    currentHostId: string,
+    targetPlayerId: string
+  ): Promise<void>
   subscribeToRoom(
     roomId: string,
     callback: (room: Room | null) => void
@@ -164,10 +170,76 @@ export class RoomsServiceImpl implements RoomsService {
   }
 
   async leaveRoom(roomId: string, playerId: string): Promise<void> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
     const playerRef = ref(this.db, `rooms/${roomId}/players/${playerId}`)
+
+    const roomSnapshot = await get(roomRef)
+    const room = roomSnapshot.val()
+    const isHost = room?.hostId === playerId
+
     await update(playerRef, {
       leftAt: Date.now(),
     })
+
+    if (isHost) {
+      await this.transferHost(roomId, playerId)
+    }
+  }
+
+  async transferHost(
+    roomId: string,
+    leavingHostId: string
+  ): Promise<string | null> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
+    const playersRef = ref(this.db, `rooms/${roomId}/players`)
+
+    const roomSnapshot = await get(roomRef)
+    const room = roomSnapshot.val()
+
+    if (!room || room.hostId !== leavingHostId) {
+      return null
+    }
+
+    const playersSnapshot = await get(playersRef)
+    const playersData = playersSnapshot.val()
+    if (!playersData) return null
+
+    const allPlayers = Object.values(playersData) as Player[]
+    const players = allPlayers
+      .filter((p) => !p.leftAt)
+      .sort((a, b) => a.joinedAt - b.joinedAt)
+
+    if (players.length === 0) return null
+
+    const newHost = players[0]
+    await update(roomRef, { hostId: newHost.id })
+
+    return newHost.id
+  }
+
+  async transferHostTo(
+    roomId: string,
+    currentHostId: string,
+    targetPlayerId: string
+  ): Promise<void> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
+
+    const roomSnapshot = await get(roomRef)
+    const room = roomSnapshot.val()
+
+    if (!room) {
+      throw new Error('Room not found')
+    }
+
+    if (room.hostId !== currentHostId) {
+      throw new Error('Only the host can transfer host')
+    }
+
+    if (currentHostId === targetPlayerId) {
+      throw new Error('Cannot transfer host to yourself')
+    }
+
+    await update(roomRef, { hostId: targetPlayerId })
   }
 
   async startGame(roomId: string, playerId: string): Promise<void> {

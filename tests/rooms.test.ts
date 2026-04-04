@@ -417,4 +417,83 @@ describe('RoomsServiceImpl', () => {
       expect(input).toEqual(original)
     })
   })
+
+  describe('transferHost', () => {
+    it('returns null when room not found', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any).mockResolvedValue({ val: () => null })
+
+      const result = await service.transferHost('ABCDEF', 'host-1')
+      expect(result).toBeNull()
+    })
+
+    it('returns null when caller is not current host', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any).mockResolvedValue({
+        val: () => ({ hostId: 'host-1', status: 'lobby' }),
+      })
+
+      const result = await service.transferHost('ABCDEF', 'other-user')
+      expect(result).toBeNull()
+    })
+
+    it('transfers host to first active player', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({ hostId: 'host-1', status: 'lobby' }),
+        })
+        .mockResolvedValueOnce({
+          val: () => ({
+            'host-1': { id: 'host-1', name: 'Host', leftAt: Date.now() },
+            'player-2': { id: 'player-2', name: 'Player 2', joinedAt: 1000 },
+          }),
+        })
+      ;(update as any).mockResolvedValue(undefined)
+
+      const result = await service.transferHost('ABCDEF', 'host-1')
+      expect(result).toBe('player-2')
+      expect(update).toHaveBeenCalledWith({}, { hostId: 'player-2' })
+    })
+
+    it('returns null when no active players', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({ hostId: 'host-1', status: 'lobby' }),
+        })
+        .mockResolvedValueOnce({
+          val: () => ({
+            'host-1': { id: 'host-1', name: 'Host', leftAt: Date.now() },
+          }),
+        })
+
+      const result = await service.transferHost('ABCDEF', 'host-1')
+      expect(result).toBeNull()
+    })
+
+    it('selects player with earliest joinedAt', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({ hostId: 'host-1', status: 'lobby' }),
+        })
+        .mockResolvedValueOnce({
+          val: () => ({
+            'host-1': { id: 'host-1', name: 'Host', leftAt: Date.now() },
+            'player-2': { id: 'player-2', name: 'Player 2', joinedAt: 3000 },
+            'player-3': { id: 'player-3', name: 'Player 3', joinedAt: 1000 },
+          }),
+        })
+      ;(update as any).mockResolvedValue(undefined)
+
+      const result = await service.transferHost('ABCDEF', 'host-1')
+      expect(result).toBe('player-3')
+    })
+  })
 })
