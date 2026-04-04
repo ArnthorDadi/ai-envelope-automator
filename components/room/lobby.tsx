@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Room, Player } from '@/lib/rooms'
 import { useToast } from '@/contexts/toast-context'
 import { useAuth } from '@/contexts/auth-context'
 import { PlayerList } from './player-list'
+import { PlayerMenu } from './player-menu'
 import { ShareButton } from './share-button'
 import { LeaveRoomButton } from './leave-room-button'
 import { StartGameButton } from './start-game-button'
@@ -19,7 +20,11 @@ export function Lobby({ room, players }: LobbyProps) {
   const { user } = useAuth()
   const { addToast } = useToast()
   const previousPlayersRef = useRef<Player[]>([])
+  const previousHostIdRef = useRef<string | null>(null)
   const isHost = user?.uid === room.hostId
+  const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null)
+
+  const openPlayer = players.find((p) => p.id === menuOpenFor) || null
 
   useEffect(() => {
     const previousPlayers = previousPlayersRef.current
@@ -42,6 +47,19 @@ export function Lobby({ room, players }: LobbyProps) {
     previousPlayersRef.current = players
   }, [players, user, addToast])
 
+  useEffect(() => {
+    const previousHostId = previousHostIdRef.current
+
+    if (previousHostId && previousHostId !== room.hostId) {
+      const newHost = players.find((p) => p.id === room.hostId)
+      if (newHost) {
+        addToast(`${newHost.name} is now the host`, 'info')
+      }
+    }
+
+    previousHostIdRef.current = room.hostId
+  }, [room.hostId, players, addToast])
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-md p-4">
       <div className="flex items-center justify-between">
@@ -53,7 +71,18 @@ export function Lobby({ room, players }: LobbyProps) {
         players={players}
         hostId={room.hostId}
         currentUserId={user?.uid || null}
+        isHost={isHost}
+        onMenuOpen={setMenuOpenFor}
       />
+
+      {menuOpenFor && openPlayer && (
+        <PlayerMenu
+          player={openPlayer}
+          roomId={room.id}
+          currentHostId={room.hostId}
+          onClose={() => setMenuOpenFor(null)}
+        />
+      )}
 
       <div className="flex flex-col gap-3">
         {isHost ? (
