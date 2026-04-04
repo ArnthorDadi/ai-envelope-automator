@@ -283,7 +283,11 @@
         "New host immediately sees host-only controls",
         "Old host (if still in room) no longer sees host controls"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": ["lib/rooms.ts", "components/room/lobby.tsx"],
+        "tests": ["tests/rooms.test.ts"]
+      }
     },
     {
       "id": "F7-FUNC",
