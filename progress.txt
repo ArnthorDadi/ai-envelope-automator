@@ -120,3 +120,26 @@
 - F7-FUNC: Role Assignment (role reveal card UI)
 - F8-UI: Role Reveal Card
 - F9-UI/F9-FUNC: Visible Players Display
+
+## Session 6: April 4, 2026
+
+### Completed: F7-FUNC (Role Assignment)
+
+- Role assignment logic was already implemented in startGame() (lib/rooms.ts:274-292)
+- getRoleDistribution method handles all player counts (5-10)
+- Fisher-Yates shuffle for random role assignment
+- Batch write to Firestore assigns roles to all players atomically
+- Added new tests for role assignment verification:
+  - Verifies exactly one Hitler assigned for all player counts
+  - Verifies correct total number of roles assigned
+  - Verifies room status updated to 'started'
+  - Verifies roles assigned to correct player paths
+  - Verifies shuffle produces different results (no predictable patterns)
+- All 47 tests pass in rooms.test.ts
+- TypeScript compiles without errors
+
+### Next Session
+
+- F8-UI: Role Reveal Card (depends on F7-FUNC ✓)
+- F9-UI/F9-FUNC: Visible Players Display
+- F10-FUNC: Game Reset Logic

@@ -308,7 +308,11 @@
         "Roles randomly distributed (no predictable patterns)",
         "All clients receive role assignments simultaneously"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": ["lib/rooms.ts"],
+        "tests": ["tests/rooms.test.ts"]
+      }
     },
     {
       "id": "F8-UI",
