@@ -416,6 +416,131 @@ describe('RoomsServiceImpl', () => {
       ;(service as any).fisherYatesShuffle(input)
       expect(input).toEqual(original)
     })
+
+    it('produces different results across multiple shuffles', () => {
+      const input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      const results = new Set<string>()
+      for (let i = 0; i < 20; i++) {
+        const shuffled = (service as any).fisherYatesShuffle([...input])
+        results.add(shuffled.join(','))
+      }
+      expect(results.size).toBeGreaterThan(1)
+    })
+  })
+
+  describe('role assignment verification', () => {
+    const createPlayers = (count: number): Record<string, Player> => {
+      const players: Record<string, Player> = {}
+      for (let i = 0; i < count; i++) {
+        players[`user-${i}`] = {
+          id: `user-${i}`,
+          name: `Player ${i}`,
+          role: null,
+          joinedAt: i * 1000,
+          leftAt: null,
+        }
+      }
+      return players
+    }
+
+    it('assigns exactly one Hitler for all player counts', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(update as any).mockResolvedValue(undefined)
+
+      for (let count = 5; count <= 10; count++) {
+        ;(get as any)
+          .mockResolvedValueOnce({
+            val: () => ({ hostId: 'user-0', status: 'lobby' }),
+          })
+          .mockResolvedValueOnce({
+            val: () => createPlayers(count),
+          })
+
+        await service.startGame('ABCDEF', 'user-0')
+
+        const updateCall = (update as any).mock.calls.at(-1)
+        const updates = updateCall[1] as Record<string, unknown>
+        const assignedRoles = Object.values(updates).filter(
+          (v: unknown) =>
+            typeof v === 'string' &&
+            ['liberal', 'fascist', 'hitler'].includes(v)
+        )
+        const hitlerCount = assignedRoles.filter((r) => r === 'hitler').length
+        expect(hitlerCount).toBe(1)
+      }
+    })
+
+    it('assigns correct total number of roles', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(update as any).mockResolvedValue(undefined)
+
+      for (let count = 5; count <= 10; count++) {
+        ;(get as any)
+          .mockResolvedValueOnce({
+            val: () => ({ hostId: 'user-0', status: 'lobby' }),
+          })
+          .mockResolvedValueOnce({
+            val: () => createPlayers(count),
+          })
+
+        await service.startGame('ABCDEF', 'user-0')
+
+        const updateCall = (update as any).mock.calls.at(-1)
+        const updates = updateCall[1] as Record<string, unknown>
+        const assignedRoles = Object.values(updates).filter(
+          (v: unknown) =>
+            typeof v === 'string' &&
+            ['liberal', 'fascist', 'hitler'].includes(v)
+        )
+        expect(assignedRoles.length).toBe(count)
+      }
+    })
+
+    it('updates room status to started', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({ hostId: 'user-0', status: 'lobby' }),
+        })
+        .mockResolvedValueOnce({
+          val: () => createPlayers(5),
+        })
+      ;(update as any).mockResolvedValue(undefined)
+
+      await service.startGame('ABCDEF', 'user-0')
+
+      const updateCall = (update as any).mock.calls.at(-1)
+      const updates = updateCall[1]
+      expect(updates.status).toBe('started')
+    })
+
+    it('assigns roles to correct player paths', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({ hostId: 'user-0', status: 'lobby' }),
+        })
+        .mockResolvedValueOnce({
+          val: () => createPlayers(5),
+        })
+      ;(update as any).mockResolvedValue(undefined)
+
+      await service.startGame('ABCDEF', 'user-0')
+
+      const updateCall = (update as any).mock.calls.at(-1)
+      const updates = updateCall[1]
+
+      for (let i = 0; i < 5; i++) {
+        expect(updates[`rooms/ABCDEF/players/user-${i}/role`]).toBeDefined()
+        expect(['liberal', 'fascist', 'hitler']).toContain(
+          updates[`rooms/ABCDEF/players/user-${i}/role`]
+        )
+      }
+    })
   })
 
   describe('transferHost', () => {
