@@ -9,6 +9,49 @@ import {
 } from 'firebase/database'
 import { generateRoomCode, isValidRoomCode, GAME_CONSTANTS } from './utils'
 
+export type Role = 'liberal' | 'fascist' | 'hitler' | null
+
+export interface VisibleAlly {
+  id: string
+  name: string
+  role: Role
+}
+
+export function getVisibleAllies(
+  myRole: Role,
+  otherPlayers: Player[],
+  playerCount: number
+): VisibleAlly[] {
+  if (!myRole || myRole === 'liberal') {
+    return []
+  }
+
+  if (myRole === 'hitler') {
+    if (playerCount <= GAME_CONSTANTS.HITLER_SEES_FASCISTS_THRESHOLD) {
+      return otherPlayers
+        .filter((p) => p.role === 'fascist')
+        .map((p) => ({ id: p.id, name: p.name, role: p.role }))
+    }
+    return []
+  }
+
+  if (myRole === 'fascist') {
+    const allies: VisibleAlly[] = []
+
+    otherPlayers.forEach((p) => {
+      if (p.role === 'fascist') {
+        allies.push({ id: p.id, name: p.name, role: p.role })
+      } else if (p.role === 'hitler') {
+        allies.push({ id: p.id, name: p.name, role: p.role })
+      }
+    })
+
+    return allies
+  }
+
+  return []
+}
+
 export interface Room {
   id: string
   hostId: string
@@ -79,6 +122,11 @@ export interface RoomsService {
   subscribeToPlayers(
     roomId: string,
     callback: (players: Player[]) => void
+  ): () => void
+  subscribeToPlayer(
+    roomId: string,
+    playerId: string,
+    callback: (player: Player | null) => void
   ): () => void
 }
 
@@ -285,8 +333,7 @@ export class RoomsServiceImpl implements RoomsService {
     }
 
     shuffledPlayers.forEach((player, index) => {
-      updates[`rooms/${roomId}/players/${player.id}/role`] =
-        shuffledRoles[index]
+      updates[`players/${player.id}/role`] = shuffledRoles[index]
     })
 
     await update(roomRef, updates)
@@ -348,5 +395,19 @@ export class RoomsServiceImpl implements RoomsService {
     })
 
     return () => off(playersRef)
+  }
+
+  subscribeToPlayer(
+    roomId: string,
+    playerId: string,
+    callback: (player: Player | null) => void
+  ): () => void {
+    const playerRef = ref(this.db, `rooms/${roomId}/players/${playerId}`)
+
+    const unsubscribe = onValue(playerRef, (snapshot) => {
+      callback(snapshot.val())
+    })
+
+    return () => off(playerRef)
   }
 }

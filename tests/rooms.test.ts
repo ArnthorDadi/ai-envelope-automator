@@ -5,7 +5,13 @@ import {
   normalizeRoomCode,
   GAME_CONSTANTS,
 } from '@/lib/utils'
-import { RoomsServiceImpl, Room, Player, JoinRoomError } from '@/lib/rooms'
+import {
+  RoomsServiceImpl,
+  Room,
+  Player,
+  JoinRoomError,
+  getVisibleAllies,
+} from '@/lib/rooms'
 
 vi.mock('firebase/database', () => ({
   ref: vi.fn(() => ({})),
@@ -620,5 +626,59 @@ describe('RoomsServiceImpl', () => {
       const result = await service.transferHost('ABCDEF', 'host-1')
       expect(result).toBe('player-3')
     })
+  })
+})
+
+describe('getVisibleAllies', () => {
+  const otherPlayers: Player[] = [
+    {
+      id: 'player-2',
+      name: 'Bob',
+      role: 'liberal',
+      joinedAt: Date.now(),
+      leftAt: null,
+    },
+    {
+      id: 'player-3',
+      name: 'Charlie',
+      role: 'fascist',
+      joinedAt: Date.now(),
+      leftAt: null,
+    },
+    {
+      id: 'player-4',
+      name: 'Diana',
+      role: 'hitler',
+      joinedAt: Date.now(),
+      leftAt: null,
+    },
+  ]
+
+  it('returns empty array for liberal', () => {
+    const result = getVisibleAllies('liberal', otherPlayers, 5)
+    expect(result).toHaveLength(0)
+  })
+
+  it('returns empty array for null role', () => {
+    const result = getVisibleAllies(null, otherPlayers, 5)
+    expect(result).toHaveLength(0)
+  })
+
+  it('returns fascists and hitler for fascist', () => {
+    const result = getVisibleAllies('fascist', otherPlayers, 5)
+    expect(result).toHaveLength(2)
+    expect(result.map((a) => a.name)).toContain('Charlie')
+    expect(result.map((a) => a.name)).toContain('Diana')
+  })
+
+  it('returns fascists only for hitler (5-6 players)', () => {
+    const result = getVisibleAllies('hitler', otherPlayers, 5)
+    expect(result).toHaveLength(1)
+    expect(result[0].name).toBe('Charlie')
+  })
+
+  it('returns empty array for hitler (7+ players)', () => {
+    const result = getVisibleAllies('hitler', otherPlayers, 7)
+    expect(result).toHaveLength(0)
   })
 })
