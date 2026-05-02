@@ -143,3 +143,45 @@
 - F8-UI: Role Reveal Card (depends on F7-FUNC ✓)
 - F9-UI/F9-FUNC: Visible Players Display
 - F10-FUNC: Game Reset Logic
+
+## Session 7: April 18, 2026
+
+### Completed: F8-UI (Role Reveal Card)
+
+- Created usePlayer hook for subscribing to own player document (hooks/room/use-player.ts)
+- Created RoleReveal component with fade-in animation (500ms), role-specific styling, 7-second auto-hide timer
+- "View Role" button to re-display the card anytime
+- Timer pauses on user interaction with card
+- Tap outside to dismiss early with fade-out (300ms)
+
+### Completed: F9-FUNC (Role Visibility Logic)
+
+- Added getVisibleAllies function to lib/rooms.ts
+- Liberals: empty allies list
+- Fascists: see other fascists + Hitler
+- Hitler (5-6 players): see fascists only
+- Hitler (7-10 players): empty allies list
+
+### Completed: F9-UI (Visible Players Display)
+
+- Allies displayed within role card
+- Shows player names with role labels (e.g., "Charlie (Fascist)")
+
+### Updated: F8-PRIVACY (Minimal Game View)
+
+- Player list shows names only after role card hides
+- No role indicators visible in player list
+- "View My Role" button always accessible
+
+### Tests
+
+- Added 5 tests for getVisibleAllies function (tests/rooms.test.ts)
+- Added RoleReveal component test (components/room/role-reveal.test.tsx)
+- All rooms.test.ts tests pass (52 tests)
+- TypeScript compiles without errors
+
+### Next Session
+
+- F10-FUNC: Game Reset Logic
+- F12-UI/F12-FUNC: Toast Notifications
+- F11-FUNC: Firestore Security Rules
