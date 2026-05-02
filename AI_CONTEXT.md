@@ -27,6 +27,13 @@ A real-time multiplayer web app that replaces physical role envelopes in Secret 
    - Role card auto-hides after 7 seconds (privacy)
    - Tap "View Role" anytime to see again
 
+4. **Investigation System**
+   - All players can investigate other players (cannot investigate self)
+   - Available only after game has started
+   - Unlimited uses, no cooldown
+   - Shows target's affiliation: "Liberal" or "Fascist" (Hitler shows as Fascist)
+   - No notification to investigated player
+
 ## Tech Stack
 
 - **Frontend**: Next.js 14+ (App Router), Tailwind CSS, TypeScript

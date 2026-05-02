@@ -192,6 +192,14 @@ Order matters: complete each phase before moving to the next.
 - [ ] Nothing that reveals role to phone peekers
 - [ ] Host sees Reset/Quit buttons
 
+### 5.6 Investigation
+
+- [ ] Create `lib/investigate.ts` function
+- [ ] Implement investigation logic (game started, not self)
+- [ ] Return "fascist" or "liberal" (Hitler as fascist)
+- [ ] Create `investigate-button.tsx` component
+- [ ] Add investigate button to game view
+
 ---
 
 ## Phase 6: Game Reset

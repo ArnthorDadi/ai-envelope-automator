@@ -4,18 +4,21 @@ import { getAuth, Auth } from 'firebase/auth'
 import { app } from './firebase'
 import { AuthService, AuthServiceImpl } from './auth'
 import { RoomsService, RoomsServiceImpl } from './rooms'
+import { InvestigationServiceImpl } from './investigate'
 
 class Db {
   readonly db: Database
   readonly auth: Auth
   readonly rooms: RoomsService
   readonly user: AuthService
+  readonly investigate: InvestigationServiceImpl
 
   constructor(firebaseApp: FirebaseApp) {
     this.db = getDatabase(firebaseApp)
     this.auth = getAuth(firebaseApp)
     this.rooms = new RoomsServiceImpl(this.db)
     this.user = new AuthServiceImpl(firebaseApp, this.auth)
+    this.investigate = new InvestigationServiceImpl(this.db)
   }
 }
 
