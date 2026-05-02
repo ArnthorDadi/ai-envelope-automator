@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { PlayerList } from './player-list'
 import { PlayerMenu } from './player-menu'
 import { ShareButton } from './share-button'
+import { CopyCodeButton } from './copy-code-button'
 import { LeaveRoomButton } from './leave-room-button'
 import { StartGameButton } from './start-game-button'
 import { GAME_CONSTANTS } from '@/lib/utils'
@@ -25,6 +26,7 @@ export function Lobby({ room, players }: LobbyProps) {
   const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null)
 
   const openPlayer = players.find((p) => p.id === menuOpenFor) || null
+  const gameStarted = room.status === 'started'
 
   useEffect(() => {
     const previousPlayers = previousPlayersRef.current
@@ -63,8 +65,18 @@ export function Lobby({ room, players }: LobbyProps) {
   return (
     <div className="flex flex-col gap-6 w-full max-w-md p-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Room: {room.id}</h1>
-        <ShareButton roomId={room.id} />
+        <h1 className="text-2xl font-bold">
+          Room: {room.id}
+          {gameStarted && (
+            <span className="ml-2 text-sm font-normal text-green-500">
+              (Started)
+            </span>
+          )}
+        </h1>
+        <div className="flex gap-2">
+          <CopyCodeButton roomCode={room.id} />
+          <ShareButton roomId={room.id} />
+        </div>
       </div>
 
       <PlayerList
@@ -84,30 +96,38 @@ export function Lobby({ room, players }: LobbyProps) {
         />
       )}
 
-      <div className="flex flex-col gap-3">
-        {isHost ? (
-          <>
-            <StartGameButton
-              roomId={room.id}
-              playerCount={players.length}
-              disabled={players.length < GAME_CONSTANTS.MIN_PLAYERS}
-            />
-            <p className="text-center text-sm text-muted-foreground">
-              {players.length < GAME_CONSTANTS.MIN_PLAYERS
-                ? `Need ${GAME_CONSTANTS.MIN_PLAYERS - players.length} more player${
-                    GAME_CONSTANTS.MIN_PLAYERS - players.length > 1 ? 's' : ''
-                  } to start`
-                : 'Ready to start!'}
-            </p>
-          </>
-        ) : (
-          <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-center">
-            Waiting for host to start...
-          </div>
-        )}
+      {!gameStarted && (
+        <div className="flex flex-col gap-3">
+          {isHost ? (
+            <>
+              <StartGameButton
+                roomId={room.id}
+                playerCount={players.length}
+                disabled={players.length < GAME_CONSTANTS.MIN_PLAYERS}
+              />
+              <p className="text-center text-sm text-muted-foreground">
+                {players.length < GAME_CONSTANTS.MIN_PLAYERS
+                  ? `Need ${GAME_CONSTANTS.MIN_PLAYERS - players.length} more player${
+                      GAME_CONSTANTS.MIN_PLAYERS - players.length > 1 ? 's' : ''
+                    } to start`
+                  : 'Ready to start!'}
+              </p>
+            </>
+          ) : (
+            <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-center">
+              Waiting for host to start...
+            </div>
+          )}
 
-        <LeaveRoomButton roomId={room.id} />
-      </div>
+          <LeaveRoomButton roomId={room.id} />
+        </div>
+      )}
+
+      {gameStarted && isHost && (
+        <div className="flex flex-col gap-3">
+          <LeaveRoomButton roomId={room.id} />
+        </div>
+      )}
     </div>
   )
 }

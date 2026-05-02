@@ -1,6 +1,7 @@
 'use client'
 
-import { use } from 'react'
+import { use, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useRoom, usePlayers } from '@/hooks/room'
 import { Lobby } from '@/components/room'
 import { useAuth } from '@/contexts/auth-context'
@@ -13,9 +14,16 @@ interface RoomPageProps {
 
 export default function RoomPage({ params }: RoomPageProps) {
   const { roomId } = use(params)
+  const router = useRouter()
   const { user, loading: authLoading } = useAuth()
   const { room, loading: roomLoading } = useRoom(roomId)
   const { players, loading: playersLoading } = usePlayers(roomId)
+
+  useEffect(() => {
+    if (room?.status === 'started') {
+      router.push(`/room/${roomId}/game`)
+    }
+  }, [room?.status, router, roomId])
 
   if (authLoading) {
     return (

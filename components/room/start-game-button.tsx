@@ -30,6 +30,7 @@ export function StartGameButton({
     try {
       await db.rooms.startGame(roomId, user.uid)
       addToast('Game started!', 'success')
+      router.push(`/room/${roomId}/game`)
     } catch (error) {
       console.error('Failed to start game:', error)
       addToast('Failed to start game', 'error')
