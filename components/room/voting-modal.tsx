@@ -31,14 +31,17 @@ export function VotingModal({
   const vote = room.votes?.[playerId] || null
   const result = room.lastVoteResult
   const showResult = !!result && room.isVoting
+  const currentPlayer = players.find((p) => p.id === playerId)
+  const isDead = currentPlayer?.isDead || false
 
   const endVote = useCallback(async () => {
     if (endedRef.current) return
     endedRef.current = true
 
     const votes = room.votes || {}
-    const yesVotes = Object.values(votes).filter((v) => v === 'yes').length
-    const noVotes = Object.values(votes).filter((v) => v === 'no').length
+    const alivePlayers = players.filter((p) => !p.isDead)
+    const yesVotes = alivePlayers.filter((p) => votes[p.id] === 'yes').length
+    const noVotes = alivePlayers.filter((p) => votes[p.id] === 'no').length
 
     const voteResult: 'passed' | 'failed' = yesVotes > noVotes ? 'passed' : 'failed'
 
@@ -48,7 +51,7 @@ export function VotingModal({
       console.error('Failed to end vote:', error)
       endedRef.current = false
     }
-  }, [room.votes, roomId])
+  }, [room.votes, roomId, players])
 
   // Timer and all-voted check
   useEffect(() => {
@@ -75,7 +78,7 @@ export function VotingModal({
         return
       }
 
-      const activePlayers = players.filter((p) => !p.leftAt)
+      const activePlayers = players.filter((p) => !p.leftAt && !p.isDead)
       const allVoted = activePlayers.every(
         (p) => room.votes && room.votes[p.id] !== null && room.votes[p.id] !== undefined
       )
@@ -148,6 +151,19 @@ export function VotingModal({
   }
 
   if (!room.isVoting) return null
+
+  if (isDead) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-8 max-w-sm w-full mx-4 text-center">
+          <h2 className="text-2xl font-bold mb-4">Voting is in progress...</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            You cannot vote as you are dead.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   if (showResult && result) {
     return (

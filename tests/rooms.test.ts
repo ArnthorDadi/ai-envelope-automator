@@ -435,19 +435,20 @@ describe('RoomsServiceImpl', () => {
   })
 
   describe('role assignment verification', () => {
-    const createPlayers = (count: number): Record<string, Player> => {
-      const players: Record<string, Player> = {}
-      for (let i = 0; i < count; i++) {
-        players[`user-${i}`] = {
-          id: `user-${i}`,
-          name: `Player ${i}`,
-          role: null,
-          joinedAt: i * 1000,
-          leftAt: null,
-        }
+  const createPlayers = (count: number): Record<string, Player> => {
+    const players: Record<string, Player> = {}
+    for (let i = 0; i < count; i++) {
+      players[`user-${i}`] = {
+        id: `user-${i}`,
+        name: `Player ${i}`,
+        role: null,
+        joinedAt: i * 1000,
+        leftAt: null,
+        isDead: false,
       }
-      return players
     }
+    return players
+  }
 
     it('assigns exactly one Hitler for all player counts', async () => {
       const { ref, get, update } = await import('firebase/database')
@@ -541,28 +542,29 @@ describe('RoomsServiceImpl', () => {
       const updates = updateCall[1]
 
       for (let i = 0; i < 5; i++) {
-        expect(updates[`rooms/ABCDEF/players/user-${i}/role`]).toBeDefined()
+        expect(updates[`players/user-${i}/role`]).toBeDefined()
         expect(['liberal', 'fascist', 'hitler']).toContain(
-          updates[`rooms/ABCDEF/players/user-${i}/role`]
+          updates[`players/user-${i}/role`]
         )
       }
     })
   })
 
   describe('resetGame', () => {
-    const createPlayers = (count: number): Record<string, Player> => {
-      const players: Record<string, Player> = {}
-      for (let i = 0; i < count; i++) {
-        players[`user-${i}`] = {
-          id: `user-${i}`,
-          name: `Player ${i}`,
-          role: i % 2 === 0 ? 'liberal' : 'fascist',
-          joinedAt: i * 1000,
-          leftAt: null,
-        }
+  const createPlayers = (count: number): Record<string, Player> => {
+    const players: Record<string, Player> = {}
+    for (let i = 0; i < count; i++) {
+      players[`user-${i}`] = {
+        id: `user-${i}`,
+        name: `Player ${i}`,
+        role: i % 2 === 0 ? 'liberal' : 'fascist',
+        joinedAt: i * 1000,
+        leftAt: null,
+        isDead: false,
       }
-      return players
     }
+    return players
+  }
 
     it('throws error when room not found', async () => {
       const { ref, get } = await import('firebase/database')
@@ -878,6 +880,7 @@ describe('getVisibleAllies', () => {
       role: 'liberal',
       joinedAt: Date.now(),
       leftAt: null,
+      isDead: false,
     },
     {
       id: 'player-3',
@@ -885,6 +888,7 @@ describe('getVisibleAllies', () => {
       role: 'fascist',
       joinedAt: Date.now(),
       leftAt: null,
+      isDead: false,
     },
     {
       id: 'player-4',
@@ -892,6 +896,7 @@ describe('getVisibleAllies', () => {
       role: 'hitler',
       joinedAt: Date.now(),
       leftAt: null,
+      isDead: false,
     },
   ]
 

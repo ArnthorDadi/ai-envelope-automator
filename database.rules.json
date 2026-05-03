@@ -21,6 +21,9 @@
           "$playerId": {
             "role": {
               ".read": "auth != null && (auth.uid === $playerId || (auth.uid !== $playerId && root.child('rooms').child($roomId).child('players').child(auth.uid).child('role').val() === 'fascist' && (data.val() === 'fascist' || data.val() === 'hitler')))"
+            },
+            "isDead": {
+              ".write": "auth != null && root.child('rooms').child($roomId).child('players').child(auth.uid).exists()"
             }
           }
         }

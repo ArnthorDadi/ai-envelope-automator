@@ -70,6 +70,7 @@ export interface Player {
   role: 'liberal' | 'fascist' | 'hitler' | null
   joinedAt: number
   leftAt: number | null
+  isDead: boolean
 }
 
 export interface CreateRoomOptions {
@@ -149,6 +150,7 @@ export interface RoomsService {
     roomId: string,
     playerId: string
   ): Promise<void>
+  togglePlayerDead(roomId: string, targetPlayerId: string): Promise<void>
 }
 
 export class RoomsServiceImpl implements RoomsService {
@@ -178,6 +180,7 @@ export class RoomsServiceImpl implements RoomsService {
       name: hostName,
       role: null,
       joinedAt: now,
+      isDead: false,
     })
 
     return { roomId, playerId: hostId }
@@ -406,6 +409,7 @@ export class RoomsServiceImpl implements RoomsService {
 
     shuffledPlayers.forEach((player, index) => {
       updates[`players/${player.id}/role`] = shuffledRoles[index]
+      updates[`players/${player.id}/isDead`] = false
     })
 
     await update(roomRef, updates)
@@ -592,5 +596,17 @@ export class RoomsServiceImpl implements RoomsService {
     const voteUpdate: Record<string, unknown> = {}
     voteUpdate[`votes/${playerId}`] = null
     await update(roomRef, voteUpdate)
+  }
+
+  async togglePlayerDead(roomId: string, targetPlayerId: string): Promise<void> {
+    const playerRef = ref(this.db, `rooms/${roomId}/players/${targetPlayerId}`)
+    const snapshot = await get(playerRef)
+    const player = snapshot.val()
+
+    if (!player) {
+      throw new Error('Player not found')
+    }
+
+    await update(playerRef, { isDead: !player.isDead })
   }
 }

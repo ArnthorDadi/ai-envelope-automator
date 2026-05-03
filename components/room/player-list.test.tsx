@@ -10,6 +10,14 @@ vi.mock('@/contexts/toast-context', () => ({
   }),
 }))
 
+vi.mock('@/lib/db', () => ({
+  db: {
+    rooms: {
+      togglePlayerDead: vi.fn().mockResolvedValue(undefined),
+    },
+  },
+}))
+
 describe('PlayerList', () => {
   const mockPlayers: Player[] = [
     {
@@ -18,6 +26,7 @@ describe('PlayerList', () => {
       role: null,
       joinedAt: Date.now(),
       leftAt: null,
+      isDead: false,
     },
     {
       id: 'player-2',
@@ -25,6 +34,7 @@ describe('PlayerList', () => {
       role: null,
       joinedAt: Date.now(),
       leftAt: null,
+      isDead: false,
     },
     {
       id: 'player-3',
@@ -32,6 +42,7 @@ describe('PlayerList', () => {
       role: null,
       joinedAt: Date.now(),
       leftAt: null,
+      isDead: false,
     },
   ]
 
@@ -119,6 +130,7 @@ describe('PlayerList', () => {
         role: null,
         joinedAt: Date.now(),
         leftAt: null,
+        isDead: false,
       },
       {
         id: 'player-5',
@@ -126,6 +138,7 @@ describe('PlayerList', () => {
         role: null,
         joinedAt: Date.now(),
         leftAt: null,
+        isDead: false,
       },
     ]
     render(

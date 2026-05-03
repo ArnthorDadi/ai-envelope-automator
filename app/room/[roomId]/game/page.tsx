@@ -99,6 +99,7 @@ export default function GamePage({ params }: GamePageProps) {
         hostId={room.hostId}
         currentUserId={user?.uid || null}
         isHost={user?.uid === room.hostId}
+        showDeadToggle
       />
       <div className="mt-6">
         <RoleReveal roomId={roomId} mode="button" />
