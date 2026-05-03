@@ -13,7 +13,7 @@ export function usePlayers(roomId: string) {
     setLoading(true)
     const unsubscribe = db.rooms.subscribeToPlayers(roomId, (playersData) => {
       previousPlayersRef.current = playersData
-      setPlayers(playersData)
+      setPlayers([...playersData].sort((a, b) => a.joinedAt - b.joinedAt))
       setLoading(false)
     })
 
