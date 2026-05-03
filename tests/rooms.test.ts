@@ -549,6 +549,247 @@ describe('RoomsServiceImpl', () => {
     })
   })
 
+  describe('resetGame', () => {
+    const createPlayers = (count: number): Record<string, Player> => {
+      const players: Record<string, Player> = {}
+      for (let i = 0; i < count; i++) {
+        players[`user-${i}`] = {
+          id: `user-${i}`,
+          name: `Player ${i}`,
+          role: i % 2 === 0 ? 'liberal' : 'fascist',
+          joinedAt: i * 1000,
+          leftAt: null,
+        }
+      }
+      return players
+    }
+
+    it('throws error when room not found', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any).mockResolvedValue({ val: () => null })
+
+      await expect(service.resetGame('ABCDEF', 'user-123')).rejects.toThrow(
+        'Room not found'
+      )
+    })
+
+    it('throws error when caller is not host', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any).mockResolvedValue({
+        val: () => ({
+          hostId: 'other-user',
+          status: 'started',
+          playerCount: 5,
+        }),
+      })
+
+      await expect(service.resetGame('ABCDEF', 'user-123')).rejects.toThrow(
+        'Only the host can reset the game'
+      )
+    })
+
+    it('throws error when game not started', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any).mockResolvedValue({
+        val: () => ({
+          hostId: 'user-123',
+          status: 'lobby',
+        }),
+      })
+
+      await expect(service.resetGame('ABCDEF', 'user-123')).rejects.toThrow(
+        'Game must be started before it can be reset'
+      )
+    })
+
+    it('throws error when not enough players', async () => {
+      const { ref, get } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({
+            hostId: 'user-123',
+            status: 'started',
+          }),
+        })
+        .mockResolvedValueOnce({
+          val: () => ({
+            'user-123': { id: 'user-123', name: 'Host', role: 'liberal', joinedAt: 1000, leftAt: null },
+          }),
+        })
+
+      await expect(service.resetGame('ABCDEF', 'user-123')).rejects.toThrow(
+        'Need at least 5 players to reset'
+      )
+    })
+
+    it('resets game successfully with 5 players', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({
+            hostId: 'user-1',
+            status: 'started',
+          }),
+        })
+        .mockResolvedValueOnce({
+          val: () => createPlayers(5),
+        })
+      ;(update as any).mockResolvedValue(undefined)
+
+      await service.resetGame('ABCDEF', 'user-1')
+
+      expect(update).toHaveBeenCalled()
+      const updateCall = (update as any).mock.calls.at(-1)
+      const updates = updateCall[1] as Record<string, unknown>
+
+      const assignedRoles = Object.values(updates).filter(
+        (v: unknown) =>
+          typeof v === 'string' &&
+          ['liberal', 'fascist', 'hitler'].includes(v)
+      )
+      expect(assignedRoles.length).toBe(5)
+    })
+
+    it('assigns exactly one Hitler on reset', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(update as any).mockResolvedValue(undefined)
+
+      for (let count = 5; count <= 10; count++) {
+        ;(get as any)
+          .mockResolvedValueOnce({
+            val: () => ({ hostId: 'user-0', status: 'started' }),
+          })
+          .mockResolvedValueOnce({
+            val: () => createPlayers(count),
+          })
+
+        await service.resetGame('ABCDEF', 'user-0')
+
+        const updateCall = (update as any).mock.calls.at(-1)
+        const updates = updateCall[1] as Record<string, unknown>
+        const assignedRoles = Object.values(updates).filter(
+          (v: unknown) =>
+            typeof v === 'string' &&
+            ['liberal', 'fascist', 'hitler'].includes(v)
+        )
+        const hitlerCount = assignedRoles.filter((r) => r === 'hitler').length
+        expect(hitlerCount).toBe(1)
+      }
+    })
+
+    it('assigns correct total number of roles on reset', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(update as any).mockResolvedValue(undefined)
+
+      for (let count = 5; count <= 10; count++) {
+        ;(get as any)
+          .mockResolvedValueOnce({
+            val: () => ({ hostId: 'user-0', status: 'started' }),
+          })
+          .mockResolvedValueOnce({
+            val: () => createPlayers(count),
+          })
+
+        await service.resetGame('ABCDEF', 'user-0')
+
+        const updateCall = (update as any).mock.calls.at(-1)
+        const updates = updateCall[1] as Record<string, unknown>
+        const assignedRoles = Object.values(updates).filter(
+          (v: unknown) =>
+            typeof v === 'string' &&
+            ['liberal', 'fascist', 'hitler'].includes(v)
+        )
+        expect(assignedRoles.length).toBe(count)
+      }
+    })
+
+    it('keeps room status as started (does not change)', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({ hostId: 'user-0', status: 'started' }),
+        })
+        .mockResolvedValueOnce({
+          val: () => createPlayers(5),
+        })
+      ;(update as any).mockResolvedValue(undefined)
+
+      await service.resetGame('ABCDEF', 'user-0')
+
+      const updateCall = (update as any).mock.calls.at(-1)
+      const updates = updateCall[1]
+      expect(updates.status).toBeUndefined()
+    })
+
+    it('assigns roles to correct player paths', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(get as any)
+        .mockResolvedValueOnce({
+          val: () => ({ hostId: 'user-0', status: 'started' }),
+        })
+        .mockResolvedValueOnce({
+          val: () => createPlayers(5),
+        })
+      ;(update as any).mockResolvedValue(undefined)
+
+      await service.resetGame('ABCDEF', 'user-0')
+
+      const updateCall = (update as any).mock.calls.at(-1)
+      const updates = updateCall[1]
+
+      for (let i = 0; i < 5; i++) {
+        const roleKey = Object.keys(updates).find(
+          (k) => k.includes(`user-${i}`) && k.endsWith('role')
+        )
+        expect(roleKey).toBeDefined()
+        expect(['liberal', 'fascist', 'hitler']).toContain(
+          updates[roleKey!]
+        )
+      }
+    })
+
+    it('produces different role assignments across resets', async () => {
+      const { ref, get, update } = await import('firebase/database')
+      ;(ref as any).mockReturnValue({})
+      ;(update as any).mockResolvedValue(undefined)
+
+      const roleSets: string[] = []
+
+      for (let attempt = 0; attempt < 10; attempt++) {
+        ;(get as any)
+          .mockResolvedValueOnce({
+            val: () => ({ hostId: 'user-0', status: 'started' }),
+          })
+          .mockResolvedValueOnce({
+            val: () => createPlayers(5),
+          })
+
+        await service.resetGame('ABCDEF', 'user-0')
+
+        const updateCall = (update as any).mock.calls.at(-1)
+        const updates = updateCall[1] as Record<string, unknown>
+        const roles = Object.entries(updates)
+          .filter(([k]) => k.endsWith('role'))
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([, v]) => v)
+          .join(',')
+        roleSets.push(roles)
+      }
+
+      const uniqueSets = new Set(roleSets)
+      expect(uniqueSets.size).toBeGreaterThan(1)
+    })
+  })
+
   describe('transferHost', () => {
     it('returns null when room not found', async () => {
       const { ref, get } = await import('firebase/database')

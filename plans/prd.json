@@ -146,7 +146,11 @@
         "All clients see new role cards simultaneously",
         "Previous role information fully cleared"
       ],
-      "passes": false
+      "passes": true,
+      "implementation": {
+        "files": ["lib/rooms.ts", "components/room/reset-game-button.tsx", "components/room/lobby.tsx"],
+        "tests": ["tests/rooms.test.ts"]
+      }
     },
     {
       "id": "F11-FUNC",

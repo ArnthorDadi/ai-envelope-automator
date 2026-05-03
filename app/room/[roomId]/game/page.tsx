@@ -5,6 +5,7 @@ import { useRoom, usePlayers } from '@/hooks/room'
 import { PlayerList } from '@/components/room/player-list'
 import { RoleReveal } from '@/components/room/role-reveal'
 import { InvestigateButton } from '@/components/room/investigate-button'
+import { ResetGameButton } from '@/components/room/reset-game-button'
 import { LeaveRoomButton } from '@/components/room/leave-room-button'
 import { useAuth } from '@/contexts/auth-context'
 import { Spinner } from '@/components/shared'
@@ -97,6 +98,15 @@ export default function GamePage({ params }: GamePageProps) {
       <div className="mt-4 w-full max-w-md">
         <InvestigateButton roomId={roomId} players={players} />
       </div>
+      {user?.uid === room.hostId && (
+        <div className="mt-4 w-full max-w-md">
+          <ResetGameButton
+            roomId={roomId}
+            playerCount={players.length}
+            disabled={players.length < 2}
+          />
+        </div>
+      )}
       <div className="mt-6">
         <LeaveRoomButton roomId={roomId} />
       </div>

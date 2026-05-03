@@ -109,6 +109,7 @@ export interface RoomsService {
   joinRoom(roomId: string, options: JoinRoomOptions): Promise<JoinRoomResult>
   leaveRoom(roomId: string, playerId: string): Promise<void>
   startGame(roomId: string, playerId: string): Promise<void>
+  resetGame(roomId: string, playerId: string): Promise<void>
   transferHost(roomId: string, leavingHostId: string): Promise<string | null>
   transferHostTo(
     roomId: string,
@@ -331,6 +332,53 @@ export class RoomsServiceImpl implements RoomsService {
     const updates: Record<string, unknown> = {
       status: 'started',
     }
+
+    shuffledPlayers.forEach((player, index) => {
+      updates[`players/${player.id}/role`] = shuffledRoles[index]
+    })
+
+    await update(roomRef, updates)
+  }
+
+  async resetGame(roomId: string, playerId: string): Promise<void> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
+    const playersRef = ref(this.db, `rooms/${roomId}/players`)
+
+    const roomSnapshot = await get(roomRef)
+    const room = roomSnapshot.val()
+
+    if (!room) {
+      throw new Error('Room not found')
+    }
+
+    if (room.hostId !== playerId) {
+      throw new Error('Only the host can reset the game')
+    }
+
+    if (room.status !== 'started') {
+      throw new Error('Game must be started before it can be reset')
+    }
+
+    const playersSnapshot = await get(playersRef)
+    const playersData = playersSnapshot.val()
+    const players: Player[] = playersData ? Object.values(playersData) : []
+
+    if (players.length < GAME_CONSTANTS.MIN_PLAYERS) {
+      throw new Error(
+        `Need at least ${GAME_CONSTANTS.MIN_PLAYERS} players to reset`
+      )
+    }
+
+    const roleDistribution = this.getRoleDistribution(players.length)
+    const shuffledPlayers = this.fisherYatesShuffle([...players])
+    const roles: Array<'liberal' | 'fascist' | 'hitler'> = [
+      ...Array(roleDistribution.liberals).fill('liberal'),
+      ...Array(roleDistribution.fascists - 1).fill('fascist'),
+      'hitler',
+    ]
+    const shuffledRoles = this.fisherYatesShuffle(roles)
+
+    const updates: Record<string, unknown> = {}
 
     shuffledPlayers.forEach((player, index) => {
       updates[`players/${player.id}/role`] = shuffledRoles[index]

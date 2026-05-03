@@ -123,11 +123,6 @@ export function Lobby({ room, players }: LobbyProps) {
         </div>
       )}
 
-      {gameStarted && isHost && (
-        <div className="flex flex-col gap-3">
-          <LeaveRoomButton roomId={room.id} />
-        </div>
-      )}
     </div>
   )
 }

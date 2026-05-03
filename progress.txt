@@ -182,6 +182,36 @@
 
 ### Next Session
 
-- F10-FUNC: Game Reset Logic
+- F12-UI/F12-FUNC: Toast Notifications
+- F11-FUNC: Firestore Security Rules
+
+## Session 8: May 2, 2026
+
+### Completed: F10-FUNC (Game Reset Logic)
+
+- Added resetGame method to RoomsService interface and implementation (lib/rooms.ts)
+- Validates: room exists, caller is host, game is started, minimum players met
+- Re-shuffles roles using Fisher-Yates shuffle for truly random assignment
+- Assigns new roles to all players while keeping room status as 'started'
+- Created ResetGameButton component with confirmation dialog (components/room/reset-game-button.tsx)
+- Confirmation dialog shows warning message with YES, RESET and CANCEL options
+- Loading state shown during reset operation
+- Updated Lobby component to show ResetGameButton when game is started and user is host
+- Added 10 unit tests for resetGame:
+  - Throws when room not found
+  - Throws when caller is not host
+  - Throws when game not started
+  - Throws when not enough players
+  - Resets game successfully with 5 players
+  - Assigns exactly one Hitler on reset (5-10 players)
+  - Assigns correct total number of roles (5-10 players)
+  - Keeps room status as 'started' (does not change)
+  - Assigns roles to correct player paths
+  - Produces different role assignments across multiple resets
+- All 10 new tests pass (62 total in rooms.test.ts, 1 pre-existing failure)
+- TypeScript compiles without errors
+
+### Next Session
+
 - F12-UI/F12-FUNC: Toast Notifications
 - F11-FUNC: Firestore Security Rules
