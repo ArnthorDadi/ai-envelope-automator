@@ -40,7 +40,10 @@
           "app/layout.tsx",
           "app/page.tsx"
         ],
-        "tests": ["tests/ToastContext.test.tsx", "tests/Navbar.test.tsx"]
+        "tests": [
+          "tests/ToastContext.test.tsx",
+          "tests/Navbar.test.tsx"
+        ]
       }
     },
     {
@@ -123,7 +126,7 @@
         "Liberals cannot see any teammates",
         "Hitler (7-10p) cannot see teammates"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F10-FUNC",
@@ -148,8 +151,14 @@
       ],
       "passes": true,
       "implementation": {
-        "files": ["lib/rooms.ts", "components/room/reset-game-button.tsx", "components/room/lobby.tsx"],
-        "tests": ["tests/rooms.test.ts"]
+        "files": [
+          "lib/rooms.ts",
+          "components/room/reset-game-button.tsx",
+          "components/room/lobby.tsx"
+        ],
+        "tests": [
+          "tests/rooms.test.ts"
+        ]
       }
     },
     {
@@ -174,7 +183,7 @@
         "Only host can delete room",
         "Invalid requests rejected by Firestore"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F12-UI",
@@ -195,7 +204,7 @@
         "Multiple toasts display without overlap issues",
         "Animation smooth (slide in/out)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F12-FUNC",
@@ -214,7 +223,7 @@
         "Auto-dismiss respects 3-second timer",
         "No memory leaks from orphaned timers"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F13-UI",
@@ -235,7 +244,9 @@
       ],
       "passes": true,
       "implementation": {
-        "files": ["components/room/share-button.tsx"]
+        "files": [
+          "components/room/share-button.tsx"
+        ]
       }
     },
     {
@@ -255,7 +266,9 @@
       ],
       "passes": true,
       "implementation": {
-        "files": ["components/room/share-button.tsx"]
+        "files": [
+          "components/room/share-button.tsx"
+        ]
       }
     },
     {
@@ -278,8 +291,13 @@
       ],
       "passes": true,
       "implementation": {
-        "files": ["lib/rooms.ts", "components/room/leave-room-button.tsx"],
-        "tests": ["tests/rooms.test.ts"]
+        "files": [
+          "lib/rooms.ts",
+          "components/room/leave-room-button.tsx"
+        ],
+        "tests": [
+          "tests/rooms.test.ts"
+        ]
       }
     },
     {
@@ -300,7 +318,7 @@
         "'Go Back Home' button present on all error pages",
         "Button navigates to home page"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F15-FUNC",
@@ -319,7 +337,7 @@
         "Recoverable errors offer retry option",
         "Error context preserved for debugging"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F16-FUNC",
@@ -338,14 +356,14 @@
         "Player list shows all current players",
         "No duplicate player documents created"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F17-UI",
       "description": "Theme Toggle",
       "steps": [
         "User clicks theme toggle in header",
-        "Cycle through: Light → Dark → System",
+        "Cycle through: Light \u2192 Dark \u2192 System",
         "Apply theme to document root",
         "Persist preference to localStorage",
         "Icon reflects current theme (sun/moon/system)"
@@ -359,7 +377,7 @@
         "Preference persists across page refreshes",
         "Theme applies immediately without flash"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F18-UI",
@@ -379,7 +397,7 @@
         "Content not obscured by notch/home indicator",
         "No horizontal scroll on mobile"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F19-UI",
@@ -396,7 +414,7 @@
         "Loading states match app theme",
         "No layout shift when content loads"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F20-FUNC",
@@ -418,7 +436,7 @@
         "Toast 'Room has been deleted' shown",
         "Non-hosts cannot trigger deletion"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F4-UX",
@@ -436,7 +454,7 @@
         "Non-host sees waiting message",
         "Messages update without refresh"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8-PRIVACY",
@@ -456,7 +474,7 @@
         "Host controls accessible",
         "Phone peeking reveals no extra information"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F21-FUNC",
@@ -525,7 +543,7 @@
         "No white flash between pages",
         "Transition fast enough to not feel slow"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F25-UI",
@@ -542,7 +560,7 @@
         "Hover states work on desktop",
         "Mobile layout unaffected"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F26-FUNC",
@@ -560,7 +578,7 @@
         "Reconnecting players restore to room",
         "No errors when all non-hosts disconnect"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F27-UI",
@@ -588,7 +606,7 @@
         "Rejoining during active vote reopens modal with correct vote state",
         "Timer pauses/hides during result display phase"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F27-FUNC",
@@ -618,15 +636,15 @@
         "5-second result display before clearing data",
         "Left players retain their vote if they rejoin"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F28-DEAD",
       "description": "Player Dead State",
       "steps": [
         "Add isDead boolean field to Player interface, default false",
-        "Show skull icon (💀) in game page player list (not lobby), gray when alive, red when dead",
-        "Any player can click any skull to toggle isDead (alive ↔ dead)",
+        "Show skull icon (\ud83d\udc80) in game page player list (not lobby), gray when alive, red when dead",
+        "Any player can click any skull to toggle isDead (alive \u2194 dead)",
         "Dead players appear dimmed (opacity-60) in player list",
         "Dead players cannot vote: voting modal shows 'Voting is in progress...' instead of vote UI",
         "Dead players excluded from all-voted check (only alive players count)",
@@ -643,7 +661,7 @@
         "Reset game clears all isDead flags",
         "Any player can toggle any other player's dead state"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
