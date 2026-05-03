@@ -58,6 +58,10 @@ export interface Room {
   status: 'lobby' | 'started'
   playerCount: number
   createdAt: number
+  isVoting: boolean
+  votingStartedAt: number | null
+  votes: Record<string, 'yes' | 'no' | null>
+  lastVoteResult: 'passed' | 'failed' | null
 }
 
 export interface Player {
@@ -129,6 +133,22 @@ export interface RoomsService {
     playerId: string,
     callback: (player: Player | null) => void
   ): () => void
+  startVote(roomId: string, playerId: string): Promise<void>
+  cancelVote(roomId: string, playerId: string): Promise<void>
+  submitVote(
+    roomId: string,
+    playerId: string,
+    vote: 'yes' | 'no'
+  ): Promise<void>
+  endVote(
+    roomId: string,
+    result: 'passed' | 'failed'
+  ): Promise<void>
+  clearVote(roomId: string): Promise<void>
+  clearPlayerVote(
+    roomId: string,
+    playerId: string
+  ): Promise<void>
 }
 
 export class RoomsServiceImpl implements RoomsService {
@@ -146,6 +166,10 @@ export class RoomsServiceImpl implements RoomsService {
       status: 'lobby',
       playerCount: 1,
       createdAt: now,
+      isVoting: false,
+      votingStartedAt: null,
+      votes: null,
+      lastVoteResult: null,
     })
 
     const playerRef = ref(this.db, `rooms/${roomId}/players/${hostId}`)
@@ -457,5 +481,116 @@ export class RoomsServiceImpl implements RoomsService {
     })
 
     return () => off(playerRef)
+  }
+
+  async startVote(roomId: string, playerId: string): Promise<void> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
+
+    const roomSnapshot = await get(roomRef)
+    const room = roomSnapshot.val()
+
+    if (!room) {
+      throw new Error('Room not found')
+    }
+
+    if (room.hostId !== playerId) {
+      throw new Error('Only the host can start a vote')
+    }
+
+    if (room.status !== 'started') {
+      throw new Error('Game must be started to vote')
+    }
+
+    if (room.isVoting) {
+      throw new Error('Vote already in progress')
+    }
+
+    await update(roomRef, {
+      isVoting: true,
+      votingStartedAt: Date.now(),
+      'votes': {},
+      lastVoteResult: null,
+    })
+  }
+
+  async cancelVote(roomId: string, playerId: string): Promise<void> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
+
+    const roomSnapshot = await get(roomRef)
+    const room = roomSnapshot.val()
+
+    if (!room) {
+      throw new Error('Room not found')
+    }
+
+    if (room.hostId !== playerId) {
+      throw new Error('Only the host can cancel a vote')
+    }
+
+    if (!room.isVoting) {
+      throw new Error('No vote in progress')
+    }
+
+    await update(roomRef, {
+      isVoting: false,
+      votingStartedAt: null,
+      votes: null,
+      lastVoteResult: null,
+    })
+  }
+
+  async submitVote(
+    roomId: string,
+    playerId: string,
+    vote: 'yes' | 'no'
+  ): Promise<void> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
+
+    const roomSnapshot = await get(roomRef)
+    const room = roomSnapshot.val()
+
+    if (!room) {
+      throw new Error('Room not found')
+    }
+
+    if (!room.isVoting) {
+      throw new Error('No vote in progress')
+    }
+
+    const voteUpdate: Record<string, unknown> = {}
+    voteUpdate[`votes/${playerId}`] = vote
+
+    await update(roomRef, voteUpdate)
+  }
+
+  async endVote(
+    roomId: string,
+    result: 'passed' | 'failed'
+  ): Promise<void> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
+    await update(roomRef, {
+      lastVoteResult: result,
+    })
+  }
+
+  async clearVote(roomId: string): Promise<void> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
+
+    await update(roomRef, {
+      isVoting: false,
+      votingStartedAt: null,
+      votes: null,
+      lastVoteResult: null,
+    })
+  }
+
+  async clearPlayerVote(
+    roomId: string,
+    playerId: string
+  ): Promise<void> {
+    const roomRef = ref(this.db, `rooms/${roomId}`)
+    const voteUpdate: Record<string, unknown> = {}
+    voteUpdate[`votes/${playerId}`] = null
+    await update(roomRef, voteUpdate)
   }
 }

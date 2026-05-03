@@ -1,12 +1,15 @@
 'use client'
 
 import { use } from 'react'
+import { useState, useCallback } from 'react'
 import { useRoom, usePlayers } from '@/hooks/room'
 import { PlayerList } from '@/components/room/player-list'
 import { RoleReveal } from '@/components/room/role-reveal'
 import { InvestigateButton } from '@/components/room/investigate-button'
 import { ResetGameButton } from '@/components/room/reset-game-button'
+import { StartVoteButton } from '@/components/room/start-vote-button'
 import { LeaveRoomButton } from '@/components/room/leave-room-button'
+import { VotingModal } from '@/components/room/voting-modal'
 import { useAuth } from '@/contexts/auth-context'
 import { Spinner } from '@/components/shared'
 import { AuthPrompt } from '@/components/auth'
@@ -20,6 +23,11 @@ export default function GamePage({ params }: GamePageProps) {
   const { user, loading: authLoading } = useAuth()
   const { room, loading: roomLoading } = useRoom(roomId)
   const { players, loading: playersLoading } = usePlayers(roomId)
+  const [voteEnded, setVoteEnded] = useState(false)
+
+  const handleVoteEnded = useCallback(() => {
+    setVoteEnded((prev) => !prev)
+  }, [])
 
   if (authLoading) {
     return (
@@ -99,7 +107,11 @@ export default function GamePage({ params }: GamePageProps) {
         <InvestigateButton roomId={roomId} players={players} />
       </div>
       {user?.uid === room.hostId && (
-        <div className="mt-4 w-full max-w-md">
+        <div className="mt-4 w-full max-w-md space-y-4">
+          <StartVoteButton
+            roomId={roomId}
+            disabled={room.isVoting}
+          />
           <ResetGameButton
             roomId={roomId}
             playerCount={players.length}
@@ -110,6 +122,16 @@ export default function GamePage({ params }: GamePageProps) {
       <div className="mt-6">
         <LeaveRoomButton roomId={roomId} />
       </div>
+      {room.isVoting && (
+        <VotingModal
+          roomId={roomId}
+          playerId={user?.uid || ''}
+          isHost={user?.uid === room.hostId}
+          room={room}
+          players={players}
+          onVoteEnded={handleVoteEnded}
+        />
+      )}
     </main>
   )
 }

@@ -2,8 +2,28 @@
   "rules": {
     "rooms": {
       "$roomId": {
-        ".read": true,
-        ".write": true
+        ".read": "auth != null && data.child('players').child(auth.uid).exists()",
+        "isVoting": {
+          ".write": "auth != null && data.child('hostId').val() === auth.uid"
+        },
+        "votingStartedAt": {
+          ".write": "auth != null && data.child('hostId').val() === auth.uid"
+        },
+        "votes": {
+          "$playerId": {
+            ".write": "auth != null && auth.uid === $playerId && data.parent().child('isVoting').val() === true"
+          }
+        },
+        "lastVoteResult": {
+          ".write": "auth != null && data.child('hostId').val() === auth.uid"
+        },
+        "players": {
+          "$playerId": {
+            "role": {
+              ".read": "auth != null && (auth.uid === $playerId || (auth.uid !== $playerId && root.child('rooms').child($roomId).child('players').child(auth.uid).child('role').val() === 'fascist' && (data.val() === 'fascist' || data.val() === 'hitler')))"
+            }
+          }
+        }
       }
     }
   }
