@@ -561,6 +561,64 @@
         "No errors when all non-hosts disconnect"
       ],
       "passes": false
+    },
+    {
+      "id": "F27-UI",
+      "description": "Voting Modal UI",
+      "steps": [
+        "When room.isVoting is true, unclosable modal renders for all players",
+        "Modal prevents closing: no X button, no click-outside, no ESC key",
+        "Modal blocks all other page interactions (no access to role card, buttons, etc.)",
+        "Display 3-minute countdown timer synced via room.votingStartedAt server timestamp",
+        "Show Yes/No vote buttons for players who haven't voted",
+        "After voting, hide Yes/No buttons, show 'Changed my mind' button",
+        "Host sees 'Cancel Vote' button in modal, non-hosts do not",
+        "When vote ends: display 'Vote Passed' or 'Vote Failed' for exactly 5 seconds",
+        "After 5 seconds, set isVoting=false, close modal",
+        "Rejoining players check room.isVoting: if true, open modal",
+        "Rejoining players check their vote in room.votes: if exists, show 'Changed my mind' state"
+      ],
+      "verification_steps": [
+        "Modal is unclosable via all methods (X, click outside, ESC)",
+        "Modal blocks all other page interactions",
+        "Countdown timer synced across all clients via server timestamp",
+        "Yes/No buttons functional, 'Changed my mind' appears after voting",
+        "Host sees Cancel Vote button, other players do not",
+        "Vote results display correctly for 5 seconds",
+        "Rejoining during active vote reopens modal with correct vote state",
+        "Timer pauses/hides during result display phase"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F27-FUNC",
+      "description": "Voting Logic",
+      "steps": [
+        "Host calls startVote: set room.isVoting=true, room.votingStartedAt=serverTimestamp, clear room.votes",
+        "Store votes as flat map in room doc: { votes: { [playerId]: 'yes' | 'no' | null } }",
+        "Player votes: update room.votes[playerId] to 'yes'/'no'",
+        "Check all-voted condition: all active players (leftAt=null) have vote != null",
+        "3-minute timer: check if (Date.now() - room.votingStartedAt) >= 180000",
+        "Vote ends when all-voted or timer expires",
+        "Compute result: plurality (most votes wins), ties = 'no'",
+        "Store room.lastVoteResult: 'passed' (yes majority) | 'failed' (no majority or tie)",
+        "After 5 seconds: set room.isVoting=false, clear room.votes, clear room.lastVoteResult",
+        "Host cancels vote: set room.isVoting=false, clear room.votes, do not set lastVoteResult",
+        "Vote persistence: left players keep their vote, rejoining restores it",
+        "Only host can start/cancel votes, verified via room.hostId check"
+      ],
+      "verification_steps": [
+        "Only host can start or cancel votes",
+        "Vote data stored correctly in room.votes flat map",
+        "All-voted check ignores players with leftAt != null",
+        "Timer uses server timestamp for cross-client sync",
+        "Result computed correctly (plurality, ties = no)",
+        "Vote cancellation clears all vote data without result",
+        "Rejoining players during active vote restore correct state",
+        "5-second result display before clearing data",
+        "Left players retain their vote if they rejoin"
+      ],
+      "passes": false
     }
   ]
 }
