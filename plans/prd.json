@@ -619,6 +619,31 @@
         "Left players retain their vote if they rejoin"
       ],
       "passes": false
+    },
+    {
+      "id": "F28-DEAD",
+      "description": "Player Dead State",
+      "steps": [
+        "Add isDead boolean field to Player interface, default false",
+        "Show skull icon (💀) in game page player list (not lobby), gray when alive, red when dead",
+        "Any player can click any skull to toggle isDead (alive ↔ dead)",
+        "Dead players appear dimmed (opacity-60) in player list",
+        "Dead players cannot vote: voting modal shows 'Voting is in progress...' instead of vote UI",
+        "Dead players excluded from all-voted check (only alive players count)",
+        "Dead players excluded from vote result calculation (majority of alive players)",
+        "Reset game clears all isDead flags to false",
+        "Database rule: any room member can write isDead for any player"
+      ],
+      "verification_steps": [
+        "Skull icon visible only in game page, not lobby",
+        "Clicking skull toggles isDead, visual feedback updates immediately",
+        "Dead players see 'Voting is in progress...' modal, not vote buttons",
+        "Vote majority calculated from alive players only (5 players, 1 dead = need 3 votes)",
+        "All-voted check ignores dead players",
+        "Reset game clears all isDead flags",
+        "Any player can toggle any other player's dead state"
+      ],
+      "passes": false
     }
   ]
 }
