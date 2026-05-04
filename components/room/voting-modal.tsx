@@ -27,6 +27,7 @@ export function VotingModal({
   const endedRef = useRef(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const resultTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const vote = room.votes?.[playerId] || null
   const result = room.lastVoteResult
@@ -99,22 +100,29 @@ export function VotingModal({
     }
   }, [room.isVoting, room.votingStartedAt, room.votes, players, showResult, endVote])
 
-  // Result display timeout
+  // Result display timeout - auto close after 5 seconds
   useEffect(() => {
-    if (showResult && !timeoutRef.current) {
-      timeoutRef.current = setTimeout(() => {
-        timeoutRef.current = null
-        onVoteEnded()
-      }, 5000)
+    if (!showResult || !result || resultTimeoutRef.current) return
 
-      return () => {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current)
-          timeoutRef.current = null
-        }
+    resultTimeoutRef.current = setTimeout(async () => {
+      resultTimeoutRef.current = null
+      try {
+        await db.rooms.clearVote(roomId)
+      } catch (error) {
+        console.error('Failed to clear vote:', error)
+      }
+    }, 5000)
+
+    return () => {
+      if (resultTimeoutRef.current) {
+        clearTimeout(resultTimeoutRef.current)
+        resultTimeoutRef.current = null
       }
     }
-  }, [showResult, onVoteEnded])
+  }, [showResult, result, roomId])
+
+  // Remove or simplify the old result timeout effect since we handle it above
+  // Keep the existing timeoutRef for any other usage but it's now handled above
 
   const handleVote = useCallback(
     async (choice: 'yes' | 'no') => {
@@ -207,7 +215,7 @@ export function VotingModal({
           </div>
         ) : (
           <div className="text-center">
-            <p className="mb-4">You voted: {vote === 'yes' ? 'Yes' : 'No'}</p>
+            <p className="mb-4">You have voted</p>
             <button
               onClick={handleChangeMind}
               className="px-6 py-3 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition"
