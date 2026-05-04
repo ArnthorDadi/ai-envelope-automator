@@ -5,6 +5,7 @@ import { db } from '@/lib/db'
 import { GAME_CONSTANTS } from '@/lib/utils'
 
 interface PlayerListProps {
+  roomId: string
   players: Player[]
   hostId: string
   currentUserId: string | null
@@ -14,6 +15,7 @@ interface PlayerListProps {
 }
 
 export function PlayerList({
+  roomId,
   players,
   hostId,
   currentUserId,
@@ -27,10 +29,7 @@ export function PlayerList({
 
   const handleToggleDead = async (playerId: string) => {
     try {
-      await db.rooms.togglePlayerDead(
-        players.find((p) => p.id === playerId)?.id || '',
-        playerId
-      )
+      await db.rooms.togglePlayerDead(roomId, playerId)
     } catch (error) {
       console.error('Failed to toggle dead state:', error)
     }
@@ -63,6 +62,7 @@ export function PlayerList({
               <span className="flex-1">
                 {player.name}
                 {isCurrentUser && ' (You)'}
+                {player.isDead && ' (dead)'}
               </span>
               {player.id === hostId && (
                 <span className="text-yellow-500">⭐ Host</span>
@@ -73,10 +73,10 @@ export function PlayerList({
                     e.stopPropagation()
                     handleToggleDead(player.id)
                   }}
-                  className="text-lg hover:scale-110 transition"
+                  className={`text-lg hover:scale-110 transition ${player.isDead ? 'text-red-500' : 'text-gray-400'}`}
                   title={player.isDead ? 'Revive player' : 'Kill player'}
                 >
-                  {player.isDead ? '💀' : '💀'}
+                  💀
                 </button>
               )}
               {isClickable && <span className="text-gray-400">⋮</span>}

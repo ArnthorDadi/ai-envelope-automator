@@ -95,6 +95,7 @@ export default function GamePage({ params }: GamePageProps) {
     <main className="flex flex-col items-center justify-center flex-1 p-4">
       <h1 className="text-2xl font-bold mb-6">Game Started</h1>
       <PlayerList
+        roomId={roomId}
         players={players}
         hostId={room.hostId}
         currentUserId={user?.uid || null}

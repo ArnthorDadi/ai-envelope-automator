@@ -80,6 +80,7 @@ export function Lobby({ room, players }: LobbyProps) {
       </div>
 
       <PlayerList
+        roomId={room.id}
         players={players}
         hostId={room.hostId}
         currentUserId={user?.uid || null}

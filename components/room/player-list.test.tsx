@@ -46,9 +46,30 @@ describe('PlayerList', () => {
     },
   ]
 
+  const fivePlayers: Player[] = [
+    ...mockPlayers,
+    {
+      id: 'player-4',
+      name: 'Diana',
+      role: null,
+      joinedAt: Date.now(),
+      leftAt: null,
+      isDead: false,
+    },
+    {
+      id: 'player-5',
+      name: 'Eve',
+      role: null,
+      joinedAt: Date.now(),
+      leftAt: null,
+      isDead: false,
+    },
+  ]
+
   it('displays all players', () => {
     render(
       <PlayerList
+        roomId="TEST01"
         players={mockPlayers}
         hostId="host-1"
         currentUserId="player-2"
@@ -63,6 +84,7 @@ describe('PlayerList', () => {
   it('shows host badge for host player', () => {
     render(
       <PlayerList
+        roomId="TEST01"
         players={mockPlayers}
         hostId="host-1"
         currentUserId="player-2"
@@ -75,6 +97,7 @@ describe('PlayerList', () => {
   it('shows (You) for current user', () => {
     render(
       <PlayerList
+        roomId="TEST01"
         players={mockPlayers}
         hostId="host-1"
         currentUserId="player-2"
@@ -87,6 +110,7 @@ describe('PlayerList', () => {
   it('displays player count', () => {
     render(
       <PlayerList
+        roomId="TEST01"
         players={mockPlayers}
         hostId="host-1"
         currentUserId="player-2"
@@ -99,6 +123,7 @@ describe('PlayerList', () => {
   it('shows waiting message when not enough players', () => {
     render(
       <PlayerList
+        roomId="TEST01"
         players={mockPlayers}
         hostId="host-1"
         currentUserId="player-2"
@@ -109,40 +134,22 @@ describe('PlayerList', () => {
   })
 
   it('shows waiting message for 1 player', () => {
-    const twoPlayers = mockPlayers.slice(0, 2)
     render(
       <PlayerList
-        players={twoPlayers}
+        roomId="TEST01"
+        players={mockPlayers}
         hostId="host-1"
         currentUserId="player-2"
       />
     )
 
-    expect(screen.getByText(/Waiting for 3 more players/)).toBeInTheDocument()
+    expect(screen.getByText(/Waiting for 2 more players/)).toBeInTheDocument()
   })
 
   it('shows ready message when enough players', () => {
-    const fivePlayers: Player[] = [
-      ...mockPlayers,
-      {
-        id: 'player-4',
-        name: 'Diana',
-        role: null,
-        joinedAt: Date.now(),
-        leftAt: null,
-        isDead: false,
-      },
-      {
-        id: 'player-5',
-        name: 'Eve',
-        role: null,
-        joinedAt: Date.now(),
-        leftAt: null,
-        isDead: false,
-      },
-    ]
     render(
       <PlayerList
+        roomId="TEST01"
         players={fivePlayers}
         hostId="host-1"
         currentUserId="player-2"

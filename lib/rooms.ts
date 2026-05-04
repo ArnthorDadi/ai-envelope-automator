@@ -236,6 +236,7 @@ export class RoomsServiceImpl implements RoomsService {
       name: options.playerName,
       role: null,
       joinedAt: now,
+      isDead: false,
     })
 
     await update(roomRef, {
@@ -470,7 +471,7 @@ export class RoomsServiceImpl implements RoomsService {
       callback(data ? Object.values(data) : [])
     })
 
-    return () => off(playersRef)
+    return unsubscribe
   }
 
   subscribeToPlayer(
@@ -607,6 +608,6 @@ export class RoomsServiceImpl implements RoomsService {
       throw new Error('Player not found')
     }
 
-    await update(playerRef, { isDead: !player.isDead })
+    await update(playerRef, { isDead: !(player.isDead ?? false) })
   }
 }
