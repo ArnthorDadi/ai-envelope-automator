@@ -83,38 +83,49 @@ export function JoinRoomForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full max-w-xs flex flex-col gap-3"
-    >
-      <div className="flex flex-col gap-1">
-        <input
-          ref={roomCodeRef}
-          type="text"
-          value={roomCode}
-          onChange={handleRoomCodeChange}
-          placeholder="ROOM CODE"
-          maxLength={6}
-          className={`w-full p-3 border rounded-lg text-center text-lg font-mono uppercase tracking-widest ${
-            errors.roomCode ? 'border-red-500' : ''
-          }`}
-          disabled={loading}
-          autoComplete="off"
-          autoCapitalize="characters"
-        />
-        {errors.roomCode && (
-          <span className="text-red-500 text-sm">{errors.roomCode}</span>
-        )}
+    <section className="w-full bg-warm-cream p-8 rounded-sm paper-texture shadow-2xl relative overflow-hidden flex flex-col gap-6">
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-hitler-accent/10 rounded-full blur-2xl" />
+      <div className="flex items-center gap-3 border-b-2 border-outline/30 pb-2 mb-2">
+        <span className="material-symbols-outlined text-warm-cream">assignment_ind</span>
+        <h3 className="font-stamp-text text-2xl tracking-wide text-warm-cream">
+          JOIN EXISTING ROOM
+        </h3>
       </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <label className="font-label-caps italic text-warm-cream opacity-90">
+            CLASSIFIED ROOM CODE
+          </label>
+          <div className="relative">
+            <input
+              ref={roomCodeRef}
+              type="text"
+              value={roomCode}
+              onChange={handleRoomCodeChange}
+              placeholder="______"
+              maxLength={6}
+              className={`w-full bg-transparent border-b-2 font-code-display text-code-display py-2 tracking-[0.5em] focus:outline-none placeholder-surface-dim/20 uppercase text-center text-warm-cream border-warm-cream/50 placeholder-warm-cream/30 ${
+                errors.roomCode ? 'border-error' : ''
+              }`}
+              disabled={loading}
+              autoComplete="off"
+              autoCapitalize="characters"
+            />
+          </div>
+          {errors.roomCode && (
+            <span className="text-error text-sm font-body-md">{errors.roomCode}</span>
+          )}
+        </div>
 
-      <button
-        type="submit"
-        disabled={!roomCode.trim() || loading}
-        className="w-full p-3 bg-blue-500 text-white rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
-      >
-        {loading ? <Spinner size="sm" /> : null}
-        {loading ? 'JOINING' : 'JOIN ROOM'}
-      </button>
-    </form>
+        <button
+          type="submit"
+          disabled={!roomCode.trim() || loading}
+          className="w-full bg-surface-dim text-warm-cream py-4 font-stamp-text text-xl tracking-widest hover:bg-surface-bright transition-colors mt-4 shadow-lg active:scale-95 duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          {loading ? <Spinner size="sm" /> : null}
+          {loading ? 'INFILTRATING...' : 'infiltrate Room'}
+        </button>
+      </form>
+    </section>
   )
 }

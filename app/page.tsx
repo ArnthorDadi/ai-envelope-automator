@@ -1,32 +1,25 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useAuth } from '@/contexts/auth-context'
-import { CreateRoomButton, HeroSection, JoinRoomForm } from '@/components/home'
-import { AuthPrompt } from '@/components/auth'
+import { useRouter } from 'next/navigation'
+import {
+  CreateRoomButton,
+  HeroSection,
+  JoinRoomForm,
+  FactionPreviewCards,
+} from '@/components/home'
 import { Spinner } from '@/components/shared'
 
-function HomeContent() {
-  const { user } = useAuth()
-
-  if (!user) {
-    return <AuthPrompt />
-  }
-
-  return (
-    <div className="flex flex-col gap-6 w-full max-w-xs">
-      <CreateRoomButton />
-      <div className="relative flex justify-center text-xs uppercase">
-        <span className="bg-background px-4 text-muted-foreground">
-          Or join a room
-        </span>
-      </div>
-      <JoinRoomForm />
-    </div>
-  )
-}
-
 export default function Home() {
-  const { loading } = useAuth()
+  const { user, loading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login')
+    }
+  }, [user, loading, router])
 
   if (loading) {
     return (
@@ -36,10 +29,30 @@ export default function Home() {
     )
   }
 
+  if (!user) {
+    return (
+      <main className="flex items-center justify-center flex-1">
+        <Spinner size="md" />
+      </main>
+    )
+  }
+
   return (
-    <main className="flex flex-col items-center justify-center flex-1 p-4">
+    <main className="flex flex-col items-center px-margin-mobile w-full max-w-container-max mx-auto gap-12 pb-12">
       <HeroSection />
-      <HomeContent />
+      <CreateRoomButton />
+      <JoinRoomForm />
+      <FactionPreviewCards />
+      <footer className="text-center pb-8 opacity-40">
+        <p className="font-label-caps text-label-caps italic max-w-xs mx-auto">
+          &ldquo;In a world of secrets, trust is the only currency worth trading.&rdquo;
+        </p>
+        <div className="mt-4 flex justify-center gap-4">
+          <div className="w-2 h-2 rounded-full bg-primary" />
+          <div className="w-2 h-2 rounded-full bg-hitler-accent" />
+          <div className="w-2 h-2 rounded-full bg-primary" />
+        </div>
+      </footer>
     </main>
   )
 }

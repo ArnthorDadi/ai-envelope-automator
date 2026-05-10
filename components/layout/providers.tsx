@@ -10,7 +10,7 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <ToastProvider>
       <AuthProvider>
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen pt-16">
           <Navbar />
           <Toast />
           <div className="flex-1 flex flex-col">{children}</div>

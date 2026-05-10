@@ -34,13 +34,25 @@ export function CreateRoomButton() {
   }
 
   return (
-    <button
-      onClick={handleCreateRoom}
-      disabled={creating}
-      className="w-full p-3 bg-blue-500 text-white rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
-    >
-      {creating ? <Spinner size="sm" /> : null}
-      {creating ? 'CREATING' : 'CREATE ROOM'}
-    </button>
+    <section className="w-full">
+      <button
+        onClick={handleCreateRoom}
+        disabled={creating}
+        className="w-full py-8 border-4 border-dashed border-primary text-primary bg-primary/5 rounded-xl stamp-effect flex flex-col items-center justify-center gap-2 hover:bg-primary/10 hover:border-solid transition-all duration-300 group disabled:opacity-50"
+      >
+        {creating ? (
+          <Spinner size="sm" />
+        ) : (
+          <>
+            <span className="font-stamp-text text-[40px] tracking-widest group-hover:scale-105 transition-transform ink-bleed">
+              CREATE ROOM
+            </span>
+            <span className="font-label-caps text-label-caps tracking-[0.3em] opacity-60">
+              AUTHORIZE NEW SESSION
+            </span>
+          </>
+        )}
+      </button>
+    </section>
   )
 }
