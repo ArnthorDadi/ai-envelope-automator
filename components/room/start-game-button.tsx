@@ -42,10 +42,17 @@ export function StartGameButton({
     <button
       onClick={handleStartGame}
       disabled={disabled || starting}
-      className="w-full p-3 bg-green-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      className={`w-full h-touch-target font-stamp-text text-stamp-text flex items-center justify-center gap-2 transition-all ${
+        disabled || starting
+          ? 'bg-muted-gray/20 text-on-surface-variant border border-outline-variant cursor-not-allowed opacity-50'
+          : 'bg-primary-container text-on-primary-container border-2 border-primary shadow-lg active:scale-95 hover:brightness-110'
+      }`}
     >
       {starting ? <Spinner size="sm" /> : null}
       {starting ? 'STARTING' : 'START GAME'}
+      {disabled && !starting && (
+        <span className="material-symbols-outlined text-[20px]">lock</span>
+      )}
     </button>
   )
 }

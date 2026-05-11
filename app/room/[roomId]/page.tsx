@@ -69,7 +69,7 @@ export default function RoomPage({ params }: RoomPageProps) {
   }
 
   return (
-    <main className="flex items-center justify-center flex-1">
+    <main className="flex flex-col flex-1 overflow-hidden">
       <Lobby room={room} players={players} />
     </main>
   )

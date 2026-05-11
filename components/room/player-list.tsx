@@ -2,7 +2,6 @@
 
 import { Player } from '@/lib/rooms'
 import { db } from '@/lib/db'
-import { GAME_CONSTANTS } from '@/lib/utils'
 
 interface PlayerListProps {
   roomId: string
@@ -23,8 +22,6 @@ export function PlayerList({
   onMenuOpen,
   showDeadToggle = false,
 }: PlayerListProps) {
-  const playersNeeded = GAME_CONSTANTS.MIN_PLAYERS - players.length
-
   const shouldShowMenu = isHost && currentUserId === hostId
 
   const handleToggleDead = async (playerId: string) => {
@@ -36,60 +33,81 @@ export function PlayerList({
   }
 
   return (
-    <div className="w-full">
-      <h2 className="text-lg font-semibold mb-3 text-center">
-        Players ({players.length}/{GAME_CONSTANTS.MIN_PLAYERS} needed)
-      </h2>
-      <ul className="space-y-2 mb-4">
+    <section className="space-y-4">
+      <h3 className="font-stamp-text text-stamp-text text-on-surface border-b border-outline-variant pb-2">
+        ENLISTED PERSONNEL
+      </h3>
+      <div className="space-y-3">
         {players.map((player) => {
           const isCurrentUser = player.id === currentUserId
-          const isCurrentHost = isCurrentUser && shouldShowMenu
-          const isClickable = !isCurrentHost && shouldShowMenu
+          const isHostPlayer = player.id === hostId
+          const isClickable = !isCurrentUser && shouldShowMenu
 
           return (
-            <li
+            <div
               key={player.id}
               onClick={() => {
                 if (isClickable && onMenuOpen) {
                   onMenuOpen(player.id)
                 }
               }}
-              className={`flex items-center gap-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${
-                isClickable ? 'cursor-pointer' : ''
-              } ${player.isDead ? 'opacity-60' : ''}`}
+              className={`flex items-center gap-4 p-3 border rounded-lg ${
+                isCurrentUser
+                  ? 'bg-primary-container/10 border-primary-container shadow-xl'
+                  : 'bg-surface-container-low border-outline-variant opacity-80'
+              } ${isClickable ? 'cursor-pointer hover:bg-surface-container transition-colors' : ''} ${player.isDead ? 'opacity-60' : ''}`}
             >
-              <span className="text-lg">👤</span>
-              <span className="flex-1">
-                {player.name}
-                {isCurrentUser && ' (You)'}
-                {player.isDead && ' (dead)'}
-              </span>
-              {player.id === hostId && (
-                <span className="text-yellow-500">⭐ Host</span>
-              )}
-              {showDeadToggle && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleToggleDead(player.id)
-                  }}
-                  className={`text-lg hover:scale-110 transition ${player.isDead ? 'text-red-500' : 'text-gray-400'}`}
-                  title={player.isDead ? 'Revive player' : 'Kill player'}
-                >
-                  💀
-                </button>
-              )}
-              {isClickable && <span className="text-gray-400">⋮</span>}
-            </li>
+              <div className="w-14 h-14 bg-warm-cream p-1 border border-outline shadow-sm overflow-hidden flex-shrink-0 flex items-center justify-center">
+                <span className="material-symbols-outlined text-surface-dim text-3xl" style={{ fontVariationSettings: '"FILL" 1' }}>
+                  person
+                </span>
+              </div>
+              <div className="flex-grow min-w-0">
+                <p className={`font-body-lg font-bold truncate ${isCurrentUser ? 'text-primary' : 'text-on-surface'}`}>
+                  {player.name}
+                  {isCurrentUser && (
+                    <span className="text-label-caps text-on-surface-variant opacity-70 font-normal"> (YOU)</span>
+                  )}
+                  {player.isDead && (
+                    <span className="text-label-caps text-error font-normal"> (dead)</span>
+                  )}
+                </p>
+                <p className="text-label-caps text-on-surface-variant">
+                  {isCurrentUser ? 'OPERATIVE READY' : 'READY'}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {isHostPlayer && (
+                  <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: '"FILL" 1' }}>
+                    star
+                  </span>
+                )}
+                {!player.isDead && (
+                  <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: '"FILL" 1' }}>
+                    check_circle
+                  </span>
+                )}
+                {showDeadToggle && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleToggleDead(player.id)
+                    }}
+                    className="text-lg hover:scale-110 transition"
+                    title={player.isDead ? 'Revive player' : 'Kill player'}
+                  >
+                    {player.isDead ? '🔄' : '💀'}
+                  </button>
+                )}
+                {isClickable && (
+                  <span className="material-symbols-outlined text-on-surface-variant">more_vert</span>
+                )}
+              </div>
+            </div>
           )
         })}
-      </ul>
-      {playersNeeded > 0 && (
-        <p className="text-center text-muted-foreground">
-          Waiting for {playersNeeded} more player{playersNeeded > 1 ? 's' : ''}
-          ...
-        </p>
-      )}
-    </div>
+
+      </div>
+    </section>
   )
 }

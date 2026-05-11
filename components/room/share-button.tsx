@@ -39,9 +39,16 @@ export function ShareButton({ roomId }: ShareButtonProps) {
     <button
       onClick={handleShare}
       disabled={sharing}
-      className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+      className="w-full h-touch-target bg-surface-container border border-outline-variant font-stamp-text text-stamp-text active:scale-95 transition-transform flex items-center justify-center gap-2 hover:bg-surface-container-high disabled:opacity-50"
     >
-      {sharing ? 'Sharing...' : 'Share'}
+      {sharing ? (
+        'SHARING...'
+      ) : (
+        <>
+          INVITE PLAYERS
+          <span className="material-symbols-outlined text-[20px]">send</span>
+        </>
+      )}
     </button>
   )
 }

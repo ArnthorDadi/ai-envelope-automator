@@ -35,10 +35,14 @@ export function LeaveRoomButton({ roomId }: LeaveRoomButtonProps) {
     <button
       onClick={handleLeave}
       disabled={leaving}
-      className="w-full p-3 bg-red-500 text-white rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
+      className="w-full py-2 text-on-surface font-label-caps uppercase flex items-center justify-center gap-2 hover:bg-error-container/10 transition-colors disabled:opacity-50"
     >
-      {leaving ? <Spinner size="sm" /> : null}
-      {leaving ? 'LEAVING' : 'LEAVE ROOM'}
+      {leaving ? (
+        <Spinner size="sm" />
+      ) : (
+        <span className="material-symbols-outlined text-[16px]">logout</span>
+      )}
+      {leaving ? 'LEAVING' : 'LEAVE GAME'}
     </button>
   )
 }
