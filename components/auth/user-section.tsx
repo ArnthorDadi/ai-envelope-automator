@@ -14,7 +14,7 @@ export function UserSection() {
 
   return user ? (
     <div className="flex items-center gap-4">
-      <span>{user.name}</span>
+      {/*<span>{user.name}</span>*/}
       <LogoutButton />
     </div>
   ) : (

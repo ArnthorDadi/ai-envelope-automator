@@ -15,7 +15,7 @@ export function CreateRoomButton() {
 
   const handleCreateRoom = async () => {
     if (!user) {
-      addToast('Please log in first.', 'error')
+      router.push('/login?createRoom=true')
       return
     }
 

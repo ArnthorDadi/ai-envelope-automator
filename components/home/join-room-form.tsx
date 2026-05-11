@@ -50,7 +50,12 @@ export function JoinRoomForm() {
     e.preventDefault()
 
     if (!user) {
-      addToast('Please log in first.', 'error')
+      const trimmedCode = roomCode.toUpperCase().trim()
+      if (trimmedCode) {
+        router.push(`/login?joinRoom=${trimmedCode}`)
+      } else {
+        router.push('/login?joinRoom=true')
+      }
       return
     }
 
