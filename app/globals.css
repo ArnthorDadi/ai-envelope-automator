@@ -113,8 +113,28 @@ body {
   background-blend-mode: multiply;
 }
 
+.login-card {
+  background-image: url(/images/stitch-paper-texture.png);
+  background-color: #f5f0e1;
+}
+
 .leather-texture {
   background: url(/images/leather-texture.png) var(--color-surface);
+}
+
+.login-bg {
+  background-image:
+    radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.4) 100%),
+    url(/images/desk-texture.png);
+  background-size: cover;
+  background-position: center;
+}
+
+.stamped-border {
+  border: 8px double #4d4635;
+  padding: 4px;
+  outline: 2px solid #4d4635;
+  outline-offset: 4px;
 }
 
 .stamp-effect {
