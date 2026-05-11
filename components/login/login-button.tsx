@@ -8,9 +8,9 @@ export function LoginButton() {
   return (
     <button
       onClick={() => router.push('/login')}
-      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      className="px-5 py-2 font-stamp-text text-stamp-text text-primary border border-primary hover:bg-primary-container/10 active:scale-95 transition-all rounded"
     >
-      Login
+      SIGN IN
     </button>
   )
 }

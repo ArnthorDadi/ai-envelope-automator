@@ -15,6 +15,6 @@ vi.mock('@/lib/firebase', () => ({
 describe('LoginButton', () => {
   it('renders Login button', () => {
     render(<LoginButton />)
-    expect(screen.getByRole('button', { name: 'Login' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'SIGN IN' })).toBeInTheDocument()
   })
 })

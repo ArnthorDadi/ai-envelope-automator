@@ -56,30 +56,30 @@ describe('LoginForm', () => {
 
   it('renders name input and submit button', () => {
     renderWithAuth()
-    expect(screen.getByPlaceholderText('Your name')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'SUBMIT' })).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Type name...')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'CONTINUE' })).toBeInTheDocument()
   })
 
   it('submit button is disabled when name is empty', () => {
     renderWithAuth()
-    expect(screen.getByRole('button', { name: 'SUBMIT' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'CONTINUE' })).toBeDisabled()
   })
 
   it('submit button is enabled when name is entered', () => {
     renderWithAuth()
-    const input = screen.getByPlaceholderText('Your name')
+    const input = screen.getByPlaceholderText('Type name...')
     fireEvent.change(input, { target: { value: 'TestUser' } })
-    expect(screen.getByRole('button', { name: 'SUBMIT' })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: 'CONTINUE' })).not.toBeDisabled()
   })
 
   it('calls signIn on successful submit', async () => {
     mockSignIn.mockResolvedValue({ uid: '123', name: 'TestUser' })
     renderWithAuth()
 
-    const input = screen.getByPlaceholderText('Your name')
+    const input = screen.getByPlaceholderText('Type name...')
     fireEvent.change(input, { target: { value: 'TestUser' } })
 
-    fireEvent.click(screen.getByRole('button', { name: 'SUBMIT' }))
+    fireEvent.click(screen.getByRole('button', { name: 'CONTINUE' }))
 
     await waitFor(() => {
       expect(mockSignIn).toHaveBeenCalledWith('TestUser')
@@ -92,10 +92,10 @@ describe('LoginForm', () => {
     )
     renderWithAuth()
 
-    const input = screen.getByPlaceholderText('Your name')
+    const input = screen.getByPlaceholderText('Type name...')
     fireEvent.change(input, { target: { value: 'TestUser' } })
 
-    fireEvent.click(screen.getByRole('button', { name: 'SUBMIT' }))
+    fireEvent.click(screen.getByRole('button', { name: 'CONTINUE' }))
 
     expect(
       screen.getByRole('button', { name: 'SUBMITTING' })
@@ -104,7 +104,7 @@ describe('LoginForm', () => {
 
   it('limits input to 20 characters', () => {
     renderWithAuth()
-    const input = screen.getByPlaceholderText('Your name') as HTMLInputElement
+    const input = screen.getByPlaceholderText('Type name...') as HTMLInputElement
     fireEvent.change(input, {
       target: { value: 'this is a very long name that exceeds 20 chars' },
     })

@@ -14,7 +14,7 @@ import { useToast } from './toast-context'
 interface AuthState {
   user: UserData | null
   loading: boolean
-  signIn: (name: string) => Promise<void>
+  signIn: (name: string) => Promise<UserData>
   signOut: () => Promise<void>
 }
 
@@ -41,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userData = await db.user.signIn({ name })
       setUser(userData)
       addToast(`Welcome, ${name}!`, 'success')
+      return userData
     } catch (error) {
       addToast('Login failed, please try again', 'error')
       throw error
