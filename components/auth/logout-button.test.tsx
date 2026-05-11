@@ -44,6 +44,6 @@ describe('LogoutButton', () => {
         </AuthContext.Provider>
       </ToastProvider>
     )
-    expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'SIGN OUT' })).toBeInTheDocument()
   })
 })
