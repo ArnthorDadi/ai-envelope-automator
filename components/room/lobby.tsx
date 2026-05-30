@@ -9,6 +9,7 @@ import { PlayerMenu } from './player-menu'
 import { ShareButton } from './share-button'
 import { LeaveRoomButton } from './leave-room-button'
 import { StartGameButton } from './start-game-button'
+import { QrCodeModal } from './qr-code-modal'
 import { GAME_CONSTANTS } from '@/lib/utils'
 
 interface LobbyProps {
@@ -23,6 +24,7 @@ export function Lobby({ room, players }: LobbyProps) {
   const previousHostIdRef = useRef<string | null>(null)
   const isHost = user?.uid === room.hostId
   const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null)
+  const [qrModalOpen, setQrModalOpen] = useState(false)
 
   const openPlayer = players.find((p) => p.id === menuOpenFor) || null
   const gameStarted = room.status === 'started'
@@ -66,59 +68,63 @@ export function Lobby({ room, players }: LobbyProps) {
     previousHostIdRef.current = room.hostId
   }, [room.hostId, players, addToast])
 
-  const handleCopyCode = async () => {
+  const handleHeaderClick = async () => {
     try {
       await navigator.clipboard.writeText(room.id)
       addToast('Code copied!', 'success')
     } catch {
       addToast('Failed to copy code', 'error')
     }
+
+    if (isHost) {
+      setQrModalOpen(true)
+    }
   }
 
   return (
     <div className="flex flex-col flex-1 relative">
       <div className="flex-1 overflow-y-auto px-margin-mobile pt-12 pb-52 space-y-8">
-        <section className="text-center space-y-4">
-          <h1 className="font-headline-xl text-headline-xl text-primary tracking-[0.3em] uppercase ink-bleed mb-8">
-            SECRET ROOM
+        <section className="text-center relative">
+          <h1
+            onClick={handleHeaderClick}
+            className="font-headline-xl text-headline-xl text-primary tracking-[0.3em] uppercase ink-bleed flex flex-col items-center cursor-pointer active:scale-95 transition-transform gap-2 relative z-10"
+            title="Click to copy room code"
+          >
+            <span>SECRET</span>
+            <span>ROOM</span>
           </h1>
-          <div className="inline-block relative">
-            <div
-              onClick={handleCopyCode}
-              className="-rotate-3 paper-texture bg-warm-cream text-on-primary-container px-8 py-4 border-2 border-primary-container shadow-sm ink-bleed cursor-pointer active:scale-95 transition-transform"
-              title="Click to copy room code"
-            >
-              <p className="font-label-caps text-label-caps text-outline pt-1">
-                ACCESS CODE
-              </p>
-              <p className="font-code-display text-code-display text-outline">
-                {room.id}
-              </p>
-            </div>
-          </div>
+          <span
+            className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 font-code-display text-headline-lg leading-none text-primary-container bg-warm-cream/50 px-2 pt-0.5 rounded whitespace-nowrap cursor-pointer active:scale-95 transition-transform animate-wiggle-tilt"
+            onClick={handleHeaderClick}
+            title="Click to copy room code"
+          >
+            {room.id}
+          </span>
         </section>
 
-        <section className="bg-surface-container border border-outline-variant p-6 space-y-4 rounded-lg relative overflow-hidden">
-          <div className="flex justify-between items-center">
-            <h2 className="font-stamp-text text-stamp-text text-primary">
-              MOBILIZING FORCES
-            </h2>
-            <span className="text-on-surface-variant text-label-caps">
-              {players.length} / {GAME_CONSTANTS.MAX_PLAYERS} PLAYERS
-            </span>
-          </div>
-          <div className="w-full h-3 bg-surface-container-highest border border-outline-variant overflow-hidden">
-            <div
-              className="h-full bg-primary-container shadow-[0_0_10px_rgba(242,202,80,0.3)] transition-all duration-1000"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-          <p className="text-on-surface-variant font-body-md italic text-center">
-            {playersNeeded > 0
-              ? `Awaiting ${playersNeeded} more agent${playersNeeded > 1 ? 's' : ''} to establish a quorum.`
-              : 'Quorum established. Ready for deployment.'}
-          </p>
-        </section>
+        {isHost && (
+          <section className="bg-surface-container border border-outline-variant p-6 space-y-4 rounded-lg relative overflow-hidden">
+            <div className="flex justify-between items-center">
+              <h2 className="font-stamp-text text-stamp-text text-primary">
+                MOBILIZING FORCES
+              </h2>
+              <span className="text-on-surface-variant text-label-caps">
+                {players.length} / {GAME_CONSTANTS.MAX_PLAYERS} PLAYERS
+              </span>
+            </div>
+            <div className="w-full h-3 bg-surface-container-highest border border-outline-variant overflow-hidden">
+              <div
+                className="h-full bg-primary-container shadow-[0_0_10px_rgba(242,202,80,0.3)] transition-all duration-1000"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            <p className="text-on-surface-variant font-body-md italic text-center">
+              {playersNeeded > 0
+                ? `Awaiting ${playersNeeded} more agent${playersNeeded > 1 ? 's' : ''} to establish a quorum.`
+                : 'Quorum established. Ready for deployment.'}
+            </p>
+          </section>
+        )}
 
         <PlayerList
           roomId={room.id}
@@ -128,15 +134,6 @@ export function Lobby({ room, players }: LobbyProps) {
           isHost={isHost}
           onMenuOpen={setMenuOpenFor}
         />
-
-        {menuOpenFor && openPlayer && (
-          <PlayerMenu
-            player={openPlayer}
-            roomId={room.id}
-            currentHostId={room.hostId}
-            onClose={() => setMenuOpenFor(null)}
-          />
-        )}
       </div>
 
       {!gameStarted && (
@@ -151,6 +148,22 @@ export function Lobby({ room, players }: LobbyProps) {
           <ShareButton roomId={room.id} />
           <LeaveRoomButton roomId={room.id} />
         </footer>
+      )}
+
+      {menuOpenFor && openPlayer && (
+        <PlayerMenu
+          player={openPlayer}
+          roomId={room.id}
+          currentHostId={room.hostId}
+          onClose={() => setMenuOpenFor(null)}
+        />
+      )}
+
+      {qrModalOpen && (
+        <QrCodeModal
+          roomId={room.id}
+          onClose={() => setQrModalOpen(false)}
+        />
       )}
     </div>
   )
