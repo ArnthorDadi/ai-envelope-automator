@@ -13,6 +13,14 @@ interface PlayerListProps {
   showDeadToggle?: boolean
 }
 
+function hashName(name: string): number {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  return Math.abs(hash) % 10 + 1
+}
+
 export function PlayerList({
   roomId,
   players,
@@ -42,6 +50,7 @@ export function PlayerList({
           const isCurrentUser = player.id === currentUserId
           const isHostPlayer = player.id === hostId
           const isClickable = !isCurrentUser && shouldShowMenu
+          const silhouetteIndex = hashName(player.name)
 
           return (
             <div
@@ -57,10 +66,12 @@ export function PlayerList({
                   : 'bg-surface-container-low border-outline-variant opacity-80'
               } ${isClickable ? 'cursor-pointer hover:bg-surface-container transition-colors' : ''} ${player.isDead ? 'opacity-60' : ''}`}
             >
-              <div className="w-14 h-14 bg-warm-cream p-1 border border-outline shadow-sm overflow-hidden flex-shrink-0 flex items-center justify-center">
-                <span className="material-symbols-outlined text-surface-dim text-3xl" style={{ fontVariationSettings: '"FILL" 1' }}>
-                  person
-                </span>
+              <div className="w-14 h-14 bg-warm-cream overflow-hidden flex-shrink-0 flex items-center justify-center">
+                <img
+                  src={`/images/silhouettes/identity-silhouette-${silhouetteIndex}.png`}
+                  alt={player.name}
+                  className="w-full h-full object-cover grayscale opacity-80"
+                />
               </div>
               <div className="flex-grow min-w-0">
                 <p className={`font-body-lg font-bold truncate ${isCurrentUser ? 'text-primary' : 'text-on-surface'}`}>

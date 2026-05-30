@@ -113,6 +113,10 @@ body {
   background-blend-mode: multiply;
 }
 
+.stitch-paper-texture {
+  background: url(/images/stitch-paper-texture.png) #f5f0e1;
+}
+
 .login-card {
   background-image: url(/images/stitch-paper-texture.png);
   background-color: #f5f0e1;

@@ -40,7 +40,7 @@ export default async function LoginPage({
           <div className="w-24 h-32 bg-surface-dim mb-8 relative border-4 border-outline-variant -rotate-1 shadow-md">
             <img
               alt="Identity Silhouette"
-              src="/images/identity-silhouette.png"
+              src="/images/silhouettes/identity-silhouette-1.png"
               className="w-full h-full object-cover grayscale opacity-80"
             />
             <div className="absolute inset-0 border-[1px] border-white/10 pointer-events-none" />

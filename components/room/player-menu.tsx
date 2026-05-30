@@ -7,6 +7,14 @@ import { useAuth } from '@/contexts/auth-context'
 import { useToast } from '@/contexts/toast-context'
 import { Spinner } from '@/components/shared'
 
+function hashName(name: string): number {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  return Math.abs(hash) % 10 + 1
+}
+
 interface PlayerMenuProps {
   player: Player
   roomId: string
@@ -39,32 +47,70 @@ export function PlayerMenu({
   }
 
   return (
-    <div className="fixed inset-0 z-50" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/50" />
-      <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-800 rounded-t-2xl p-4 pb-8 animate-slide-up">
-        <div className="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-4" />
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-2xl">👤</span>
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50"
+      onClick={onClose}
+      data-testid="player-menu-overlay"
+    >
+      <div
+        className="stitch-paper-texture w-full max-w-sm mx-4 rounded-lg shadow-2xl relative overflow-hidden p-6"
+        style={{
+          border: '12px double #4d4635',
+          outline: '4px solid #4d4635',
+          outlineOffset: '4px',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="absolute top-3 right-3 opacity-10 pointer-events-none">
+          <span
+            className="material-symbols-outlined text-4xl text-surface-dim rotate-12"
+            style={{ fontVariationSettings: '"FILL" 0' }}
+          >
+            star
+          </span>
+        </div>
+
+        <h2 className="font-stamp-text text-stamp-text text-primary text-center mb-6 tracking-widest">
+          TRANSFER COMMAND
+        </h2>
+
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-14 h-14 bg-warm-cream overflow-hidden flex-shrink-0 flex items-center justify-center">
+            <img
+              src={`/images/silhouettes/identity-silhouette-${hashName(player.name)}.png`}
+              alt={player.name}
+              className="w-full h-full object-cover grayscale opacity-80"
+            />
+          </div>
           <div>
-            <p className="font-semibold">{player.name}</p>
-            <p className="text-sm text-muted-foreground">
+            <p className="font-body-lg font-bold text-on-surface">{player.name}</p>
+            <p className="text-label-caps text-on-surface-variant">
               Will be able to start the game
             </p>
           </div>
         </div>
+
         <button
           onClick={handleTransfer}
           disabled={transferring}
-          className="w-full p-4 bg-blue-500 text-white rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full bg-primary-container text-on-primary-container h-touch-target font-stamp-text text-stamp-text border-2 border-primary shadow-lg rounded-lg flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 hover:brightness-110 transition-all"
         >
           {transferring ? (
             <>
               <Spinner size="sm" />
-              TRANSFERRING...
+              TRANSFERRING COMMAND...
             </>
           ) : (
-            'Transfer Host'
+            'TRANSFER COMMAND'
           )}
+        </button>
+
+        <button
+          onClick={onClose}
+          disabled={transferring}
+          className="w-full mt-3 text-on-surface-variant font-label-caps text-label-caps h-touch-target hover:text-on-surface transition-colors"
+        >
+          Cancel
         </button>
       </div>
     </div>
